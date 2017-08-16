@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Routing;
+using Microsoft.Web.Http.Routing;
 
 namespace ListApp.Api
 {
@@ -11,12 +13,22 @@ namespace ListApp.Api
         {
             // Web API configuration and services
 
+            var constraintResolver = new DefaultInlineConstraintResolver()
+            {
+                ConstraintMap =
+                {
+                    ["apiVersion"] = typeof( ApiVersionRouteConstraint )
+                }
+            };
+
+            config.AddApiVersioning();
+
             // Web API routes
-            config.MapHttpAttributeRoutes();
+            config.MapHttpAttributeRoutes(constraintResolver);
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
+                routeTemplate: "api/v{version:apiVersion}/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
         }

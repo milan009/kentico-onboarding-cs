@@ -20,9 +20,9 @@ namespace ListApp.Api.Controllers
 
             static ItemsController()
             {
-                items.Add(new ListItem{Id = "0", Text = "Stretch correctly"});
-                items.Add(new ListItem{Id = "1", Text = "Make a coffey"});
-                items.Add(new ListItem{Id = "2", Text = "Take over the world"});
+                items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "))Stretch correctly"});
+                items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"});
+                items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world"});
             }
 
             public IEnumerable<ListItem> GetItems()
@@ -33,7 +33,12 @@ namespace ListApp.Api.Controllers
             [Route("api/v{version:apiVersion}/items/{id}")]
             public IHttpActionResult GetItem(string id)
             {
-                var theItem = items.First((item) => item.Id == id);
+                if (!Guid.TryParse(id, out Guid guid))
+                {
+                    return BadRequest("Specified ID is not a valid GUID");
+                }
+
+                var theItem = items.FirstOrDefault((item) => item.Id == guid);
                 if (theItem != null)
                 {
                     return Ok(theItem);
@@ -42,34 +47,33 @@ namespace ListApp.Api.Controllers
                 return NotFound();
             }
 
-            public IHttpActionResult PostItem(ListItem newItem)
+            public IHttpActionResult PostItem(string newItemText)
             {
-                var checkedItem = items.FirstOrDefault((item) => item.Id == newItem.Id);
+                var createdItem = new ListItem{Id = Guid.NewGuid(), Text = newItemText};
 
-                if (checkedItem != null)
-                {
-                    return Conflict();
-                }
+                items.Add(createdItem);
 
-                items.Add(newItem);
-
-                return Created($"/items/{newItem.Id}", newItem);
+                return Created($"/items/{createdItem.Id}", createdItem);
             }
 
             [Route("api/v{version:apiVersion}/items/{id}")]
             public IHttpActionResult PutItem(string id, ListItem newItem)
             {
-                var checkedItem = items.First((item) => item.Id == id);
+                if (Guid.TryParse(id, out Guid guid))
+                {
+                    return BadRequest("Specified ID is not a valid GUID");
+                }
 
-                if (checkedItem == null)
+                var existingItem = items.First((item) => item.Id == guid);
+                if (existingItem == null)
                 {
                     items.Add(newItem);
                     return Created($"/items/{id}", newItem);
                 }
 
-                checkedItem.Text = newItem.Text;
+                existingItem.Text = newItem.Text;
 
-                return Ok(checkedItem);
+                return Ok(existingItem);
             }
         }
     }

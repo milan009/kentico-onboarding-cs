@@ -7,7 +7,7 @@ namespace ListApp.Api.Models
 {
     public class ListItem
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Text { get; set; }
     }
 }

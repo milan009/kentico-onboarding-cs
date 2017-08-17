@@ -13,24 +13,27 @@ namespace ListApp.Api.Controllers
     namespace V1
     {
         [ApiVersion("1.0")]
-        [Route("api/v{version:apiVersion}/items")]
+        [RoutePrefix("api/v{version:apiVersion}/items")]
         public class ItemsController : ApiController
         {
             private static List<ListItem> items = new List<ListItem>();
 
             static ItemsController()
             {
-                items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "))Stretch correctly"});
+                items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "Stretch correctly"});
                 items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"});
                 items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world"});
             }
-
+            
+            [Route]
+            [HttpGet]
             public IEnumerable<ListItem> GetItems()
             {
                 return items;
             }        
 
-            [Route("api/v{version:apiVersion}/items/{id}")]
+            [Route("{id}")]
+            [HttpGet]
             public IHttpActionResult GetItem(string id)
             {
                 if (!Guid.TryParse(id, out Guid guid))
@@ -47,7 +50,9 @@ namespace ListApp.Api.Controllers
                 return NotFound();
             }
 
-            public IHttpActionResult PostItem(string newItemText)
+            [Route]
+            [HttpPost]
+            public IHttpActionResult PostItem([FromBody]string newItemText)
             {
                 var createdItem = new ListItem{Id = Guid.NewGuid(), Text = newItemText};
 
@@ -56,15 +61,16 @@ namespace ListApp.Api.Controllers
                 return Created($"/items/{createdItem.Id}", createdItem);
             }
 
-            [Route("api/v{version:apiVersion}/items/{id}")]
+            [Route("{id}")]
+            [HttpPut]
             public IHttpActionResult PutItem(string id, ListItem newItem)
             {
-                if (Guid.TryParse(id, out Guid guid))
+                if (!Guid.TryParse(id, out Guid guid))
                 {
                     return BadRequest("Specified ID is not a valid GUID");
                 }
 
-                var existingItem = items.First((item) => item.Id == guid);
+                var existingItem = items.FirstOrDefault((item) => item.Id == guid);
                 if (existingItem == null)
                 {
                     items.Add(newItem);

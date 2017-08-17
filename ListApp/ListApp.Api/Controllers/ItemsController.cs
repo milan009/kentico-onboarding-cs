@@ -85,7 +85,7 @@ namespace ListApp.Api.Controllers
                     return Created($"/items/{id}", newItem);
                 }
 
-                existingItem.Text = newItem.Text;
+                existingItem = newItem;
 
                 return Ok(existingItem);
             }

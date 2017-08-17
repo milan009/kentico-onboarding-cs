@@ -28,7 +28,7 @@ namespace ListApp.Api.Controllers
             public IEnumerable<ListItem> GetItems()
             {
                 return items;
-            }
+            }        
 
             [Route("api/v{version:apiVersion}/items/{id}")]
             public IHttpActionResult GetItem(string id)
@@ -46,13 +46,14 @@ namespace ListApp.Api.Controllers
             {
                 var checkedItem = items.FirstOrDefault((item) => item.Id == newItem.Id);
 
-                if (checkedItem == null)
+                if (checkedItem != null)
                 {
-                    items.Add(newItem);
-                    return Created($"/items/{newItem.Id}", newItem);
+                    return Conflict();
                 }
 
-                return Conflict();
+                items.Add(newItem);
+
+                return Created($"/items/{newItem.Id}", newItem);
             }
 
             [Route("api/v{version:apiVersion}/items/{id}")]
@@ -62,7 +63,8 @@ namespace ListApp.Api.Controllers
 
                 if (checkedItem == null)
                 {
-                    return NotFound();
+                    items.Add(newItem);
+                    return Created($"/items/{id}", newItem);
                 }
 
                 checkedItem.Text = newItem.Text;

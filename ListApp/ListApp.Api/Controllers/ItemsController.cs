@@ -89,6 +89,26 @@ namespace ListApp.Api.Controllers
 
                 return Ok(existingItem);
             }
+
+            [Route("{id}")]
+            [HttpDelete]
+            public IHttpActionResult DeleteItem(string id)
+            {
+                if (!Guid.TryParse(id, out Guid guid))
+                {
+                    return BadRequest("Specified ID is not a valid GUID");
+                }
+
+                var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
+                if (existingItem == null)
+                {
+                    return NotFound();
+                }
+
+                Items.Remove(existingItem);
+
+                return Ok();
+            }
         }
     }
 }

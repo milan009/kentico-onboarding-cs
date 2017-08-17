@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Routing;
+using JsonPatch;
+using JsonPatch.Formatting;
+using JsonPatch.Paths.Resolvers;
 using Microsoft.Web.Http.Routing;
 
 namespace ListApp.Api
@@ -21,6 +25,10 @@ namespace ListApp.Api
                 }
             };
 
+            config.Formatters.Add(new JsonPatchFormatter(new JsonPatchSettings
+            {
+                PathResolver = new CaseInsensitivePropertyPathResolver()
+            }));
             config.AddApiVersioning();
 
             // Web API routes

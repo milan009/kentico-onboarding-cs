@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.ModelBinding;
 using ListApp.Api.Models;
 using Microsoft.Web.Http;
 
@@ -112,8 +113,13 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpPatch]
-            public IHttpActionResult PatchItem(string id, JsonPatch.JsonPatchDocument<ListItem> patch)
+            public IHttpActionResult PatchItem(string id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
             {
+                if (patch == null)
+                {
+                    return BadRequest("Missing patch request body");
+                }
+
                 if (!Guid.TryParse(id, out Guid guid))
                 {
                     return BadRequest("Specified ID is not a valid GUID");

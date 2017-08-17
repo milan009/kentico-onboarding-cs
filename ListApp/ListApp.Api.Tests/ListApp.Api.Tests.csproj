@@ -36,6 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JsonPatch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JsonPatch.1.0.2\lib\net45\JsonPatch.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.WebApi.Versioning, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Versioning.2.1.0\lib\net45\Microsoft.AspNet.WebApi.Versioning.dll</HintPath>
     </Reference>
@@ -45,7 +48,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

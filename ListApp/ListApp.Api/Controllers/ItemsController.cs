@@ -109,6 +109,26 @@ namespace ListApp.Api.Controllers
 
                 return Ok();
             }
+
+            [Route("{id}")]
+            [HttpPatch]
+            public IHttpActionResult PatchItem(string id, JsonPatch.JsonPatchDocument<ListItem> patch)
+            {
+                if (!Guid.TryParse(id, out Guid guid))
+                {
+                    return BadRequest("Specified ID is not a valid GUID");
+                }
+                
+                var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
+                if (existingItem == null)
+                {
+                    return NotFound();
+                }
+
+                patch.ApplyUpdatesTo(existingItem);
+
+                return Ok(existingItem);
+            }
         }
     }
 }

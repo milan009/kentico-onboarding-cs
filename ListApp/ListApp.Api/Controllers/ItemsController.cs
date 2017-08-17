@@ -16,20 +16,28 @@ namespace ListApp.Api.Controllers
         [RoutePrefix("api/v{version:apiVersion}/items")]
         public class ItemsController : ApiController
         {
-            private static List<ListItem> items = new List<ListItem>();
+            private static readonly List<ListItem> Items = new List<ListItem>();
+            private readonly Func<Guid> _idGenerator;
 
             static ItemsController()
             {
-                items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "Stretch correctly"});
-                items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"});
-                items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world"});
+                Items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "Stretch correctly"});
+                Items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"});
+                Items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world"});
+            }
+
+            public ItemsController() : this(Guid.NewGuid) { }
+
+            public ItemsController(Func<Guid> idGenerator)
+            {
+                _idGenerator = idGenerator;
             }
             
             [Route]
             [HttpGet]
             public IEnumerable<ListItem> GetItems()
             {
-                return items;
+                return Items;
             }        
 
             [Route("{id}")]
@@ -41,7 +49,7 @@ namespace ListApp.Api.Controllers
                     return BadRequest("Specified ID is not a valid GUID");
                 }
 
-                var theItem = items.FirstOrDefault((item) => item.Id == guid);
+                var theItem = Items.FirstOrDefault((item) => item.Id == guid);
                 if (theItem != null)
                 {
                     return Ok(theItem);
@@ -54,9 +62,9 @@ namespace ListApp.Api.Controllers
             [HttpPost]
             public IHttpActionResult PostItem([FromBody]string newItemText)
             {
-                var createdItem = new ListItem{Id = Guid.NewGuid(), Text = newItemText};
+                var createdItem = new ListItem{Id = _idGenerator(), Text = newItemText};
 
-                items.Add(createdItem);
+                Items.Add(createdItem);
 
                 return Created($"/items/{createdItem.Id}", createdItem);
             }
@@ -70,10 +78,10 @@ namespace ListApp.Api.Controllers
                     return BadRequest("Specified ID is not a valid GUID");
                 }
 
-                var existingItem = items.FirstOrDefault((item) => item.Id == guid);
+                var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
                 if (existingItem == null)
                 {
-                    items.Add(newItem);
+                    Items.Add(newItem);
                     return Created($"/items/{id}", newItem);
                 }
 

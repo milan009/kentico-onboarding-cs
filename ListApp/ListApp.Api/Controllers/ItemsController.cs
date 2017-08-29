@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
+using System.Web.WebSockets;
 using ListApp.Api.Models;
 using Microsoft.Web.Http;
 
@@ -85,21 +86,30 @@ namespace ListApp.Api.Controllers
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
+                    if (newItem == null)
+                    {
+                        return BadRequest("Missing/invalid put request body");
+                    }
+
                     if (!Guid.TryParse(id, out Guid guid))
                     {
                         return BadRequest("Specified ID is not a valid GUID");
                     }
 
-                    var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
-                    if (existingItem == null)
+                    if (guid != newItem.Id)
+                    {
+                        return BadRequest("Inconsistent GUIDs in URL and the list item object");
+                    }
+
+                    var existingItemIndex = Items.FindIndex((item) => item.Id == guid);
+                    if(existingItemIndex == -1)
                     {
                         Items.Add(newItem);
                         return Created($"/items/{id}", newItem);
                     }
 
-                    existingItem = newItem;
-
-                    return Ok(existingItem);
+                    Items[existingItemIndex] = newItem;
+                    return Ok(newItem);
                 });
             }
 

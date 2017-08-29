@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using System.Web.Http.ModelBinding;
-using System.Web.WebSockets;
 using ListApp.Api.Models;
 using Microsoft.Web.Http;
 
@@ -24,11 +19,13 @@ namespace ListApp.Api.Controllers
 
             static ItemsController()
             {
+                // Mock list items
                 Items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "Stretch correctly"});
                 Items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"});
                 Items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world"});
             }
 
+            // Paramless constructor will be using Guid.NewGuid to generate GUIDs
             public ItemsController() : this(Guid.NewGuid) { }
 
             public ItemsController(Func<Guid> idGenerator)

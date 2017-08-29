@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
@@ -34,106 +35,123 @@ namespace ListApp.Api.Controllers
                 _idGenerator = idGenerator;
             }
             
+            // HTTP verbs implementations
+
             [Route]
             [HttpGet]
-            public IEnumerable<ListItem> GetItems()
+            public async Task<IEnumerable<ListItem>> GetItems()
             {
-                return Items;
+                return await Task<IEnumerable<ListItem>>.Factory.StartNew(() => Items);
             }        
 
             [Route("{id}")]
             [HttpGet]
-            public IHttpActionResult GetItem(string id)
+            public async Task<IHttpActionResult> GetItem(string id)
             {
-                if (!Guid.TryParse(id, out Guid guid))
+                return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    return BadRequest("Specified ID is not a valid GUID");
-                }
+                    if (!Guid.TryParse(id, out Guid guid))
+                    {
+                        return BadRequest("Specified ID is not a valid GUID");
+                    }
 
-                var theItem = Items.FirstOrDefault((item) => item.Id == guid);
-                if (theItem != null)
-                {
-                    return Ok(theItem);
-                }
+                    var theItem = Items.FirstOrDefault((item) => item.Id == guid);
+                    if (theItem != null)
+                    {
+                        return Ok(theItem);
+                    }
 
-                return NotFound();
+                    return NotFound();
+                });
             }
 
             [Route]
             [HttpPost]
-            public IHttpActionResult PostItem([FromBody]string newItemText)
+            public async Task<IHttpActionResult> PostItem([FromBody]string newItemText)
             {
-                var createdItem = new ListItem{Id = _idGenerator(), Text = newItemText};
+                return await Task<IHttpActionResult>.Factory.StartNew(() =>
+                {
+                    var createdItem = new ListItem {Id = _idGenerator(), Text = newItemText};
 
-                Items.Add(createdItem);
+                    Items.Add(createdItem);
 
-                return Created($"/items/{createdItem.Id}", createdItem);
+                    return Created($"/items/{createdItem.Id}", createdItem);
+                });
             }
 
             [Route("{id}")]
             [HttpPut]
-            public IHttpActionResult PutItem(string id, ListItem newItem)
+            public async Task<IHttpActionResult> PutItem(string id, [FromBody] ListItem newItem)
             {
-                if (!Guid.TryParse(id, out Guid guid))
+                return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    return BadRequest("Specified ID is not a valid GUID");
-                }
+                    if (!Guid.TryParse(id, out Guid guid))
+                    {
+                        return BadRequest("Specified ID is not a valid GUID");
+                    }
 
-                var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
-                if (existingItem == null)
-                {
-                    Items.Add(newItem);
-                    return Created($"/items/{id}", newItem);
-                }
+                    var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
+                    if (existingItem == null)
+                    {
+                        Items.Add(newItem);
+                        return Created($"/items/{id}", newItem);
+                    }
 
-                existingItem = newItem;
+                    existingItem = newItem;
 
-                return Ok(existingItem);
+                    return Ok(existingItem);
+                });
             }
 
             [Route("{id}")]
             [HttpDelete]
-            public IHttpActionResult DeleteItem(string id)
+            public async Task<IHttpActionResult> DeleteItem(string id)
             {
-                if (!Guid.TryParse(id, out Guid guid))
+                return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    return BadRequest("Specified ID is not a valid GUID");
-                }
+                    if (!Guid.TryParse(id, out Guid guid))
+                    {
+                        return BadRequest("Specified ID is not a valid GUID");
+                    }
 
-                var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
-                if (existingItem == null)
-                {
-                    return NotFound();
-                }
+                    var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
+                    if (existingItem == null)
+                    {
+                        return NotFound();
+                    }
 
-                Items.Remove(existingItem);
+                    Items.Remove(existingItem);
 
-                return Ok();
+                    return Ok();
+                });
             }
 
             [Route("{id}")]
             [HttpPatch]
-            public IHttpActionResult PatchItem(string id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
+            public async Task<IHttpActionResult> PatchItem(string id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
             {
-                if (patch == null)
+                return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    return BadRequest("Missing patch request body");
-                }
+                    if (patch == null)
+                    {
+                        return BadRequest("Missing patch request body");
+                    }
 
-                if (!Guid.TryParse(id, out Guid guid))
-                {
-                    return BadRequest("Specified ID is not a valid GUID");
-                }
-                
-                var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
-                if (existingItem == null)
-                {
-                    return NotFound();
-                }
+                    if (!Guid.TryParse(id, out Guid guid))
+                    {
+                        return BadRequest("Specified ID is not a valid GUID");
+                    }
 
-                patch.ApplyUpdatesTo(existingItem);
+                    var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
+                    if (existingItem == null)
+                    {
+                        return NotFound();
+                    }
 
-                return Ok(existingItem);
+                    patch.ApplyUpdatesTo(existingItem);
+
+                    return Ok(existingItem);
+                });
             }
         }
     }

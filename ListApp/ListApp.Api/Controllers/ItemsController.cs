@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using ListApp.Api.Models;
+using System.Web.UI.WebControls;
 using Microsoft.Web.Http;
+using ListItem = ListApp.Api.Models.ListItem;
 
 namespace ListApp.Api.Controllers
 {
@@ -14,16 +15,13 @@ namespace ListApp.Api.Controllers
         [RoutePrefix("api/v{version:apiVersion}/items")]
         public class ItemsController : ApiController
         {
-            private static readonly List<ListItem> Items = new List<ListItem>();
-            private readonly Func<Guid> _idGenerator;
-
-            static ItemsController()
+            private static readonly List<ListItem> Items = new List<ListItem>
             {
-                // Mock list items
-                Items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "Stretch correctly"});
-                Items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"});
-                Items.Add(new ListItem{Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world"});
-            }
+                new ListItem(Guid.Parse("00000000-0000-0000-0000-000000000000"), "Stretch correctly"),
+                new ListItem(Guid.Parse("00000000-0000-0000-0000-000000000001"), "Make a coffey"),
+                new ListItem(Guid.Parse("00000000-0000-0000-0000-000000000002"), "Take over the world")
+            };
+            private readonly Func<Guid> _idGenerator;
 
             // Paramless constructor will be using Guid.NewGuid to generate GUIDs
             public ItemsController() : this(Guid.NewGuid) { }
@@ -69,10 +67,10 @@ namespace ListApp.Api.Controllers
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    var createdItem = new ListItem {Id = _idGenerator(), Text = newItemText};
+                    var createdItem = new ListItem (_idGenerator(), newItemText);
 
                     Items.Add(createdItem);
-
+                    
                     return Created($"/items/{createdItem.Id}", createdItem);
                 });
             }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.UI.WebControls;
+using JsonPatch;
 using Microsoft.Web.Http;
 using ListItem = ListApp.Api.Models.ListItem;
 
@@ -15,12 +16,7 @@ namespace ListApp.Api.Controllers
         [RoutePrefix("api/v{version:apiVersion}/items")]
         public class ItemsController : ApiController
         {
-            private static readonly List<ListItem> Items = new List<ListItem>
-            {
-                new ListItem(Guid.Parse("00000000-0000-0000-0000-000000000000"), "Stretch correctly"),
-                new ListItem(Guid.Parse("00000000-0000-0000-0000-000000000001"), "Make a coffey"),
-                new ListItem(Guid.Parse("00000000-0000-0000-0000-000000000002"), "Take over the world")
-            };
+            private static readonly List<ListItem> Items = new List<ListItem>(Utils.Constants.MockListItems);
             private readonly Func<Guid> _idGenerator;
 
             // Paramless constructor will be using Guid.NewGuid to generate GUIDs
@@ -67,7 +63,12 @@ namespace ListApp.Api.Controllers
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    var createdItem = new ListItem (_idGenerator(), newItemText);
+                    if (newItemText == null)
+                    {
+                        return BadRequest("You need to specify the ListItem text in the request body.");
+                    }
+
+                    var createdItem = new ListItem{Id = _idGenerator(), Text = newItemText};
 
                     Items.Add(createdItem);
                     

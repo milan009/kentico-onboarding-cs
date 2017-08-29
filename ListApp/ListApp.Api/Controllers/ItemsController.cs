@@ -26,15 +26,16 @@ namespace ListApp.Api.Controllers
             {
                 _idGenerator = idGenerator;
             }
-            
+
             // HTTP verbs implementations
 
+            // TODO: Check ModelState in actions
             [Route]
             [HttpGet]
             public async Task<IEnumerable<ListItem>> GetItems()
             {
                 return await Task<IEnumerable<ListItem>>.Factory.StartNew(() => Items);
-            }        
+            }
 
             [Route("{id}")]
             [HttpGet]
@@ -73,6 +74,25 @@ namespace ListApp.Api.Controllers
                     Items.Add(createdItem);
                     
                     return Created($"/items/{createdItem.Id}", createdItem);
+                });
+            }
+
+            [Route]
+            [HttpPut]
+            public async Task<IHttpActionResult> PutItemsCollection([FromBody] IEnumerable<ListItem> items)
+            {
+                return await Task<IHttpActionResult>.Factory.StartNew(() =>
+                {
+                    if (items == null)
+                    {
+                        return BadRequest("Missing/invalid put request body");
+                    }
+
+                    Items.Clear();
+                    var listItems = items as IList<ListItem> ?? items.ToList();
+                    Items.AddRange(listItems);
+
+                    return Created("/items", listItems);
                 });
             }
 

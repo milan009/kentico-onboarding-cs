@@ -5,7 +5,6 @@ using JsonPatch;
 using JsonPatch.Formatting;
 using JsonPatch.Paths.Resolvers;
 using ListApp.Api.Filters;
-using ListApp.Api.ModelBinders;
 using Microsoft.Web.Http.Routing;
 
 namespace ListApp.Api
@@ -24,16 +23,11 @@ namespace ListApp.Api
                 }
             };
 
-            // Guid model binder - the default one was not returning an error,
-            // and "null" got passed into not nullable ModelState dictionary value
-            // if the passed string was not convertible to a GUID
-            config.BindParameter(typeof(Guid), new GuidModelBinder());
-            
-            // A filter that takes care of "null" arguments
-            config.Filters.Add(new NullArgumentActionFilter());
-
             // A filter that takse care of situations when models are invalid
             config.Filters.Add(new ModelValidationActionFilter());
+
+            // A filter that takes care of "null" arguments
+            config.Filters.Add(new NullArgumentActionFilter());
 
             // A formatter that parses the body of a PATCH request 
             config.Formatters.Add(new JsonPatchFormatter(new JsonPatchSettings

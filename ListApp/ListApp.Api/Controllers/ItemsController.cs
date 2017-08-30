@@ -32,7 +32,7 @@ namespace ListApp.Api.Controllers
             [HttpGet]
             public async Task<IEnumerable<ListItem>> GetItems()
             {
-                return await Task<IEnumerable<ListItem>>.Factory.StartNew(() => Items);
+                return await Task.FromResult<IEnumerable<ListItem>>(Items);
             }
 
             [Route("{id}")]
@@ -40,44 +40,35 @@ namespace ListApp.Api.Controllers
             [Filters.ModelValidationActionFilter()]
             public async Task<IHttpActionResult> GetItem(Guid id)
             {
-                return await Task<IHttpActionResult>.Factory.StartNew(() =>
+                var theItem = Items.FirstOrDefault((item) => item.Id == id);
+                if (theItem != null)
                 {
-                    var theItem = Items.FirstOrDefault((item) => item.Id == id);
-                    if (theItem != null)
-                    {
-                        return Ok(theItem);
-                    }
+                    return Ok(theItem);
+                }
 
-                    return NotFound();
-                });
+                return await Task.FromResult<IHttpActionResult>(NotFound());
             }
 
             [Route]
             [HttpPost]
             public async Task<IHttpActionResult> PostItem([FromBody]string newItemText)
             {
-                return await Task<IHttpActionResult>.Factory.StartNew(() =>
-                {
-                    var createdItem = new ListItem{Id = _idGenerator(), Text = newItemText};
+                var createdItem = new ListItem{Id = _idGenerator(), Text = newItemText};
 
-                    Items.Add(createdItem);
+                Items.Add(createdItem);
                     
-                    return Created($"/items/{createdItem.Id}", createdItem);
-                });
+                return await Task.FromResult<IHttpActionResult>(Created($"/items/{createdItem.Id}", createdItem));
             }
 
             [Route]
             [HttpPut]
             public async Task<IHttpActionResult> PutItemsCollection([FromBody] IEnumerable<ListItem> items)
             {
-                return await Task<IHttpActionResult>.Factory.StartNew(() =>
-                {
-                    Items.Clear();
-                    var listItems = items as IList<ListItem> ?? items.ToList();
-                    Items.AddRange(listItems);
+                Items.Clear();
+                var listItems = items as IList<ListItem> ?? items.ToList();
+                Items.AddRange(listItems);
 
-                    return Created("/items", listItems);
-                });
+                return await Task.FromResult<IHttpActionResult>(Created("/items", listItems));
             }
 
             [Route("{id}")]
@@ -85,54 +76,45 @@ namespace ListApp.Api.Controllers
             [PutGuidConsistencyActionFilter]
             public async Task<IHttpActionResult> PutItem(Guid id, [FromBody] ListItem newItem)
             {
-                return await Task<IHttpActionResult>.Factory.StartNew(() =>
+                var existingItemIndex = Items.FindIndex((item) => item.Id == id);
+                if(existingItemIndex == -1)
                 {
-                    var existingItemIndex = Items.FindIndex((item) => item.Id == id);
-                    if(existingItemIndex == -1)
-                    {
-                        Items.Add(newItem);
-                        return Created($"/items/{id}", newItem);
-                    }
+                    Items.Add(newItem);
+                    return await Task.FromResult<IHttpActionResult>(Created($"/items/{id}", newItem));
+                }
 
-                    Items[existingItemIndex] = newItem;
-                    return Ok(newItem);
-                });
+                Items[existingItemIndex] = newItem;
+                return await Task.FromResult<IHttpActionResult>(Ok(newItem));
             }
 
             [Route("{id}")]
             [HttpDelete]
             public async Task<IHttpActionResult> DeleteItem(Guid id)
             {
-                return await Task<IHttpActionResult>.Factory.StartNew(() =>
+                var existingItem = Items.FirstOrDefault((item) => item.Id == id);
+                if (existingItem == null)
                 {
-                    var existingItem = Items.FirstOrDefault((item) => item.Id == id);
-                    if (existingItem == null)
-                    {
-                        return NotFound();
-                    }
+                    await Task.FromResult<IHttpActionResult>(NotFound());
+                }
 
-                    Items.Remove(existingItem);
+                Items.Remove(existingItem);
 
-                    return Ok();
-                });
+                return await Task.FromResult<IHttpActionResult>(Ok());
             }
 
             [Route("{id}")]
             [HttpPatch]
             public async Task<IHttpActionResult> PatchItem(Guid id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
             {
-                return await Task<IHttpActionResult>.Factory.StartNew(() =>
+                var existingItem = Items.FirstOrDefault((item) => item.Id == id);
+                if (existingItem == null)
                 {
-                    var existingItem = Items.FirstOrDefault((item) => item.Id == id);
-                    if (existingItem == null)
-                    {
-                        return NotFound();
-                    }
+                    await Task.FromResult<IHttpActionResult>(NotFound());
+                }
 
-                    patch.ApplyUpdatesTo(existingItem);
+                patch.ApplyUpdatesTo(existingItem);
 
-                    return Ok(existingItem);
-                });
+                return await Task.FromResult<IHttpActionResult>(Ok(existingItem));
             }
         }
     }

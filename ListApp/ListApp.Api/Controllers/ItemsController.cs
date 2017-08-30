@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.UI.WebControls;
-using JsonPatch;
+using ListApp.Api.Filters;
 using Microsoft.Web.Http;
 using ListItem = ListApp.Api.Models.ListItem;
 
@@ -29,7 +28,6 @@ namespace ListApp.Api.Controllers
 
             // HTTP verbs implementations
 
-            // TODO: Check ModelState in actions
             [Route]
             [HttpGet]
             public async Task<IEnumerable<ListItem>> GetItems()
@@ -39,16 +37,12 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpGet]
-            public async Task<IHttpActionResult> GetItem(string id)
+            [Filters.ModelValidationActionFilter()]
+            public async Task<IHttpActionResult> GetItem(Guid id)
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    if (!Guid.TryParse(id, out Guid guid))
-                    {
-                        return BadRequest("Specified ID is not a valid GUID");
-                    }
-
-                    var theItem = Items.FirstOrDefault((item) => item.Id == guid);
+                    var theItem = Items.FirstOrDefault((item) => item.Id == id);
                     if (theItem != null)
                     {
                         return Ok(theItem);
@@ -64,11 +58,6 @@ namespace ListApp.Api.Controllers
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    if (newItemText == null)
-                    {
-                        return BadRequest("You need to specify the ListItem text in the request body.");
-                    }
-
                     var createdItem = new ListItem{Id = _idGenerator(), Text = newItemText};
 
                     Items.Add(createdItem);
@@ -83,11 +72,6 @@ namespace ListApp.Api.Controllers
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    if (items == null)
-                    {
-                        return BadRequest("Missing/invalid put request body");
-                    }
-
                     Items.Clear();
                     var listItems = items as IList<ListItem> ?? items.ToList();
                     Items.AddRange(listItems);
@@ -98,26 +82,12 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpPut]
-            public async Task<IHttpActionResult> PutItem(string id, [FromBody] ListItem newItem)
+            [PutGuidConsistencyActionFilter]
+            public async Task<IHttpActionResult> PutItem(Guid id, [FromBody] ListItem newItem)
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    if (newItem == null)
-                    {
-                        return BadRequest("Missing/invalid put request body");
-                    }
-
-                    if (!Guid.TryParse(id, out Guid guid))
-                    {
-                        return BadRequest("Specified ID is not a valid GUID");
-                    }
-
-                    if (guid != newItem.Id)
-                    {
-                        return BadRequest("Inconsistent GUIDs in URL and the list item object");
-                    }
-
-                    var existingItemIndex = Items.FindIndex((item) => item.Id == guid);
+                    var existingItemIndex = Items.FindIndex((item) => item.Id == id);
                     if(existingItemIndex == -1)
                     {
                         Items.Add(newItem);
@@ -131,16 +101,11 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpDelete]
-            public async Task<IHttpActionResult> DeleteItem(string id)
+            public async Task<IHttpActionResult> DeleteItem(Guid id)
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    if (!Guid.TryParse(id, out Guid guid))
-                    {
-                        return BadRequest("Specified ID is not a valid GUID");
-                    }
-
-                    var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
+                    var existingItem = Items.FirstOrDefault((item) => item.Id == id);
                     if (existingItem == null)
                     {
                         return NotFound();
@@ -154,21 +119,11 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpPatch]
-            public async Task<IHttpActionResult> PatchItem(string id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
+            public async Task<IHttpActionResult> PatchItem(Guid id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
-                    if (patch == null)
-                    {
-                        return BadRequest("Missing patch request body");
-                    }
-
-                    if (!Guid.TryParse(id, out Guid guid))
-                    {
-                        return BadRequest("Specified ID is not a valid GUID");
-                    }
-
-                    var existingItem = Items.FirstOrDefault((item) => item.Id == guid);
+                    var existingItem = Items.FirstOrDefault((item) => item.Id == id);
                     if (existingItem == null)
                     {
                         return NotFound();

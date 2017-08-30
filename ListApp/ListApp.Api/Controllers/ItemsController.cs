@@ -41,7 +41,7 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpGet]
-            public async Task<IHttpActionResult> GetItem(Guid? id)
+            public async Task<IHttpActionResult> GetItem(Guid id)
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
@@ -110,7 +110,7 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpPut]
-            public async Task<IHttpActionResult> PutItem(Guid? id, [FromBody] ListItem newItem)
+            public async Task<IHttpActionResult> PutItem(Guid id, [FromBody] ListItem newItem)
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
@@ -143,7 +143,7 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpDelete]
-            public async Task<IHttpActionResult> DeleteItem(Guid? id)
+            public async Task<IHttpActionResult> DeleteItem(Guid id)
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {
@@ -166,7 +166,7 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpPatch]
-            public async Task<IHttpActionResult> PatchItem(Guid? id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
+            public async Task<IHttpActionResult> PatchItem(Guid id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
             {
                 return await Task<IHttpActionResult>.Factory.StartNew(() =>
                 {

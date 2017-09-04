@@ -96,6 +96,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ItemsController.cs" />
     <Compile Include="Filters\NullArgumentActionFilter.cs" />
+    <Compile Include="Filters\PutCollectionActionFilter.cs" />
     <Compile Include="Filters\PutGuidConsistencyActionFilter.cs" />
     <Compile Include="Filters\ModelValidationActionFilter.cs" />
     <Compile Include="Global.asax.cs">

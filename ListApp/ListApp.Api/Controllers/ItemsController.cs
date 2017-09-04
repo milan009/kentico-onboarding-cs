@@ -38,7 +38,7 @@ namespace ListApp.Api.Controllers
                 _items = new List<ListItem>(Utils.Constants.MockListItems);
             }
 
-            // HTTP verbs implementations
+            #region HTTP verbs implementations
 
             [Route]
             [HttpGet]
@@ -73,6 +73,7 @@ namespace ListApp.Api.Controllers
 
             [Route]
             [HttpPut]
+            [PutCollectionActionFilter]
             public async Task<IHttpActionResult> PutItemsCollection([FromBody] IEnumerable<ListItem> items)
             {
                 var listItems = items as IList<ListItem> ?? items.ToList();
@@ -133,6 +134,8 @@ namespace ListApp.Api.Controllers
 
                 return await Task.FromResult<IHttpActionResult>(Ok(existingItem));
             }
+
+            #endregion
         }
     }
 }

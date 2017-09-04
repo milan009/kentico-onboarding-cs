@@ -252,6 +252,33 @@ namespace ListApp.Api.Tests
             Assert.That(receivedItems, Is.EqualTo(expectedItems).Using(new ListItemEqualityComparer()));
         }
 
+        [Test]
+        public async Task Delete_Returns404OnNonExistingIDInCollection()
+        {
+            var receivedDeleteResponse = await _theController.DeleteItems(new List<Guid>
+            {
+                Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                Guid.Parse("00000000-0000-0000-0000-000000000005")
+            });
+            Assert.AreEqual(((NegotiatedContentResult<string>)receivedDeleteResponse).StatusCode, HttpStatusCode.NotFound);
+        }
+
+        [Test]
+        public async Task Delete_DeletesByIDCollectionCorrectly()
+        {
+            var expectedItems = Constants.MockListItems.Take(1).ToList();
+
+            var receivedDeleteResponse = await _theController.DeleteItems(new List<Guid>
+            {
+                Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                Guid.Parse("00000000-0000-0000-0000-000000000001")
+            });
+            Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
+
+            var receivedItems = await _theController.GetItems();
+            Assert.That(receivedItems, Is.EqualTo(expectedItems).Using(new ListItemEqualityComparer()));
+        }
+
         #endregion
 
     }

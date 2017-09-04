@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Filters;
@@ -103,6 +104,22 @@ namespace ListApp.Api.Controllers
 
                 _items[existingItemIndex] = newItem;
                 return await Task.FromResult<IHttpActionResult>(Ok(newItem));
+            }
+
+            [Route]
+            [HttpDelete]
+            public async Task<IHttpActionResult> DeleteItems([FromBody]IEnumerable<Guid> idsToDelete)
+            {
+                var toDelete = idsToDelete as IList<Guid> ?? idsToDelete.ToList();
+
+                if (toDelete.All(idToDelete => _items.Exists(item => item.Id == idToDelete)))
+                {
+                    _items.RemoveAll(item => toDelete.Contains(item.Id));
+                    return await Task.FromResult<IHttpActionResult>(Ok());
+                }
+
+                return await Task.FromResult<IHttpActionResult>(Content(HttpStatusCode.NotFound,
+                    "One or more of IDs specfied for deletion has not been found."));
             }
 
             [Route("{id}")]

@@ -9,7 +9,7 @@ namespace ListApp.Api.Utils
 {
     public static class Constants
     {
-        public static readonly IReadOnlyList<ListItem> MockListItems = new List<ListItem>
+        public static IEnumerable<ListItem> MockListItems => new List<ListItem>
         {
             new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "Stretch correctly"},
             new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"},

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ListApp.Api.Repositories
 {
-    internal interface IRepository<TItemType, TKeyType>
+    public interface IRepository<TItemType, TKeyType>
     {
         IEnumerable<TKeyType> GetKeys();
         IEnumerable<TItemType> GetAll(Func<TItemType, bool> predicate = null);

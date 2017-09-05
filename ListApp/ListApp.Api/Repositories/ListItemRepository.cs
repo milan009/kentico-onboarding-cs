@@ -5,12 +5,25 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using ListApp.Api.Models;
+using ListApp.Api.Utils;
 
 namespace ListApp.Api.Repositories
 {
     public class ListItemRepository : IRepository<ListItem, Guid>
     {
-        private static Dictionary<Guid, ListItem> _items;
+        // Dummy data holder
+        private static readonly Dictionary<Guid, ListItem> _items;
+
+        static ListItemRepository()
+        {
+            _items = new Dictionary<Guid, ListItem>();
+
+            foreach (var item in Utils.Constants.MockListItems)
+            {
+                _items.Add(item.Id, item);
+            }
+        }
+
         public IEnumerable<Guid> GetKeys()
         {
             return _items.Keys;

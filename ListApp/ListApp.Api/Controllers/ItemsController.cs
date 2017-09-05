@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Filters;
 using Microsoft.Web.Http;
-using ListItem = ListApp.Api.Models.ListItem;
+using ListApp.Api.Models;
 
 namespace ListApp.Api.Controllers
 {
@@ -137,18 +137,27 @@ namespace ListApp.Api.Controllers
                 return await Task.FromResult<IHttpActionResult>(Ok());
             }
 
+            /// <summary>
+            /// Applies a Json patch to á ListItem specified by given GUID. The GUID is taken from the URL,
+            /// the patch object from the body of the request.
+            /// Only "replace" operation is allowed on a given resource, as all its props are required. 
+            /// </summary>
+            /// <param name="id">The GUID specifying the resource to patch</param>
+            /// <param name="patch">The Json patch object</param>
+            /// <returns>404 if target resource is not found, 200 with modified item in the body if resource is found and patched succesfully</returns>
             [Route("{id}")]
             [HttpPatch]
+            [PatchSingleResourceActionFilter]
             public async Task<IHttpActionResult> PatchItem(Guid id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
             {
                 var existingItem = _items.FirstOrDefault((item) => item.Id == id);
                 if (existingItem == null)
                 {
-                    await Task.FromResult<IHttpActionResult>(NotFound());
+                    return await Task.FromResult<IHttpActionResult>(NotFound());
                 }
-
+                
                 patch.ApplyUpdatesTo(existingItem);
-
+               
                 return await Task.FromResult<IHttpActionResult>(Ok(existingItem));
             }
 

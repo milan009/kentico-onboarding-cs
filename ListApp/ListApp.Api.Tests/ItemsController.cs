@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
+using JsonPatch;
 using NUnit.Framework;
 using ListApp.Api.Controllers.V1;
 using ListApp.Api.Models;
@@ -30,13 +32,17 @@ namespace ListApp.Api.Tests
             _theController = new ItemsController(GuidCreator);
         }
 
+        // Some of the tests require to create an instance of Http server/client,
+        // as passing direct invalid method argument is not possible (GUID) OR 
+        // since the validity check is done by action filters, not the controller.
+
         #region GET tests
         
         [Test]
         public async Task Get_ReturnsAllDefaultItems()
         {
             var receivedItems = await _theController.GetItems();
-            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems).Using(new ListItemEqualityComparer()));
+            Assert.That(receivedItems, Is.EqualTo(Utils.Constants.MockListItems).Using(new ListItemEqualityComparer()));
         }
 
         // It is not possible to send a invalid GUID object, but it can easily happen when using the API
@@ -67,7 +73,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Get_ReturnsSpecificExistingItem()
         {
-            var expectedItem = Constants.MockListItems.ElementAt(1);
+            var expectedItem = Utils.Constants.MockListItems.ElementAt(1);
 
             var receivedResponse = await _theController.GetItem(Guid.Parse("00000000-0000-0000-0000-000000000001"));
             Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
@@ -243,7 +249,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Delete_DeletesItemCorrectly()
         {
-            var expectedItems = Constants.MockListItems.Take(2).ToList();
+            var expectedItems = Utils.Constants.MockListItems.Take(2).ToList();
 
             var receivedDeleteResponse = await _theController.DeleteItem(Guid.Parse("00000000-0000-0000-0000-000000000002"));
             Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
@@ -266,7 +272,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Delete_DeletesByIDCollectionCorrectly()
         {
-            var expectedItems = Constants.MockListItems.Take(1).ToList();
+            var expectedItems = Utils.Constants.MockListItems.Take(1).ToList();
 
             var receivedDeleteResponse = await _theController.DeleteItems(new List<Guid>
             {
@@ -281,5 +287,63 @@ namespace ListApp.Api.Tests
 
         #endregion
 
+        #region PATCH tests
+
+        [Test]
+        public async Task Patch_Returns404OnNotFound()
+        {
+            var patch = new JsonPatch.JsonPatchDocument<ListItem>();
+            patch.Replace("/Text", "Buy some aubergine!");
+
+            var receivedResponse = await _theController.PatchItem(Guid.Parse("00000000-0000-0000-0000-000000000005"), patch);
+            Assert.IsInstanceOf<NotFoundResult>(receivedResponse);
+        }
+
+        [Test]
+        public async Task Patch_UpdatesListItemCorrectly()
+        {
+            var newText = "Take a bath";
+            var expectedItem = new ListItem
+            {
+                Id = Guid.Empty,
+                Text = newText
+            };
+
+            var patch = new JsonPatch.JsonPatchDocument<ListItem>();
+            patch.Replace("/Text", newText);
+
+            var receivedResponse = await _theController.PatchItem(Guid.Empty, patch);
+            Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
+
+            var receivedItem = ((OkNegotiatedContentResult<ListItem>) receivedResponse).Content;
+            Assert.That(receivedItem, Is.EqualTo(expectedItem).Using(new ListItemEqualityComparer()));
+        }
+
+        [Test]
+        public async Task Patch_Returns403OnForbiddenOperation()
+        {
+            var patch = new JsonPatch.JsonPatchDocument<ListItem>();
+            patch.Replace("/Text", "Buy some aubergine!");
+            patch.Replace("/Id", new Guid());
+            patch.Remove("/Id");
+
+            var config = new HttpConfiguration();
+            config = ServerInit.InitializeConfiguration(config);
+
+            using (var server = new HttpServer(config))
+            using (var client = new HttpClient(server))
+            {
+                var receivedResponse =
+                    await client.SendAsync(new HttpRequestMessage
+                    {
+                        Method = new HttpMethod("PATCH"),
+                        RequestUri = new Uri("http://localhost:57187/api/v1/items/00000000-0000-0000-0000-000000000000"),
+                        Content = new ObjectContent<JsonPatchDocument<ListItem>>(patch, new JsonMediaTypeFormatter())
+                    });
+
+                Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.Forbidden);
+            }
+        }
+        #endregion
     }
 }

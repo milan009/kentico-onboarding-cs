@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,7 +12,10 @@ using JsonPatch;
 using NUnit.Framework;
 using ListApp.Api.Controllers.V1;
 using ListApp.Api.Models;
+using ListApp.Api.Repositories;
 using ListApp.Api.Utils;
+using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 
 namespace ListApp.Api.Tests
 {
@@ -21,15 +25,17 @@ namespace ListApp.Api.Tests
         private static readonly Guid TheGuid = Guid.Parse("00000000-0000-0000-0000-000000000003");
         private const string PostedItemText = "Build a monument";
         private static readonly ListItem PostedItem = new ListItem { Id = TheGuid, Text = PostedItemText };
+
         private static readonly Func<Guid> GuidCreator = () => TheGuid;
+        private IRepository<ListItem, Guid> _itemsRepository;
 
         private ItemsController _theController;
 
         [SetUp]
         public void SetUp()
         {
-            ItemsController.InitializeItems();
-            _theController = new ItemsController(GuidCreator);
+            _itemsRepository = Substitute.For<IRepository<ListItem, Guid>>();
+            _theController = new ItemsController(GuidCreator, _itemsRepository);
         }
 
         // Some of the tests require to create an instance of Http server/client,
@@ -41,7 +47,10 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Get_ReturnsAllDefaultItems()
         {
+            _itemsRepository.GetAll().Returns(Utils.Constants.MockListItems);
+
             var receivedItems = await _theController.GetItems();
+
             Assert.That(receivedItems, Is.EqualTo(Utils.Constants.MockListItems).Using(new ListItemEqualityComparer()));
         }
 
@@ -60,25 +69,41 @@ namespace ListApp.Api.Tests
                 var receivedResponse = await client.GetAsync("http://localhost:57187/api/v1/items/1");
 
                 Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.BadRequest);
+                _itemsRepository.DidNotReceive().Get(Arg.Any<Guid>());
             }
         }
 
         [Test]
         public async Task Get_Returns404OnNonExistingItem()
         {
-            var receivedResponse = await _theController.GetItem(Guid.Parse("00000000-0000-0000-0000-000000000004"));
+            var nonExistingGuid = Guid.Parse("00000000-0000-0000-0000-000000000004");
+            _itemsRepository.Get(nonExistingGuid).ReturnsNull();
+
+            var receivedResponse = await _theController.GetItem(nonExistingGuid);
+
             Assert.IsInstanceOf<NotFoundResult>(receivedResponse);
+        }
+
+        [Test]
+        public async Task Get_Returns200OnExistingItem()
+        {
+            var targetGuid = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            _itemsRepository.Get(targetGuid).Returns(Utils.Constants.MockListItems.ElementAt(1));
+
+            var receivedResponse = await _theController.GetItem(targetGuid);
+            Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
         }
 
         [Test]
         public async Task Get_ReturnsSpecificExistingItem()
         {
+            var targetGuid = Guid.Parse("00000000-0000-0000-0000-000000000001");
             var expectedItem = Utils.Constants.MockListItems.ElementAt(1);
+            _itemsRepository.Get(targetGuid).Returns(Utils.Constants.MockListItems.ElementAt(1));
 
-            var receivedResponse = await _theController.GetItem(Guid.Parse("00000000-0000-0000-0000-000000000001"));
-            Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
-
+            var receivedResponse = await _theController.GetItem(targetGuid);
             var receivedItem = ((OkNegotiatedContentResult<ListItem>)receivedResponse).Content;
+
             Assert.That(receivedItem, Is.EqualTo(expectedItem).Using(new ListItemEqualityComparer()));
         }
 
@@ -101,11 +126,12 @@ namespace ListApp.Api.Tests
                     await client.PostAsJsonAsync<string>(new Uri("http://localhost:57187/api/v1/items"), null);
 
                 Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.BadRequest);
+                _itemsRepository.DidNotReceive().Add(Arg.Any<Guid>(), Arg.Any<ListItem>());
             }
         }
 
         [Test]
-        public async Task Post_ReturnsPostedItem()
+        public async Task Post_ReturnsPostedItemAndLocation()
         {
             var receivedResponse = await _theController.PostItem(PostedItemText);
 
@@ -120,15 +146,22 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Post_AddsPostedItemCorrectly()
+        public async Task Post_CallsAddWithCorrectGuidAndItem()
         {
-            var receivedPostResponse = await _theController.PostItem(PostedItemText);
-            Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedPostResponse);
+            await _theController.PostItem(PostedItemText);
+            
+            _itemsRepository.Received().Add(TheGuid, Arg.Is<ListItem>((arg) => new ListItemEqualityComparer().Equals(arg, PostedItem)));
+        }
 
-            var receivedGetResponse = await _theController.GetItem(TheGuid);
-            Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedGetResponse);
-            var receivedItem = ((OkNegotiatedContentResult<ListItem>)receivedGetResponse).Content;
-            Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
+        [Test]
+        public async Task Post_Returns500OnDuplicitKeyGeneration()
+        {
+            _itemsRepository.When(x => x.Add(TheGuid, Arg.Any<ListItem>())).Do(x => throw new DuplicateKeyException(TheGuid, "Duplicate GUID generated!"));
+
+            var receivedResponse = await _theController.PostItem(PostedItemText);
+            Assert.IsInstanceOf<ExceptionResult>(receivedResponse);
+
+            _itemsRepository.Received().Add(TheGuid, Arg.Is<ListItem>((arg) => new ListItemEqualityComparer().Equals(arg, PostedItem)));
         }
 
         #endregion
@@ -150,6 +183,8 @@ namespace ListApp.Api.Tests
                     new Uri("http://localhost:57187/api/v1/items/00000000-0000-0000-0000-000000000004"), null);
 
                 Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.BadRequest);
+                _itemsRepository.DidNotReceive().Delete(Arg.Any<Guid>());
+                _itemsRepository.DidNotReceive().Add(Arg.Any<Guid>(), Arg.Any<ListItem>());
             }
         }
 
@@ -165,14 +200,16 @@ namespace ListApp.Api.Tests
             using (var client = new HttpClient(server))
             {
                 var receivedResponse =
-                    await client.PutAsJsonAsync<ListItem>(new Uri("http://localhost:57187/api/v1/items/00000000-0000-0000-0000-000000000007"), PostedItem);
+                    await client.PutAsJsonAsync(new Uri("http://localhost:57187/api/v1/items/00000000-0000-0000-0000-000000000007"), PostedItem);
 
                 Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.BadRequest);
+                _itemsRepository.DidNotReceive().Delete(Arg.Any<Guid>());
+                _itemsRepository.DidNotReceive().Add(Arg.Any<Guid>(), Arg.Any<ListItem>());
             }
         }
 
         [Test]
-        public async Task Put_ReturnsPutItem()
+        public async Task Put_ReturnsPutItemAndLocation()
         {
             var receivedResponse = await _theController.PutItem(TheGuid, PostedItem);
             Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedResponse);
@@ -183,22 +220,24 @@ namespace ListApp.Api.Tests
             Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
             Assert.That(receivedLocation.ToString(), Is.EqualTo($"/items/{TheGuid}"));
         }
-
+        
         [Test]
-        public async Task Put_AddsNewItemCorrectly()
+        public async Task Put_CallsOnlyAddWhenAddingNewItem()
         {
-            var receivedPutResponse = await _theController.PutItem(TheGuid, PostedItem);
-            Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedPutResponse);
+            _itemsRepository.GetKeys().Returns(new List<Guid>());
 
-            var receivedGetResponse = await _theController.GetItem(TheGuid);
-            Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedGetResponse);
-            var receivedItem = ((OkNegotiatedContentResult<ListItem>)receivedGetResponse).Content;
-            Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
+            var receivedPutResponse = await _theController.PutItem(TheGuid, PostedItem);
+
+            Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedPutResponse);
+            _itemsRepository.Received().Add(TheGuid, PostedItem);
+            _itemsRepository.DidNotReceive().Delete(TheGuid);
         }
 
         [Test]
-        public async Task Put_ReplacesExistingItemCorrectly()
+        public async Task Put_CallsAddAndDeleteWhenReplacingExistingItem()
         {
+            _itemsRepository.GetKeys().Returns(Utils.Constants.MockListItems.Select(item => item.Id));
+
             var conflictingGuid = Guid.Parse("00000000-0000-0000-0000-000000000001");
             var conflictingListItem = new ListItem
             {
@@ -207,25 +246,36 @@ namespace ListApp.Api.Tests
             };
 
             var receivedPutResponse = await _theController.PutItem(conflictingGuid, conflictingListItem);
-            Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedPutResponse);
 
-            var receivedGetResponse = await _theController.GetItem(conflictingGuid);
-            Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedGetResponse);
-            var receivedItem = ((OkNegotiatedContentResult<ListItem>)receivedGetResponse).Content;
-            Assert.That(receivedItem, Is.EqualTo(conflictingListItem).Using(new ListItemEqualityComparer()));
+            Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedPutResponse);
+            _itemsRepository.Received().Add(conflictingGuid, conflictingListItem);
+            _itemsRepository.Received().Delete(conflictingGuid);
         }
 
         [Test]
-        public async Task Put_ReplacesCollectionCorrectly()
+        public async Task Put_CollectionReturnsPutCollectionAndLocation()
         {
-            var postedCollection = new List<ListItem>();
-            postedCollection.Add(PostedItem);
+            var postedCollection = new List<ListItem> {PostedItem};
+            _itemsRepository.GetAll().Returns(postedCollection);
 
             var receivedResponse = await _theController.PutItemsCollection(postedCollection);
-            Assert.IsInstanceOf<OkNegotiatedContentResult<List<ListItem>>>(receivedResponse);
+            var receivedCollection = ((CreatedNegotiatedContentResult<IEnumerable<ListItem>>) receivedResponse).Content;
+            var receivedLocation = ((CreatedNegotiatedContentResult<IEnumerable<ListItem>>)receivedResponse).Location;
 
-            var receivedCollection = ((OkNegotiatedContentResult<List<ListItem>>) receivedResponse).Content;
             Assert.That(receivedCollection, Is.EqualTo(postedCollection).AsCollection.Using(new ListItemEqualityComparer()));
+            Assert.That(receivedLocation.ToString(), Is.EqualTo("/items"));
+        }
+
+        [Test]
+        public async Task Put_CollectionCallsClearAddAndNotDelete()
+        {
+            var postedCollection = new List<ListItem> {PostedItem};
+
+            var receivedResponse = await _theController.PutItemsCollection(postedCollection);
+
+            _itemsRepository.Received(1).Clear();
+            _itemsRepository.Received(1).Add(PostedItem.Id, PostedItem);
+            _itemsRepository.DidNotReceive().Delete(Arg.Any<Guid>());
         }
 
         #endregion
@@ -235,54 +285,70 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Delete_Returns404OnNonExistingItem()
         {
-            var receivedResponse = await _theController.DeleteItem(Guid.Parse("00000000-0000-0000-0000-000000000004"));
+            var theGuid = Guid.Parse("00000000-0000-0000-0000-000000000004");
+            _itemsRepository
+                .When(x => x.Delete(theGuid))
+                .Do(x => throw new KeyNotFoundException());
+
+            var receivedResponse = await _theController.DeleteItem(theGuid);
+
             Assert.IsInstanceOf<NotFoundResult>(receivedResponse);
+            _itemsRepository.Received().Delete(theGuid);
         }
 
         [Test]
         public async Task Delete_Returns200OnSuccesfullDelete()
         {
-            var receivedResponse = await _theController.DeleteItem(Guid.Parse("00000000-0000-0000-0000-000000000002"));
+            var theGuid = Guid.Parse("00000000-0000-0000-0000-000000000002");
+
+            var receivedResponse = await _theController.DeleteItem(theGuid);
+
             Assert.IsInstanceOf<OkResult>(receivedResponse);
+            _itemsRepository.Received().Delete(theGuid);
         }
 
         [Test]
-        public async Task Delete_DeletesItemCorrectly()
+        public async Task Delete_CallsRepoDeleteOnExistingItem()
         {
-            var expectedItems = Utils.Constants.MockListItems.Take(2).ToList();
+            var theGuid = Guid.Parse("00000000-0000-0000-0000-000000000002");
 
-            var receivedDeleteResponse = await _theController.DeleteItem(Guid.Parse("00000000-0000-0000-0000-000000000002"));
+            var receivedDeleteResponse = await _theController.DeleteItem(theGuid);
+
             Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
-
-            var receivedItems = await _theController.GetItems();
-            Assert.That(receivedItems, Is.EqualTo(expectedItems).Using(new ListItemEqualityComparer()));
+            _itemsRepository.Received().Delete(theGuid);
         }
 
         [Test]
         public async Task Delete_Returns404OnNonExistingIDInCollection()
         {
+            _itemsRepository.GetKeys().Returns(Utils.Constants.MockListItems.Select(item => item.Id));
+
             var receivedDeleteResponse = await _theController.DeleteItems(new List<Guid>
             {
                 Guid.Parse("00000000-0000-0000-0000-000000000002"),
                 Guid.Parse("00000000-0000-0000-0000-000000000005")
             });
+
             Assert.AreEqual(((NegotiatedContentResult<string>)receivedDeleteResponse).StatusCode, HttpStatusCode.NotFound);
+            _itemsRepository.DidNotReceive().Delete(Arg.Any<Guid>());
         }
 
         [Test]
-        public async Task Delete_DeletesByIDCollectionCorrectly()
+        public async Task Delete_CollectionCallsRepoDeleteWithCorrectIDs()
         {
-            var expectedItems = Utils.Constants.MockListItems.Take(1).ToList();
+            _itemsRepository.GetKeys().Returns(Utils.Constants.MockListItems.Select(item => item.Id));
+            var guid1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var guid2 = Guid.Parse("00000000-0000-0000-0000-000000000002");
 
             var receivedDeleteResponse = await _theController.DeleteItems(new List<Guid>
             {
-                Guid.Parse("00000000-0000-0000-0000-000000000002"),
-                Guid.Parse("00000000-0000-0000-0000-000000000001")
+                guid1,
+                guid2               
             });
-            Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
 
-            var receivedItems = await _theController.GetItems();
-            Assert.That(receivedItems, Is.EqualTo(expectedItems).Using(new ListItemEqualityComparer()));
+            Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
+            _itemsRepository.Received().Delete(guid1);
+            _itemsRepository.Received().Delete(guid2);
         }
 
         #endregion
@@ -292,16 +358,24 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Patch_Returns404OnNotFound()
         {
+            var theGuid = Guid.Parse("00000000-0000-0000-0000-000000000005");
+            _itemsRepository.Get(theGuid).ReturnsNull();
+
             var patch = new JsonPatch.JsonPatchDocument<ListItem>();
             patch.Replace("/Text", "Buy some aubergine!");
 
-            var receivedResponse = await _theController.PatchItem(Guid.Parse("00000000-0000-0000-0000-000000000005"), patch);
+            var receivedResponse = await _theController.PatchItem(theGuid, patch);
+
             Assert.IsInstanceOf<NotFoundResult>(receivedResponse);
+            _itemsRepository.DidNotReceive().Add(Arg.Any<Guid>(), Arg.Any<ListItem>());
+            _itemsRepository.DidNotReceive().Delete(Arg.Any<Guid>());
         }
 
         [Test]
-        public async Task Patch_UpdatesListItemCorrectly()
+        public async Task Patch_ReturnsUpdatedListItem()
         {
+            _itemsRepository.Get(Guid.Empty).Returns(Utils.Constants.MockListItems.ElementAt(0));
+
             var newText = "Take a bath";
             var expectedItem = new ListItem
             {
@@ -317,6 +391,28 @@ namespace ListApp.Api.Tests
 
             var receivedItem = ((OkNegotiatedContentResult<ListItem>) receivedResponse).Content;
             Assert.That(receivedItem, Is.EqualTo(expectedItem).Using(new ListItemEqualityComparer()));
+        }
+
+        [Test]
+        public async Task Patch_CallsAddAndDeleteOnValidGuid()
+        {
+            _itemsRepository.Get(Guid.Empty).Returns(Utils.Constants.MockListItems.ElementAt(0));
+
+            var newText = "Take a bath";
+            var expectedItem = new ListItem
+            {
+                Id = Guid.Empty,
+                Text = newText
+            };
+
+            var patch = new JsonPatch.JsonPatchDocument<ListItem>();
+            patch.Replace("/Text", newText);
+
+            var receivedResponse = await _theController.PatchItem(Guid.Empty, patch);
+
+            Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
+            _itemsRepository.Received().Delete(Guid.Empty);
+            _itemsRepository.Received().Add(Guid.Empty, Arg.Is<ListItem>((arg) => new ListItemEqualityComparer().Equals(arg, expectedItem)));
         }
 
         [Test]
@@ -342,6 +438,8 @@ namespace ListApp.Api.Tests
                     });
 
                 Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.Forbidden);
+                _itemsRepository.DidNotReceive().Add(Arg.Any<Guid>(), Arg.Any<ListItem>());
+                _itemsRepository.DidNotReceive().Delete(Arg.Any<Guid>());
             }
         }
         #endregion

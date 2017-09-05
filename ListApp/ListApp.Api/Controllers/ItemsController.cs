@@ -18,14 +18,15 @@ namespace ListApp.Api.Controllers
         [RoutePrefix("api/v{version:apiVersion}/items")]
         public class ItemsController : ApiController
         {
-            private readonly IRepository<ListItem, Guid> _items;
+            private readonly IRepository<ListItem, Guid> _itemsRepository;
             private readonly Func<Guid> _idGenerator;
 
             // Paramless constructor will be using Guid.NewGuid to generate GUIDs
-            public ItemsController() : this(Guid.NewGuid) { }
+            public ItemsController() : this(Guid.NewGuid, new ListItemRepository()) { }
 
-            public ItemsController(Func<Guid> idGenerator)
+            public ItemsController(Func<Guid> idGenerator, IRepository<ListItem, Guid> itemsRepository)
             {
+                _itemsRepository = itemsRepository;
                 _idGenerator = idGenerator;
             }
 
@@ -35,14 +36,14 @@ namespace ListApp.Api.Controllers
             [HttpGet]
             public async Task<IEnumerable<ListItem>> GetItems()
             {
-                return await Task.FromResult(_items.GetAll());
+                return await Task.FromResult(_itemsRepository.GetAll());
             }
 
             [Route("{id}")]
             [HttpGet]
             public async Task<IHttpActionResult> GetItem(Guid id)
             {
-                var theItem = _items.Get(id);
+                var theItem = _itemsRepository.Get(id);
                 if (theItem == null)
                 {
                     return await Task.FromResult<IHttpActionResult>(NotFound());
@@ -59,11 +60,22 @@ namespace ListApp.Api.Controllers
 
                 try
                 {
-                    _items.Add(createdItem.Id, createdItem);
+                    _itemsRepository.Add(createdItem.Id, createdItem);
                 }
                 catch (DuplicateKeyException e)
                 {
-                    return await Task.FromResult<IHttpActionResult>(Conflict());
+                    if (_idGenerator == Guid.NewGuid)
+                    {
+                        return await Task.FromResult<IHttpActionResult>(InternalServerError(
+                            new DuplicateKeyException(
+                                createdItem.Id, "The generated Guid conflicts with already existing one." +
+                                                "The chance of this happening is so slim that you are " +
+                                                "more likely to be hit by a meteorite. " +
+                                                "Count yourself lucky!")));
+                    }
+
+                    return await Task.FromResult<IHttpActionResult>(InternalServerError(e));
+
                 }
                     
                 return await Task.FromResult<IHttpActionResult>(Created($"/items/{createdItem.Id}", createdItem));
@@ -74,16 +86,16 @@ namespace ListApp.Api.Controllers
             [PutCollectionActionFilter]
             public async Task<IHttpActionResult> PutItemsCollection([FromBody] IEnumerable<ListItem> items)
             {
-                _items.Clear();
+                _itemsRepository.Clear();
                 var listItems = items as IList<ListItem> ?? items.ToList();
 
                 // The uniqueness of GUIDs is tested in the filter, no need to check here
                 foreach (var item in listItems)
                 {
-                    _items.Add(item.Id, item);
+                    _itemsRepository.Add(item.Id, item);
                 }
 
-                return await Task.FromResult<IHttpActionResult>(Created("/items", _items));
+                return await Task.FromResult<IHttpActionResult>(Created("/items", _itemsRepository.GetAll()));
             }
 
             [Route("{id}")]
@@ -91,12 +103,12 @@ namespace ListApp.Api.Controllers
             [PutGuidConsistencyActionFilter]
             public async Task<IHttpActionResult> PutItem(Guid id, [FromBody] ListItem newItem)
             {
-                if (_items.GetKeys().Contains(id))
+                if (_itemsRepository.GetKeys().Contains(id))
                 {
-                    _items.Delete(id);
+                    _itemsRepository.Delete(id);
                 }
 
-                _items.Add(id, newItem);
+                _itemsRepository.Add(id, newItem);
 
                 return await Task.FromResult<IHttpActionResult>(Created($"/items/{id}", newItem));
             }
@@ -107,11 +119,11 @@ namespace ListApp.Api.Controllers
             {
                 var toDelete = idsToDelete as IList<Guid> ?? idsToDelete.ToList();
 
-                if (toDelete.All(idToDelete => _items.GetKeys().Contains(idToDelete)))
+                if (toDelete.All(idToDelete => _itemsRepository.GetKeys().Contains(idToDelete)))
                 {
                     foreach (var id in toDelete)
                     {
-                        _items.Delete(id);
+                        _itemsRepository.Delete(id);
                     }
                     return await Task.FromResult<IHttpActionResult>(Ok());
                 }
@@ -126,7 +138,7 @@ namespace ListApp.Api.Controllers
             {
                 try
                 {
-                    _items.Delete(id);
+                    _itemsRepository.Delete(id);
                 }
                 catch (KeyNotFoundException e)
                 {
@@ -149,7 +161,7 @@ namespace ListApp.Api.Controllers
             [PatchSingleResourceActionFilter]
             public async Task<IHttpActionResult> PatchItem(Guid id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
             {
-                var existingItem = _items.Get(id);
+                var existingItem = _itemsRepository.Get(id);
                 if (existingItem == null)
                 {
                     return await Task.FromResult<IHttpActionResult>(NotFound());
@@ -157,8 +169,8 @@ namespace ListApp.Api.Controllers
                 
                 patch.ApplyUpdatesTo(existingItem);
 
-                _items.Delete(id);
-                _items.Add(id, existingItem);
+                _itemsRepository.Delete(id);
+                _itemsRepository.Add(id, existingItem);
                
                 return await Task.FromResult<IHttpActionResult>(Ok(existingItem));
             }

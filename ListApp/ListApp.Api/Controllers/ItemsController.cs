@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using System.Web.Http;
 using ListApp.Api.Filters;
 using Microsoft.Web.Http;
 using ListApp.Api.Models;
+using ListApp.Api.Repositories;
 
 namespace ListApp.Api.Controllers
 {
@@ -16,8 +18,7 @@ namespace ListApp.Api.Controllers
         [RoutePrefix("api/v{version:apiVersion}/items")]
         public class ItemsController : ApiController
         {
-            // Currently used to simulate a way to store ListItems
-            private static List<ListItem> _items;
+            private readonly IRepository<ListItem, Guid> _items;
             private readonly Func<Guid> _idGenerator;
 
             // Paramless constructor will be using Guid.NewGuid to generate GUIDs
@@ -28,37 +29,26 @@ namespace ListApp.Api.Controllers
                 _idGenerator = idGenerator;
             }
 
-            static ItemsController()
-            {
-                InitializeItems();
-            }
-
-            // Initializes the static list of ListItems to default mock value
-            public static void InitializeItems()
-            {
-                _items = new List<ListItem>(Utils.Constants.MockListItems);
-            }
-
             #region HTTP verbs implementations
 
             [Route]
             [HttpGet]
             public async Task<IEnumerable<ListItem>> GetItems()
             {
-                return await Task.FromResult<IEnumerable<ListItem>>(_items);
+                return await Task.FromResult(_items.GetAll());
             }
 
             [Route("{id}")]
             [HttpGet]
             public async Task<IHttpActionResult> GetItem(Guid id)
             {
-                var theItem = _items.FirstOrDefault((item) => item.Id == id);
-                if (theItem != null)
+                var theItem = _items.Get(id);
+                if (theItem == null)
                 {
-                    return Ok(theItem);
+                    return await Task.FromResult<IHttpActionResult>(NotFound());
                 }
 
-                return await Task.FromResult<IHttpActionResult>(NotFound());
+                return await Task.FromResult<IHttpActionResult>(Ok(theItem));
             }
 
             [Route]
@@ -67,7 +57,14 @@ namespace ListApp.Api.Controllers
             {
                 var createdItem = new ListItem{Id = _idGenerator(), Text = newItemText};
 
-                _items.Add(createdItem);
+                try
+                {
+                    _items.Add(createdItem.Id, createdItem);
+                }
+                catch (DuplicateKeyException e)
+                {
+                    return await Task.FromResult<IHttpActionResult>(Conflict());
+                }
                     
                 return await Task.FromResult<IHttpActionResult>(Created($"/items/{createdItem.Id}", createdItem));
             }
@@ -77,16 +74,15 @@ namespace ListApp.Api.Controllers
             [PutCollectionActionFilter]
             public async Task<IHttpActionResult> PutItemsCollection([FromBody] IEnumerable<ListItem> items)
             {
+                _items.Clear();
                 var listItems = items as IList<ListItem> ?? items.ToList();
 
-                if (_items.Any())
+                // The uniqueness of GUIDs is tested in the filter, no need to check here
+                foreach (var item in listItems)
                 {
-                    _items.Clear();
-                    _items.AddRange(listItems);
-                    return await Task.FromResult<IHttpActionResult>(Ok(_items));
+                    _items.Add(item.Id, item);
                 }
 
-                _items.AddRange(listItems);
                 return await Task.FromResult<IHttpActionResult>(Created("/items", _items));
             }
 
@@ -95,15 +91,14 @@ namespace ListApp.Api.Controllers
             [PutGuidConsistencyActionFilter]
             public async Task<IHttpActionResult> PutItem(Guid id, [FromBody] ListItem newItem)
             {
-                var existingItemIndex = _items.FindIndex((item) => item.Id == id);
-                if(existingItemIndex == -1)
+                if (_items.GetKeys().Contains(id))
                 {
-                    _items.Add(newItem);
-                    return await Task.FromResult<IHttpActionResult>(Created($"/items/{id}", newItem));
+                    _items.Delete(id);
                 }
 
-                _items[existingItemIndex] = newItem;
-                return await Task.FromResult<IHttpActionResult>(Ok(newItem));
+                _items.Add(id, newItem);
+
+                return await Task.FromResult<IHttpActionResult>(Created($"/items/{id}", newItem));
             }
 
             [Route]
@@ -112,9 +107,12 @@ namespace ListApp.Api.Controllers
             {
                 var toDelete = idsToDelete as IList<Guid> ?? idsToDelete.ToList();
 
-                if (toDelete.All(idToDelete => _items.Exists(item => item.Id == idToDelete)))
+                if (toDelete.All(idToDelete => _items.GetKeys().Contains(idToDelete)))
                 {
-                    _items.RemoveAll(item => toDelete.Contains(item.Id));
+                    foreach (var id in toDelete)
+                    {
+                        _items.Delete(id);
+                    }
                     return await Task.FromResult<IHttpActionResult>(Ok());
                 }
 
@@ -126,13 +124,14 @@ namespace ListApp.Api.Controllers
             [HttpDelete]
             public async Task<IHttpActionResult> DeleteItem(Guid id)
             {
-                var existingItem = _items.FirstOrDefault((item) => item.Id == id);
-                if (existingItem == null)
+                try
+                {
+                    _items.Delete(id);
+                }
+                catch (KeyNotFoundException e)
                 {
                     return await Task.FromResult<IHttpActionResult>(NotFound());
                 }
-
-                _items.Remove(existingItem);
 
                 return await Task.FromResult<IHttpActionResult>(Ok());
             }
@@ -150,13 +149,16 @@ namespace ListApp.Api.Controllers
             [PatchSingleResourceActionFilter]
             public async Task<IHttpActionResult> PatchItem(Guid id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
             {
-                var existingItem = _items.FirstOrDefault((item) => item.Id == id);
+                var existingItem = _items.Get(id);
                 if (existingItem == null)
                 {
                     return await Task.FromResult<IHttpActionResult>(NotFound());
                 }
                 
                 patch.ApplyUpdatesTo(existingItem);
+
+                _items.Delete(id);
+                _items.Add(id, existingItem);
                
                 return await Task.FromResult<IHttpActionResult>(Ok(existingItem));
             }

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace ListApp.Api.Repositories
 {
-    internal interface IRepository<TItemType, in TKeyType>
+    internal interface IRepository<TItemType, TKeyType>
     {
+        IEnumerable<TKeyType> GetKeys();
         IEnumerable<TItemType> GetAll(Func<TItemType, bool> predicate = null);
         TItemType Get(TKeyType key);
         void Add(TKeyType key, TItemType entity);
         void Delete(TKeyType key);
+        void Clear();
     }
 }

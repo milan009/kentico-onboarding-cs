@@ -11,9 +11,14 @@ namespace ListApp.Api.Repositories
     public class ListItemRepository : IRepository<ListItem, Guid>
     {
         private static Dictionary<Guid, ListItem> _items;
+        public IEnumerable<Guid> GetKeys()
+        {
+            return _items.Keys;
+        }
+
         public IEnumerable<ListItem> GetAll(Func<ListItem, bool> predicate = null)
         {
-            return predicate == null ? _items.Select(pair => pair.Value) : _items.Select(pair => pair.Value).Where(predicate);
+            return predicate == null ? _items.Values : _items.Values.Where(predicate);
         }
 
         public ListItem Get(Guid key)
@@ -44,6 +49,11 @@ namespace ListApp.Api.Repositories
             }
 
             _items.Remove(key);
+        }
+
+        public void Clear()
+        {
+            _items.Clear();
         }
     }
 }

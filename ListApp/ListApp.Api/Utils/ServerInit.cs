@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Routing;
 using JsonPatch;
@@ -7,14 +10,12 @@ using JsonPatch.Paths.Resolvers;
 using ListApp.Api.Filters;
 using Microsoft.Web.Http.Routing;
 
-namespace ListApp.Api
+namespace ListApp.Api.Utils
 {
-    public static class WebApiConfig
+    public static class ServerInit
     {
-        public static void Register(HttpConfiguration config)
+        public static HttpConfiguration InitializeConfiguration(HttpConfiguration config)
         {
-            // Web API configuration and services
-
             var constraintResolver = new DefaultInlineConstraintResolver()
             {
                 ConstraintMap =
@@ -23,29 +24,22 @@ namespace ListApp.Api
                 }
             };
 
-            // A filter that takse care of situations when models are invalid
+            //   config.BindParameter(typeof(Guid), new GuidModelBinder());
             config.Filters.Add(new ModelValidationActionFilter());
-
-            // A filter that takes care of "null" arguments
             config.Filters.Add(new NullArgumentActionFilter());
-
-            // A formatter that parses the body of a PATCH request 
             config.Formatters.Add(new JsonPatchFormatter(new JsonPatchSettings
             {
                 PathResolver = new CaseInsensitivePropertyPathResolver()
             }));
-
-            // The versioning plugin
             config.AddApiVersioning();
-
-            // Web API routes
             config.MapHttpAttributeRoutes(constraintResolver);
-
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/v{version:apiVersion}/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            return config;
         }
     }
 }

@@ -39,14 +39,14 @@ namespace ListApp.Api.Controllers
 
             [Route]
             [HttpGet]
-            public async Task<IEnumerable<ListItem>> GetItems()
+            public async Task<IEnumerable<ListItem>> GetItemsAsync()
             {
                 return await Task.FromResult<IEnumerable<ListItem>>(_items);
             }
 
             [Route("{id}")]
             [HttpGet]
-            public async Task<IHttpActionResult> GetItem(Guid id)
+            public async Task<IHttpActionResult> GetItemAsync(Guid id)
             {
                 var theItem = _items.FirstOrDefault((item) => item.Id == id);
                 if (theItem != null)
@@ -59,7 +59,7 @@ namespace ListApp.Api.Controllers
 
             [Route]
             [HttpPost]
-            public async Task<IHttpActionResult> PostItem([FromBody]string newItemText)
+            public async Task<IHttpActionResult> PostItemAsync([FromBody]string newItemText)
             {
                 var createdItem = new ListItem{Id = _idGenerator(), Text = newItemText};
 
@@ -71,7 +71,7 @@ namespace ListApp.Api.Controllers
             [Route]
             [HttpPut]
             [PutCollectionActionFilter]
-            public async Task<IHttpActionResult> PutItemsCollection([FromBody] IEnumerable<ListItem> items)
+            public async Task<IHttpActionResult> PutItemsCollectionAsync([FromBody] IEnumerable<ListItem> items)
             {
                 var listItems = items as IList<ListItem> ?? items.ToList();
 
@@ -89,7 +89,7 @@ namespace ListApp.Api.Controllers
             [Route("{id}")]
             [HttpPut]
             [PutGuidConsistencyActionFilter]
-            public async Task<IHttpActionResult> PutItem(Guid id, [FromBody] ListItem newItem)
+            public async Task<IHttpActionResult> PutItemAsync(Guid id, [FromBody] ListItem newItem)
             {
                 var existingItemIndex = _items.FindIndex((item) => item.Id == id);
                 if(existingItemIndex == -1)
@@ -104,7 +104,7 @@ namespace ListApp.Api.Controllers
 
             [Route]
             [HttpDelete]
-            public async Task<IHttpActionResult> DeleteItems([FromBody]IEnumerable<Guid> idsToDelete)
+            public async Task<IHttpActionResult> DeleteItemsAsync([FromBody]IEnumerable<Guid> idsToDelete)
             {
                 var toDelete = idsToDelete as IList<Guid> ?? idsToDelete.ToList();
 
@@ -120,7 +120,7 @@ namespace ListApp.Api.Controllers
 
             [Route("{id}")]
             [HttpDelete]
-            public async Task<IHttpActionResult> DeleteItem(Guid id)
+            public async Task<IHttpActionResult> DeleteItemAsync(Guid id)
             {
                 var existingItem = _items.FirstOrDefault((item) => item.Id == id);
                 if (existingItem == null)
@@ -144,7 +144,7 @@ namespace ListApp.Api.Controllers
             [Route("{id}")]
             [HttpPatch]
             [PatchSingleResourceActionFilter]
-            public async Task<IHttpActionResult> PatchItem(Guid id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
+            public async Task<IHttpActionResult> PatchItemAsync(Guid id, [FromBody] JsonPatch.JsonPatchDocument<ListItem> patch)
             {
                 var existingItem = _items.FirstOrDefault((item) => item.Id == id);
                 if (existingItem == null)

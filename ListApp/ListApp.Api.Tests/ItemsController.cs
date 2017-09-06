@@ -40,7 +40,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Get_ReturnsAllDefaultItems()
         {
-            var receivedItems = await _itemsController.GetItems();
+            var receivedItems = await _itemsController.GetItemsAsync();
             Assert.That(receivedItems, Is.EqualTo(Utils.Constants.MockListItems).Using(new ListItemEqualityComparer()));
         }
 
@@ -65,7 +65,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Get_NonExistingItem_ReturnsNotFound()
         {
-            var receivedResponse = await _itemsController.GetItem(Guid.Parse("00000000-0000-0000-0000-000000000004"));
+            var receivedResponse = await _itemsController.GetItemAsync(Guid.Parse("00000000-0000-0000-0000-000000000004"));
             Assert.IsInstanceOf<NotFoundResult>(receivedResponse);
         }
 
@@ -74,7 +74,7 @@ namespace ListApp.Api.Tests
         {
             var expectedItem = Utils.Constants.MockListItems.ElementAt(1);
 
-            var receivedResponse = await _itemsController.GetItem(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+            var receivedResponse = await _itemsController.GetItemAsync(Guid.Parse("00000000-0000-0000-0000-000000000001"));
             Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
 
             var receivedItem = ((OkNegotiatedContentResult<ListItem>)receivedResponse).Content;
@@ -106,7 +106,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Post_ValidText_ReturnsPostedItem()
         {
-            var receivedResponse = await _itemsController.PostItem(PostedItemText);
+            var receivedResponse = await _itemsController.PostItemAsync(PostedItemText);
 
             Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedResponse);
             var typedResponse = (CreatedNegotiatedContentResult<ListItem>)receivedResponse;
@@ -121,10 +121,10 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Post_ValidText_AddsPostedItemCorrectly()
         {
-            var receivedPostResponse = await _itemsController.PostItem(PostedItemText);
+            var receivedPostResponse = await _itemsController.PostItemAsync(PostedItemText);
             Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedPostResponse);
 
-            var receivedGetResponse = await _itemsController.GetItem(TheGuid);
+            var receivedGetResponse = await _itemsController.GetItemAsync(TheGuid);
             Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedGetResponse);
             var receivedItem = ((OkNegotiatedContentResult<ListItem>)receivedGetResponse).Content;
             Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
@@ -173,7 +173,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Put_ValidItem_ReturnsPutItem()
         {
-            var receivedResponse = await _itemsController.PutItem(TheGuid, PostedItem);
+            var receivedResponse = await _itemsController.PutItemAsync(TheGuid, PostedItem);
             Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedResponse);
 
             var receivedItem = ((CreatedNegotiatedContentResult<ListItem>)receivedResponse).Content;
@@ -186,10 +186,10 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Put_ValidItem_AddsNewItemCorrectly()
         {
-            var receivedPutResponse = await _itemsController.PutItem(TheGuid, PostedItem);
+            var receivedPutResponse = await _itemsController.PutItemAsync(TheGuid, PostedItem);
             Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedPutResponse);
 
-            var receivedGetResponse = await _itemsController.GetItem(TheGuid);
+            var receivedGetResponse = await _itemsController.GetItemAsync(TheGuid);
             Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedGetResponse);
             var receivedItem = ((OkNegotiatedContentResult<ListItem>)receivedGetResponse).Content;
             Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
@@ -205,10 +205,10 @@ namespace ListApp.Api.Tests
                 Text = "Take a break"
             };
 
-            var receivedPutResponse = await _itemsController.PutItem(conflictingGuid, conflictingListItem);
+            var receivedPutResponse = await _itemsController.PutItemAsync(conflictingGuid, conflictingListItem);
             Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedPutResponse);
 
-            var receivedGetResponse = await _itemsController.GetItem(conflictingGuid);
+            var receivedGetResponse = await _itemsController.GetItemAsync(conflictingGuid);
             Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedGetResponse);
             var receivedItem = ((OkNegotiatedContentResult<ListItem>)receivedGetResponse).Content;
             Assert.That(receivedItem, Is.EqualTo(conflictingListItem).Using(new ListItemEqualityComparer()));
@@ -220,7 +220,7 @@ namespace ListApp.Api.Tests
             var postedCollection = new List<ListItem>();
             postedCollection.Add(PostedItem);
 
-            var receivedResponse = await _itemsController.PutItemsCollection(postedCollection);
+            var receivedResponse = await _itemsController.PutItemsCollectionAsync(postedCollection);
             Assert.IsInstanceOf<OkNegotiatedContentResult<List<ListItem>>>(receivedResponse);
 
             var receivedCollection = ((OkNegotiatedContentResult<List<ListItem>>) receivedResponse).Content;
@@ -234,14 +234,14 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Delete_NonExistingItem_ReturnsNotFound()
         {
-            var receivedResponse = await _itemsController.DeleteItem(Guid.Parse("00000000-0000-0000-0000-000000000004"));
+            var receivedResponse = await _itemsController.DeleteItemAsync(Guid.Parse("00000000-0000-0000-0000-000000000004"));
             Assert.IsInstanceOf<NotFoundResult>(receivedResponse);
         }
 
         [Test]
         public async Task Delete_ExistingItem_ReturnsOk()
         {
-            var receivedResponse = await _itemsController.DeleteItem(Guid.Parse("00000000-0000-0000-0000-000000000002"));
+            var receivedResponse = await _itemsController.DeleteItemAsync(Guid.Parse("00000000-0000-0000-0000-000000000002"));
             Assert.IsInstanceOf<OkResult>(receivedResponse);
         }
 
@@ -250,17 +250,17 @@ namespace ListApp.Api.Tests
         {
             var expectedItems = Utils.Constants.MockListItems.Take(2).ToList();
 
-            var receivedDeleteResponse = await _itemsController.DeleteItem(Guid.Parse("00000000-0000-0000-0000-000000000002"));
+            var receivedDeleteResponse = await _itemsController.DeleteItemAsync(Guid.Parse("00000000-0000-0000-0000-000000000002"));
             Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
 
-            var receivedItems = await _itemsController.GetItems();
+            var receivedItems = await _itemsController.GetItemsAsync();
             Assert.That(receivedItems, Is.EqualTo(expectedItems).Using(new ListItemEqualityComparer()));
         }
 
         [Test]
         public async Task Delete_NonExistingIdInCollection_ReturnsNotFound()
         {
-            var receivedDeleteResponse = await _itemsController.DeleteItems(new List<Guid>
+            var receivedDeleteResponse = await _itemsController.DeleteItemsAsync(new List<Guid>
             {
                 Guid.Parse("00000000-0000-0000-0000-000000000002"),
                 Guid.Parse("00000000-0000-0000-0000-000000000005")
@@ -273,14 +273,14 @@ namespace ListApp.Api.Tests
         {
             var expectedItems = Utils.Constants.MockListItems.Take(1).ToList();
 
-            var receivedDeleteResponse = await _itemsController.DeleteItems(new List<Guid>
+            var receivedDeleteResponse = await _itemsController.DeleteItemsAsync(new List<Guid>
             {
                 Guid.Parse("00000000-0000-0000-0000-000000000002"),
                 Guid.Parse("00000000-0000-0000-0000-000000000001")
             });
             Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
 
-            var receivedItems = await _itemsController.GetItems();
+            var receivedItems = await _itemsController.GetItemsAsync();
             Assert.That(receivedItems, Is.EqualTo(expectedItems).Using(new ListItemEqualityComparer()));
         }
 
@@ -294,7 +294,7 @@ namespace ListApp.Api.Tests
             var patch = new JsonPatch.JsonPatchDocument<ListItem>();
             patch.Replace("/Text", "Buy some aubergine!");
 
-            var receivedResponse = await _itemsController.PatchItem(Guid.Parse("00000000-0000-0000-0000-000000000005"), patch);
+            var receivedResponse = await _itemsController.PatchItemAsync(Guid.Parse("00000000-0000-0000-0000-000000000005"), patch);
             Assert.IsInstanceOf<NotFoundResult>(receivedResponse);
         }
 
@@ -311,7 +311,7 @@ namespace ListApp.Api.Tests
             var patch = new JsonPatch.JsonPatchDocument<ListItem>();
             patch.Replace("/Text", newText);
 
-            var receivedResponse = await _itemsController.PatchItem(Guid.Empty, patch);
+            var receivedResponse = await _itemsController.PatchItemAsync(Guid.Empty, patch);
             Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
 
             var receivedItem = ((OkNegotiatedContentResult<ListItem>) receivedResponse).Content;

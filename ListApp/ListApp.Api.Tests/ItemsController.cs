@@ -49,7 +49,7 @@ namespace ListApp.Api.Tests
         // The server/client has to be used to test this.
         // The argument validity check is handled by the action filter
         [Test]
-        public async Task Get_Returns400OnInvalidGuidFormat()
+        public async Task Get_InvalidGuidFormat_ReturnsBadRequest()
         {
             var config = new HttpConfiguration();
             config = ServerInit.InitializeConfiguration(config);
@@ -64,14 +64,14 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Get_Returns404OnNonExistingItem()
+        public async Task Get_NonExistingItem_ReturnsNotFound()
         {
             var receivedResponse = await _itemsController.GetItem(Guid.Parse("00000000-0000-0000-0000-000000000004"));
             Assert.IsInstanceOf<NotFoundResult>(receivedResponse);
         }
 
         [Test]
-        public async Task Get_ReturnsSpecificExistingItem()
+        public async Task Get_ExistingItem_ReturnsCorrectly()
         {
             var expectedItem = Utils.Constants.MockListItems.ElementAt(1);
 
@@ -89,7 +89,7 @@ namespace ListApp.Api.Tests
         // The server/client has to be used to test this.
         // The null argument check is handled by the action filter
         [Test]
-        public async Task Post_Returns400OnNullText()
+        public async Task Post_NullText_ReturnsBadRequest()
         {
             var config = new HttpConfiguration();
             config = ServerInit.InitializeConfiguration(config);
@@ -105,7 +105,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Post_ReturnsPostedItem()
+        public async Task Post_ValidText_ReturnsPostedItem()
         {
             var receivedResponse = await _itemsController.PostItem(PostedItemText);
 
@@ -120,7 +120,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Post_AddsPostedItemCorrectly()
+        public async Task Post_ValidText_AddsPostedItemCorrectly()
         {
             var receivedPostResponse = await _itemsController.PostItem(PostedItemText);
             Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedPostResponse);
@@ -138,7 +138,7 @@ namespace ListApp.Api.Tests
         [Test]
         // The server/client has to be used to test this.
         // The null argument check is handled by the action filter
-        public async Task Put_Returns400OnNullListItem()
+        public async Task Put_NullArgument_ReturnsBadRequest()
         {
             var config = new HttpConfiguration();
             config = ServerInit.InitializeConfiguration(config);
@@ -156,7 +156,7 @@ namespace ListApp.Api.Tests
         // The server/client has to be used to test this.
         // The ID consistency check is handled by the action filter
         [Test]
-        public async Task Put_Returns400OnInconsistentIDs()
+        public async Task Put_InconsistentIDs_ReturnsBadRequest()
         {
             var config = new HttpConfiguration();
             config = ServerInit.InitializeConfiguration(config);
@@ -172,7 +172,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Put_ReturnsPutItem()
+        public async Task Put_ValidItem_ReturnsPutItem()
         {
             var receivedResponse = await _itemsController.PutItem(TheGuid, PostedItem);
             Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedResponse);
@@ -185,7 +185,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Put_AddsNewItemCorrectly()
+        public async Task Put_ValidItem_AddsNewItemCorrectly()
         {
             var receivedPutResponse = await _itemsController.PutItem(TheGuid, PostedItem);
             Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedPutResponse);
@@ -197,7 +197,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Put_ReplacesExistingItemCorrectly()
+        public async Task Put_ValidItemToExistingGuid_ReplacesExistingItemCorrectly()
         {
             var conflictingGuid = Guid.Parse("00000000-0000-0000-0000-000000000001");
             var conflictingListItem = new ListItem
@@ -216,7 +216,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Put_ReplacesCollectionCorrectly()
+        public async Task Put_ValidCollection_ReturnsPutCollection()
         {
             var postedCollection = new List<ListItem>();
             postedCollection.Add(PostedItem);
@@ -233,21 +233,21 @@ namespace ListApp.Api.Tests
         #region DELETE tests
 
         [Test]
-        public async Task Delete_Returns404OnNonExistingItem()
+        public async Task Delete_NonExistingItem_ReturnsNotFound()
         {
             var receivedResponse = await _itemsController.DeleteItem(Guid.Parse("00000000-0000-0000-0000-000000000004"));
             Assert.IsInstanceOf<NotFoundResult>(receivedResponse);
         }
 
         [Test]
-        public async Task Delete_Returns200OnSuccesfullDelete()
+        public async Task Delete_ExistingItem_ReturnsOk()
         {
             var receivedResponse = await _itemsController.DeleteItem(Guid.Parse("00000000-0000-0000-0000-000000000002"));
             Assert.IsInstanceOf<OkResult>(receivedResponse);
         }
 
         [Test]
-        public async Task Delete_DeletesItemCorrectly()
+        public async Task Delete_ExistingItem_DeletesItemCorrectly()
         {
             var expectedItems = Utils.Constants.MockListItems.Take(2).ToList();
 
@@ -259,7 +259,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Delete_Returns404OnNonExistingIDInCollection()
+        public async Task Delete_NonExistingIdInCollection_ReturnsNotFound()
         {
             var receivedDeleteResponse = await _itemsController.DeleteItems(new List<Guid>
             {
@@ -270,7 +270,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Delete_DeletesByIDCollectionCorrectly()
+        public async Task Delete_ValidIdCollection_DeletesCorrectly()
         {
             var expectedItems = Utils.Constants.MockListItems.Take(1).ToList();
 
@@ -290,7 +290,7 @@ namespace ListApp.Api.Tests
         #region PATCH tests
 
         [Test]
-        public async Task Patch_Returns404OnNotFound()
+        public async Task Patch_NonExistingItem_ReturnsNotFound()
         {
             var patch = new JsonPatch.JsonPatchDocument<ListItem>();
             patch.Replace("/Text", "Buy some aubergine!");
@@ -300,7 +300,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Patch_UpdatesListItemCorrectly()
+        public async Task Patch_ValidItem_UpdatesListItemCorrectly()
         {
             var newText = "Take a bath";
             var expectedItem = new ListItem
@@ -320,7 +320,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Patch_Returns403OnForbiddenOperation()
+        public async Task Patch_ForbiddenOperation_ReturnsForbidden()
         {
             var patch = new JsonPatch.JsonPatchDocument<ListItem>();
             patch.Replace("/Text", "Buy some aubergine!");

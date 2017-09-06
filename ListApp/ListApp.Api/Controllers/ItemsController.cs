@@ -26,15 +26,11 @@ namespace ListApp.Api.Controllers
             public ItemsController(Func<Guid> idGenerator)
             {
                 _idGenerator = idGenerator;
-            }
-
-            static ItemsController()
-            {
                 InitializeItems();
             }
 
             // Initializes the static list of ListItems to default mock value
-            public static void InitializeItems()
+            private void InitializeItems()
             {
                 _items = new List<ListItem>(Utils.Constants.MockListItems);
             }

@@ -28,7 +28,6 @@ namespace ListApp.Api.Tests
         [SetUp]
         public void SetUp()
         {
-            ItemsController.InitializeItems();
             _itemsController = new ItemsController(GuidCreator);
         }
 

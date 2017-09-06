@@ -7,6 +7,10 @@ using ListApp.Api.Models;
 
 namespace ListApp.Api.Filters
 {
+    /// <summary>
+    /// A PUT specific filter that checks if the GUID specified in the URL as a location
+    /// of the item matches the GUID stored in the item.
+    /// </summary>
     public class PutGuidConsistencyActionFilter : ActionFilterAttribute
     {
         public override void OnActionExecuting(HttpActionContext actionContext)

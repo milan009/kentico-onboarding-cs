@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
 using ListApp.Api.Models;
-using ListApp.Api.Utils;
 
 namespace ListApp.Api.Repositories
 {

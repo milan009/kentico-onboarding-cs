@@ -9,6 +9,11 @@ using ListApp.Api.Models;
 
 namespace ListApp.Api.Filters
 {
+    /// <summary>
+    /// PUT specific filter that checks if given collection is not empty (null check is handled by different filter)
+    /// and whether GUIDs in the collection are unique to the collection. Since the collection will replace the old
+    /// one, no need to check GUIDs in that one.
+    /// </summary>
     public class PutCollectionActionFilter : ActionFilterAttribute
     {
         public override void OnActionExecuting(HttpActionContext actionContext)

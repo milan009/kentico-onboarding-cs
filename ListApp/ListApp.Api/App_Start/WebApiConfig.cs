@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Http.Routing;
 using JsonPatch;
 using JsonPatch.Formatting;
@@ -15,7 +14,7 @@ namespace ListApp.Api
         {
             // Web API configuration and services
 
-            var constraintResolver = new DefaultInlineConstraintResolver()
+            var constraintResolver = new DefaultInlineConstraintResolver
             {
                 ConstraintMap =
                 {
@@ -23,7 +22,7 @@ namespace ListApp.Api
                 }
             };
 
-            // A filter that takse care of situations when models are invalid
+            // A filter that takes care of situations when models are invalid
             config.Filters.Add(new ModelValidationActionFilter());
 
             // A filter that takes care of "null" arguments
@@ -42,9 +41,9 @@ namespace ListApp.Api
             config.MapHttpAttributeRoutes(constraintResolver);
 
             config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/v{version:apiVersion}/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+                "DefaultApi",
+                "api/v{version:apiVersion}/{controller}/{id}",
+                new { id = RouteParameter.Optional }
             );
         }
     }

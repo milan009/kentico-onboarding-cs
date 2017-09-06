@@ -22,6 +22,7 @@ namespace ListApp.Api.Controllers
             private readonly Func<Guid> _idGenerator;
 
             // Paramless constructor will be using Guid.NewGuid to generate GUIDs
+            // and an instance of ListItemRepository()
             public ItemsController() : this(Guid.NewGuid, new ListItemRepository()) { }
 
             public ItemsController(Func<Guid> idGenerator, IRepository<ListItem, Guid> itemsRepository)
@@ -119,17 +120,16 @@ namespace ListApp.Api.Controllers
             {
                 var toDelete = idsToDelete as IList<Guid> ?? idsToDelete.ToList();
 
-                if (toDelete.All(idToDelete => _itemsRepository.GetKeys().Contains(idToDelete)))
+                if (!toDelete.All(idToDelete => _itemsRepository.GetKeys().Contains(idToDelete)))
+                    return await Task.FromResult<IHttpActionResult>(Content(HttpStatusCode.NotFound,
+                        "One or more of IDs specfied for deletion has not been found."));
+
+                foreach (var id in toDelete)
                 {
-                    foreach (var id in toDelete)
-                    {
-                        _itemsRepository.Delete(id);
-                    }
-                    return await Task.FromResult<IHttpActionResult>(Ok());
+                    _itemsRepository.Delete(id);
                 }
 
-                return await Task.FromResult<IHttpActionResult>(Content(HttpStatusCode.NotFound,
-                    "One or more of IDs specfied for deletion has not been found."));
+                return await Task.FromResult<IHttpActionResult>(Ok());
             }
 
             [Route("{id}")]
@@ -149,7 +149,7 @@ namespace ListApp.Api.Controllers
             }
 
             /// <summary>
-            /// Applies a Json patch to á ListItem specified by given GUID. The GUID is taken from the URL,
+            /// Applies a Json patch to a ListItem specified by given GUID. The GUID is taken from the URL,
             /// the patch object from the body of the request.
             /// Only "replace" operation is allowed on a given resource, as all its props are required. 
             /// </summary>

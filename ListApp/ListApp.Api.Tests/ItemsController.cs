@@ -11,11 +11,11 @@ using System.Web.Http.Results;
 using JsonPatch;
 using NUnit.Framework;
 using ListApp.Api.Controllers.V1;
-using ListApp.Api.Models;
 using ListApp.Api.Repositories;
 using ListApp.Api.Utils;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
+using ListApp.Api.Models;
 
 namespace ListApp.Api.Tests
 {
@@ -51,7 +51,8 @@ namespace ListApp.Api.Tests
 
             var receivedItems = await _theController.GetItems();
 
-            Assert.That(receivedItems, Is.EqualTo(Utils.Constants.MockListItems).Using(new ListItemEqualityComparer()));
+            Assert.That(receivedItems, Is.EqualTo(Utils.Constants.MockListItems)
+                .Using(new ListItemEqualityComparer()));
         }
 
         // It is not possible to send a invalid GUID object, but it can easily happen when using the API
@@ -150,18 +151,21 @@ namespace ListApp.Api.Tests
         {
             await _theController.PostItem(PostedItemText);
             
-            _itemsRepository.Received().Add(TheGuid, Arg.Is<ListItem>((arg) => new ListItemEqualityComparer().Equals(arg, PostedItem)));
+            _itemsRepository.Received().Add(TheGuid, Arg.Is<ListItem>(
+                (arg) => new ListItemEqualityComparer().Equals(arg, PostedItem)));
         }
 
         [Test]
         public async Task Post_Returns500OnDuplicitKeyGeneration()
         {
-            _itemsRepository.When(x => x.Add(TheGuid, Arg.Any<ListItem>())).Do(x => throw new DuplicateKeyException(TheGuid, "Duplicate GUID generated!"));
+            _itemsRepository.When(x => x.Add(TheGuid, Arg.Any<ListItem>()))
+                .Do(x => throw new DuplicateKeyException(TheGuid, "Duplicate GUID generated!"));
 
             var receivedResponse = await _theController.PostItem(PostedItemText);
             Assert.IsInstanceOf<ExceptionResult>(receivedResponse);
 
-            _itemsRepository.Received().Add(TheGuid, Arg.Is<ListItem>((arg) => new ListItemEqualityComparer().Equals(arg, PostedItem)));
+            _itemsRepository.Received().Add(TheGuid, Arg.Is<ListItem>(
+                (arg) => new ListItemEqualityComparer().Equals(arg, PostedItem)));
         }
 
         #endregion
@@ -200,7 +204,8 @@ namespace ListApp.Api.Tests
             using (var client = new HttpClient(server))
             {
                 var receivedResponse =
-                    await client.PutAsJsonAsync(new Uri("http://localhost:57187/api/v1/items/00000000-0000-0000-0000-000000000007"), PostedItem);
+                    await client.PutAsJsonAsync(
+                        new Uri("http://localhost:57187/api/v1/items/00000000-0000-0000-0000-000000000007"), PostedItem);
 
                 Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.BadRequest);
                 _itemsRepository.DidNotReceive().Delete(Arg.Any<Guid>());
@@ -214,8 +219,9 @@ namespace ListApp.Api.Tests
             var receivedResponse = await _theController.PutItem(TheGuid, PostedItem);
             Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedResponse);
 
-            var receivedItem = ((CreatedNegotiatedContentResult<ListItem>)receivedResponse).Content;
-            var receivedLocation = ((CreatedNegotiatedContentResult<ListItem>)receivedResponse).Location;
+            var typedResponse = (CreatedNegotiatedContentResult<ListItem>) receivedResponse;
+            var receivedItem = typedResponse.Content;
+            var receivedLocation = typedResponse.Location;
 
             Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
             Assert.That(receivedLocation.ToString(), Is.EqualTo($"/items/{TheGuid}"));
@@ -259,10 +265,12 @@ namespace ListApp.Api.Tests
             _itemsRepository.GetAll().Returns(postedCollection);
 
             var receivedResponse = await _theController.PutItemsCollection(postedCollection);
-            var receivedCollection = ((CreatedNegotiatedContentResult<IEnumerable<ListItem>>) receivedResponse).Content;
-            var receivedLocation = ((CreatedNegotiatedContentResult<IEnumerable<ListItem>>)receivedResponse).Location;
+            var typedResponse = (CreatedNegotiatedContentResult<IEnumerable<ListItem>>) receivedResponse;
+            var receivedCollection = typedResponse.Content;
+            var receivedLocation = typedResponse.Location;
 
-            Assert.That(receivedCollection, Is.EqualTo(postedCollection).AsCollection.Using(new ListItemEqualityComparer()));
+            Assert.That(receivedCollection, Is.EqualTo(postedCollection)
+                .AsCollection.Using(new ListItemEqualityComparer()));
             Assert.That(receivedLocation.ToString(), Is.EqualTo("/items"));
         }
 
@@ -271,7 +279,7 @@ namespace ListApp.Api.Tests
         {
             var postedCollection = new List<ListItem> {PostedItem};
 
-            var receivedResponse = await _theController.PutItemsCollection(postedCollection);
+            await _theController.PutItemsCollection(postedCollection);
 
             _itemsRepository.Received(1).Clear();
             _itemsRepository.Received(1).Add(PostedItem.Id, PostedItem);
@@ -361,7 +369,7 @@ namespace ListApp.Api.Tests
             var theGuid = Guid.Parse("00000000-0000-0000-0000-000000000005");
             _itemsRepository.Get(theGuid).ReturnsNull();
 
-            var patch = new JsonPatch.JsonPatchDocument<ListItem>();
+            var patch = new JsonPatchDocument<ListItem>();
             patch.Replace("/Text", "Buy some aubergine!");
 
             var receivedResponse = await _theController.PatchItem(theGuid, patch);
@@ -383,7 +391,7 @@ namespace ListApp.Api.Tests
                 Text = newText
             };
 
-            var patch = new JsonPatch.JsonPatchDocument<ListItem>();
+            var patch = new JsonPatchDocument<ListItem>();
             patch.Replace("/Text", newText);
 
             var receivedResponse = await _theController.PatchItem(Guid.Empty, patch);
@@ -405,20 +413,21 @@ namespace ListApp.Api.Tests
                 Text = newText
             };
 
-            var patch = new JsonPatch.JsonPatchDocument<ListItem>();
+            var patch = new JsonPatchDocument<ListItem>();
             patch.Replace("/Text", newText);
 
             var receivedResponse = await _theController.PatchItem(Guid.Empty, patch);
 
             Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
             _itemsRepository.Received().Delete(Guid.Empty);
-            _itemsRepository.Received().Add(Guid.Empty, Arg.Is<ListItem>((arg) => new ListItemEqualityComparer().Equals(arg, expectedItem)));
+            _itemsRepository.Received().Add(Guid.Empty, Arg.Is<ListItem>(
+                (arg) => new ListItemEqualityComparer().Equals(arg, expectedItem)));
         }
 
         [Test]
         public async Task Patch_Returns403OnForbiddenOperation()
         {
-            var patch = new JsonPatch.JsonPatchDocument<ListItem>();
+            var patch = new JsonPatchDocument<ListItem>();
             patch.Replace("/Text", "Buy some aubergine!");
             patch.Replace("/Id", new Guid());
             patch.Remove("/Id");

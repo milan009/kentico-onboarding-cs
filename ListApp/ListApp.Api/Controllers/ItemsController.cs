@@ -39,9 +39,9 @@ namespace ListApp.Api.Controllers
 
             [Route]
             [HttpGet]
-            public async Task<IEnumerable<ListItem>> GetItemsAsync()
+            public async Task<IHttpActionResult> GetItemsAsync()
             {
-                return await Task.FromResult<IEnumerable<ListItem>>(_items);
+                return await Task.FromResult(Ok(_items));
             }
 
             [Route("{id}")]
@@ -54,7 +54,7 @@ namespace ListApp.Api.Controllers
                     return Ok(theItem);
                 }
 
-                return await Task.FromResult<IHttpActionResult>(NotFound());
+                return await Task.FromResult(NotFound());
             }
 
             [Route]
@@ -65,7 +65,7 @@ namespace ListApp.Api.Controllers
 
                 _items.Add(createdItem);
                     
-                return await Task.FromResult<IHttpActionResult>(Created($"/items/{createdItem.Id}", createdItem));
+                return await Task.FromResult(Created($"/items/{createdItem.Id}", createdItem));
             }
 
             [Route]
@@ -79,11 +79,11 @@ namespace ListApp.Api.Controllers
                 {
                     _items.Clear();
                     _items.AddRange(listItems);
-                    return await Task.FromResult<IHttpActionResult>(Ok(_items));
+                    return await Task.FromResult(Ok(_items));
                 }
 
                 _items.AddRange(listItems);
-                return await Task.FromResult<IHttpActionResult>(Created("/items", _items));
+                return await Task.FromResult(Created("/items", _items));
             }
 
             [Route("{id}")]
@@ -95,11 +95,11 @@ namespace ListApp.Api.Controllers
                 if(existingItemIndex == -1)
                 {
                     _items.Add(newItem);
-                    return await Task.FromResult<IHttpActionResult>(Created($"/items/{id}", newItem));
+                    return await Task.FromResult(Created($"/items/{id}", newItem));
                 }
 
                 _items[existingItemIndex] = newItem;
-                return await Task.FromResult<IHttpActionResult>(Ok(newItem));
+                return await Task.FromResult(Ok(newItem));
             }
 
             [Route]
@@ -111,10 +111,10 @@ namespace ListApp.Api.Controllers
                 if (toDelete.All(idToDelete => _items.Exists(item => item.Id == idToDelete)))
                 {
                     _items.RemoveAll(item => toDelete.Contains(item.Id));
-                    return await Task.FromResult<IHttpActionResult>(Ok());
+                    return await Task.FromResult(Ok());
                 }
 
-                return await Task.FromResult<IHttpActionResult>(Content(HttpStatusCode.NotFound,
+                return await Task.FromResult(Content(HttpStatusCode.NotFound,
                     "One or more of IDs specfied for deletion has not been found."));
             }
 
@@ -125,12 +125,12 @@ namespace ListApp.Api.Controllers
                 var existingItem = _items.FirstOrDefault((item) => item.Id == id);
                 if (existingItem == null)
                 {
-                    return await Task.FromResult<IHttpActionResult>(NotFound());
+                    return await Task.FromResult(NotFound());
                 }
 
                 _items.Remove(existingItem);
 
-                return await Task.FromResult<IHttpActionResult>(Ok());
+                return await Task.FromResult(Ok());
             }
 
             /// <summary>
@@ -149,12 +149,12 @@ namespace ListApp.Api.Controllers
                 var existingItem = _items.FirstOrDefault((item) => item.Id == id);
                 if (existingItem == null)
                 {
-                    return await Task.FromResult<IHttpActionResult>(NotFound());
+                    return await Task.FromResult(NotFound());
                 }
                 
                 patch.ApplyUpdatesTo(existingItem);
                
-                return await Task.FromResult<IHttpActionResult>(Ok(existingItem));
+                return await Task.FromResult(Ok(existingItem));
             }
 
             #endregion

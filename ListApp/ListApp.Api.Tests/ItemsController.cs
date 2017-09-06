@@ -40,7 +40,10 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Get_ReturnsAllDefaultItems()
         {
-            var receivedItems = await _itemsController.GetItemsAsync();
+            var receivedResponse = await _itemsController.GetItemsAsync();
+            Assert.IsInstanceOf<OkNegotiatedContentResult<List<ListItem>>>(receivedResponse);
+
+            var receivedItems = ((OkNegotiatedContentResult<List<ListItem>>)receivedResponse).Content;
             Assert.That(receivedItems, Is.EqualTo(Utils.Constants.MockListItems).Using(new ListItemEqualityComparer()));
         }
 
@@ -253,7 +256,8 @@ namespace ListApp.Api.Tests
             var receivedDeleteResponse = await _itemsController.DeleteItemAsync(Guid.Parse("00000000-0000-0000-0000-000000000002"));
             Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
 
-            var receivedItems = await _itemsController.GetItemsAsync();
+            var receivedResponse = await _itemsController.GetItemsAsync();
+            var receivedItems = ((OkNegotiatedContentResult<List<ListItem>>) receivedResponse).Content;
             Assert.That(receivedItems, Is.EqualTo(expectedItems).Using(new ListItemEqualityComparer()));
         }
 
@@ -280,7 +284,8 @@ namespace ListApp.Api.Tests
             });
             Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
 
-            var receivedItems = await _itemsController.GetItemsAsync();
+            var receivedResponse = await _itemsController.GetItemsAsync();
+            var receivedItems = ((OkNegotiatedContentResult<List<ListItem>>)receivedResponse).Content;
             Assert.That(receivedItems, Is.EqualTo(expectedItems).Using(new ListItemEqualityComparer()));
         }
 

@@ -49,7 +49,8 @@ namespace ListApp.Api.Tests
         {
             _itemsRepository.GetAll().Returns(Utils.Constants.MockListItems);
 
-            var receivedItems = await _itemsController.GetItemsAsync();
+            var receivedResponse = await _itemsController.GetItemsAsync();
+            var receivedItems = ((OkNegotiatedContentResult<IEnumerable<ListItem>>)receivedResponse).Content;
 
             Assert.That(receivedItems, Is.EqualTo(Utils.Constants.MockListItems)
                 .Using(new ListItemEqualityComparer()));

@@ -35,9 +35,9 @@ namespace ListApp.Api.Controllers
 
             [Route]
             [HttpGet]
-            public async Task<IEnumerable<ListItem>> GetItemsAsync()
+            public async Task<IHttpActionResult> GetItemsAsync()
             {
-                return await Task.FromResult(_itemsRepository.GetAll());
+                return await Task.FromResult(Ok(_itemsRepository.GetAll()));
             }
 
             [Route("{id}")]
@@ -47,10 +47,10 @@ namespace ListApp.Api.Controllers
                 var theItem = _itemsRepository.Get(id);
                 if (theItem == null)
                 {
-                    return await Task.FromResult<IHttpActionResult>(NotFound());
+                    return await Task.FromResult(NotFound());
                 }
 
-                return await Task.FromResult<IHttpActionResult>(Ok(theItem));
+                return await Task.FromResult(Ok(theItem));
             }
 
             [Route]
@@ -67,7 +67,7 @@ namespace ListApp.Api.Controllers
                 {
                     if (_idGenerator == Guid.NewGuid)
                     {
-                        return await Task.FromResult<IHttpActionResult>(InternalServerError(
+                        return await Task.FromResult(InternalServerError(
                             new DuplicateKeyException(
                                 createdItem.Id, "The generated Guid conflicts with already existing one." +
                                                 "The chance of this happening is so slim that you are " +
@@ -75,11 +75,11 @@ namespace ListApp.Api.Controllers
                                                 "Count yourself lucky!")));
                     }
 
-                    return await Task.FromResult<IHttpActionResult>(InternalServerError(e));
+                    return await Task.FromResult(InternalServerError(e));
 
                 }
                     
-                return await Task.FromResult<IHttpActionResult>(Created($"/items/{createdItem.Id}", createdItem));
+                return await Task.FromResult(Created($"/items/{createdItem.Id}", createdItem));
             }
 
             [Route]
@@ -96,7 +96,7 @@ namespace ListApp.Api.Controllers
                     _itemsRepository.Add(item.Id, item);
                 }
 
-                return await Task.FromResult<IHttpActionResult>(Created("/items", _itemsRepository.GetAll()));
+                return await Task.FromResult(Created("/items", _itemsRepository.GetAll()));
             }
 
             [Route("{id}")]
@@ -111,7 +111,7 @@ namespace ListApp.Api.Controllers
 
                 _itemsRepository.Add(id, newItem);
 
-                return await Task.FromResult<IHttpActionResult>(Created($"/items/{id}", newItem));
+                return await Task.FromResult(Created($"/items/{id}", newItem));
             }
 
             [Route]
@@ -121,7 +121,7 @@ namespace ListApp.Api.Controllers
                 var toDelete = idsToDelete as IList<Guid> ?? idsToDelete.ToList();
 
                 if (!toDelete.All(idToDelete => _itemsRepository.GetKeys().Contains(idToDelete)))
-                    return await Task.FromResult<IHttpActionResult>(Content(HttpStatusCode.NotFound,
+                    return await Task.FromResult(Content(HttpStatusCode.NotFound,
                         "One or more of IDs specfied for deletion has not been found."));
 
                 foreach (var id in toDelete)
@@ -129,7 +129,7 @@ namespace ListApp.Api.Controllers
                     _itemsRepository.Delete(id);
                 }
 
-                return await Task.FromResult<IHttpActionResult>(Ok());
+                return await Task.FromResult(Ok());
             }
 
             [Route("{id}")]
@@ -142,10 +142,10 @@ namespace ListApp.Api.Controllers
                 }
                 catch (KeyNotFoundException e)
                 {
-                    return await Task.FromResult<IHttpActionResult>(NotFound());
+                    return await Task.FromResult(NotFound());
                 }
 
-                return await Task.FromResult<IHttpActionResult>(Ok());
+                return await Task.FromResult(Ok());
             }
 
             /// <summary>
@@ -164,7 +164,7 @@ namespace ListApp.Api.Controllers
                 var existingItem = _itemsRepository.Get(id);
                 if (existingItem == null)
                 {
-                    return await Task.FromResult<IHttpActionResult>(NotFound());
+                    return await Task.FromResult(NotFound());
                 }
                 
                 patch.ApplyUpdatesTo(existingItem);
@@ -172,7 +172,7 @@ namespace ListApp.Api.Controllers
                 _itemsRepository.Delete(id);
                 _itemsRepository.Add(id, existingItem);
                
-                return await Task.FromResult<IHttpActionResult>(Ok(existingItem));
+                return await Task.FromResult(Ok(existingItem));
             }
 
             #endregion

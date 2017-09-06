@@ -54,7 +54,7 @@ namespace ListApp.Api.Tests
         public async Task Get_InvalidGuidFormat_ReturnsBadRequest()
         {
             var config = new HttpConfiguration();
-            config = ServerInit.InitializeConfiguration(config);
+            WebApiConfig.Register(config);
 
             using (var server = new HttpServer(config))
             using (var client = new HttpClient(server))
@@ -94,7 +94,7 @@ namespace ListApp.Api.Tests
         public async Task Post_NullText_ReturnsBadRequest()
         {
             var config = new HttpConfiguration();
-            config = ServerInit.InitializeConfiguration(config);
+            WebApiConfig.Register(config);
 
             using (var server = new HttpServer(config))
             using (var client = new HttpClient(server))
@@ -143,7 +143,7 @@ namespace ListApp.Api.Tests
         public async Task Put_NullArgument_ReturnsBadRequest()
         {
             var config = new HttpConfiguration();
-            config = ServerInit.InitializeConfiguration(config);
+            WebApiConfig.Register(config);
 
             using (var server = new HttpServer(config))
             using (var client = new HttpClient(server))
@@ -161,7 +161,7 @@ namespace ListApp.Api.Tests
         public async Task Put_InconsistentIDs_ReturnsBadRequest()
         {
             var config = new HttpConfiguration();
-            config = ServerInit.InitializeConfiguration(config);
+            WebApiConfig.Register(config);
 
             using (var server = new HttpServer(config))
             using (var client = new HttpClient(server))
@@ -332,7 +332,7 @@ namespace ListApp.Api.Tests
             patch.Remove("/Id");
 
             var config = new HttpConfiguration();
-            config = ServerInit.InitializeConfiguration(config);
+            WebApiConfig.Register(config);
 
             using (var server = new HttpServer(config))
             using (var client = new HttpClient(server))

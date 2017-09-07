@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Linq;
+using System.Threading.Tasks;
 using ListApp.Api.Models;
 
 namespace ListApp.Api.Repositories
@@ -21,22 +22,24 @@ namespace ListApp.Api.Repositories
             }
         }
 
-        public IEnumerable<Guid> GetKeys()
+        public async Task<IEnumerable<Guid>> GetKeysAsync()
         {
-            return _items.Keys;
+            return await Task.FromResult(_items.Keys.ToList());
         }
 
-        public IEnumerable<ListItem> GetAll(Func<ListItem, bool> predicate = null)
+        public async Task<IEnumerable<ListItem>> GetAllAsync(Func<ListItem, bool> predicate = null)
         {
-            return predicate == null ? _items.Values : _items.Values.Where(predicate);
+            return predicate == null ? await Task.FromResult(_items.Values) 
+                : await Task.FromResult(_items.Values.Where(predicate));
         }
 
-        public ListItem Get(Guid key)
+        public async Task<ListItem> GetAsync(Guid key)
         {
-            return _items.TryGetValue(key, out ListItem item) ? item : null;
+            return _items.TryGetValue(key, out ListItem item) ? await Task.FromResult(item) 
+                : await Task.FromResult<ListItem>(null);
         }
 
-        public void Add(Guid key, ListItem entity)
+        public async Task AddAsync(Guid key, ListItem entity)
         {
             if (entity == null)
             {
@@ -49,21 +52,24 @@ namespace ListApp.Api.Repositories
             }
 
             _items.Add(key, entity);
+            await Task.CompletedTask;
         }
 
-        public void Delete(Guid key)
+        public async Task DeleteAsync(Guid key)
         {
             if (!_items.ContainsKey(key))
             {
                 throw new KeyNotFoundException($"Element with \"{key}\" GUID not found!");
             }
-
+            
             _items.Remove(key);
+            await Task.CompletedTask;
         }
 
-        public void Clear()
+        public async Task ClearAsync()
         {
             _items.Clear();
+            await Task.CompletedTask;
         }
     }
 }

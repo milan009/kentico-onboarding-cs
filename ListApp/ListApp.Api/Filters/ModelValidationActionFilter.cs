@@ -1,20 +1,25 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
 namespace ListApp.Api.Filters
 {
-    public class ModelValidationActionFilter : ActionFilterAttribute
+    public class ModelValidationActionFilter : ActionFilterWithInjectibleRequest
     {
-        public override void OnActionExecuting(HttpActionContext actionContext)
+        public ModelValidationActionFilter() { }
+
+        public ModelValidationActionFilter(HttpRequestMessage testMessage) : base(testMessage) { }
+
+        protected override void DoValidation(HttpActionContext actionContext, HttpRequestMessage request)
         {
             var modelState = actionContext.ModelState;
 
             if (!modelState.IsValid)
             {
                 actionContext.Response =
-                    actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, modelState);
+                    request.CreateErrorResponse(HttpStatusCode.BadRequest, modelState);
             }
         }
     }

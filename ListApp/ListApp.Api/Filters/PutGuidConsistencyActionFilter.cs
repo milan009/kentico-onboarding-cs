@@ -7,14 +7,18 @@ using ListApp.Api.Models;
 
 namespace ListApp.Api.Filters
 {
-    public class PutGuidConsistencyActionFilter : ActionFilterAttribute
+    public class PutGuidConsistencyActionFilter : ActionFilterWithInjectibleRequest
     {
-        public override void OnActionExecuting(HttpActionContext actionContext)
+        public PutGuidConsistencyActionFilter() { }
+
+        public PutGuidConsistencyActionFilter(HttpRequestMessage testMessage) : base(testMessage) { }
+
+        protected override void DoValidation(HttpActionContext actionContext, HttpRequestMessage request)
         {
             if ((Guid)actionContext.ActionArguments["id"] != ((ListItem)actionContext.ActionArguments["newItem"]).Id)
             {
                 actionContext.Response =
-                    actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Inconsistence in URL GUID and ListItem object GUID!");
+                    request.CreateErrorResponse(HttpStatusCode.BadRequest, "Inconsistence in URL GUID and ListItem object GUID!");
             }
         }
     }

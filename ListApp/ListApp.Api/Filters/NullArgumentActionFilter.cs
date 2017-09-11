@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http.Controllers;
@@ -5,14 +6,18 @@ using System.Web.Http.Filters;
 
 namespace ListApp.Api.Filters
 {
-    public class NullArgumentActionFilter : ActionFilterAttribute
+    public class NullArgumentActionFilter : ActionFilterWithInjectibleRequest
     {
-        public override void OnActionExecuting(HttpActionContext actionContext)
+        public NullArgumentActionFilter(HttpRequestMessage testMessage) : base(testMessage) { }
+
+        public NullArgumentActionFilter() { }
+
+        protected override void DoValidation(HttpActionContext actionContext, HttpRequestMessage request)
         {
             if (actionContext.ActionArguments.ContainsValue(null))
             {
                 actionContext.Response =
-                    actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, "A null argument is not allowed!");
+                    request.CreateErrorResponse(HttpStatusCode.BadRequest, "A null argument is not allowed!");
             }
         }
     }

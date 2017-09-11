@@ -9,25 +9,29 @@ using ListApp.Api.Models;
 
 namespace ListApp.Api.Filters
 {
-    public class PutCollectionActionFilter : ActionFilterAttribute
+    public class PutCollectionActionFilter : ActionFilterWithInjectibleRequest
     {
-        public override void OnActionExecuting(HttpActionContext actionContext)
+        public PutCollectionActionFilter(HttpRequestMessage testMessage) : base(testMessage) { }
+
+        public PutCollectionActionFilter() { }
+
+        protected override void DoValidation(HttpActionContext actionContext, HttpRequestMessage request)
         {
-            var listItems = (IEnumerable<ListItem>) actionContext.ActionArguments["items"];
+            var listItems = (IEnumerable<ListItem>)actionContext.ActionArguments["items"];
             var enumerable = listItems as ListItem[] ?? listItems.ToArray();
 
             if (!enumerable.Any())
             {
                 actionContext.Response =
-                    actionContext.Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Putting empty collection is not allowed!");
+                    request.CreateErrorResponse(HttpStatusCode.Forbidden, "Putting empty collection is not allowed!");
             }
 
             var diffCheck = new HashSet<Guid>();
             if (!enumerable.All(item => diffCheck.Add(item.Id)))
             {
                 actionContext.Response =
-                    actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, "GUIDs in given collection are not unique!");
-            } 
+                    request.CreateErrorResponse(HttpStatusCode.BadRequest, "GUIDs in given collection are not unique!");
+            }
         }
     }
 }

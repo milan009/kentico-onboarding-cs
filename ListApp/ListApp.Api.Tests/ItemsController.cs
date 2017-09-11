@@ -36,7 +36,7 @@ namespace ListApp.Api.Tests
             Assert.IsInstanceOf<OkNegotiatedContentResult<List<ListItem>>>(receivedResponse);
 
             var receivedItems = ((OkNegotiatedContentResult<List<ListItem>>)receivedResponse).Content;
-            Assert.That(receivedItems, Is.EqualTo(Utils.Constants.MockListItems).Using(new ListItemEqualityComparer()));
+            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems).Using(new ListItemEqualityComparer()));
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Get_ExistingItem_ReturnsCorrectly()
         {
-            var expectedItem = Utils.Constants.MockListItems.ElementAt(1);
+            var expectedItem = Constants.MockListItems.ElementAt(1);
 
             var receivedResponse = await _itemsController.GetItemAsync(Guid.Parse("00000000-0000-0000-0000-000000000001"));
             Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
@@ -139,10 +139,9 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Put_ValidCollection_ReturnsPutCollection()
         {
-            var postedCollection = new List<ListItem>();
-            postedCollection.Add(PostedItem);
+            var postedCollection = new List<ListItem>{PostedItem};
 
-            var receivedResponse = await _itemsController.PutItemsCollectionAsync(postedCollection);
+        var receivedResponse = await _itemsController.PutItemsCollectionAsync(postedCollection);
             Assert.IsInstanceOf<OkNegotiatedContentResult<List<ListItem>>>(receivedResponse);
 
             var receivedCollection = ((OkNegotiatedContentResult<List<ListItem>>) receivedResponse).Content;
@@ -170,7 +169,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Delete_ExistingItem_DeletesItemCorrectly()
         {
-            var expectedItems = Utils.Constants.MockListItems.Take(2).ToList();
+            var expectedItems = Constants.MockListItems.Take(2).ToList();
 
             var receivedDeleteResponse = await _itemsController.DeleteItemAsync(Guid.Parse("00000000-0000-0000-0000-000000000002"));
             Assert.IsInstanceOf<OkResult>(receivedDeleteResponse);
@@ -194,7 +193,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Delete_ValidIdCollection_DeletesCorrectly()
         {
-            var expectedItems = Utils.Constants.MockListItems.Take(1).ToList();
+            var expectedItems = Constants.MockListItems.Take(1).ToList();
 
             var receivedDeleteResponse = await _itemsController.DeleteItemsAsync(new List<Guid>
             {

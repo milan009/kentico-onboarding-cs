@@ -12,4 +12,4 @@ namespace ListApp.Api.Models
     }
 }
  
- 
+ // TODO: Get rid of DataAnnotations

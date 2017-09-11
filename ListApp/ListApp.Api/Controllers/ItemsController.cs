@@ -39,10 +39,8 @@ namespace ListApp.Api.Controllers
 
             [Route]
             [HttpGet]
-            public async Task<IHttpActionResult> GetItemsAsync()
-            {
-                return await Task.FromResult(Ok(_items));
-            }
+            public async Task<IHttpActionResult> GetItemsAsync() 
+                => await Task.FromResult(Ok(_items));
 
             [Route("{id}")]
             [HttpGet]
@@ -89,7 +87,7 @@ namespace ListApp.Api.Controllers
             [Route("{id}")]
             [HttpPut]
             [PutGuidConsistencyActionFilter]
-            public async Task<IHttpActionResult> PutItemAsync(Guid id, [FromBody] ListItem newItem)
+            public async Task<IHttpActionResult> PutItemAsync([FromUri]Guid id, [FromBody] ListItem newItem)
             {
                 var existingItemIndex = _items.FindIndex((item) => item.Id == id);
                 if(existingItemIndex == -1)
@@ -161,3 +159,7 @@ namespace ListApp.Api.Controllers
         }
     }
 }
+
+// TODO: Remake into lambdas
+// TODO: Rename method names, avoid using [Http<Verb>]
+// TODO: Avoid collection operations -> should be in a different controller

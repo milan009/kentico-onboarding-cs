@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace ListApp.Api.Tests
 {
     [TestFixture]
-    public class ModelValidationFilter
+    public class ModelValidationFilterTests
     {
         [Test]
         public void OnActionExecuting_ValidModel_NoResponse()
@@ -38,7 +38,7 @@ namespace ListApp.Api.Tests
     }
 
     [TestFixture]
-    public class NullArgumentFilter
+    public class NullArgumentFilterTests
     {
         [Test]
         public void OnActionExecuting_ValidArgument_NoResponse()
@@ -66,7 +66,7 @@ namespace ListApp.Api.Tests
     }
 
     [TestFixture]
-    public class PutGuidConsistencyFilter
+    public class PutGuidConsistencyFilterTests
     {
         [Test]
         public void OnActionExecuting_MatchingGuids_NoResponse()
@@ -110,10 +110,10 @@ namespace ListApp.Api.Tests
     }
 
     [TestFixture]
-    public class PutCollectionFilter
+    public class PutCollectionFilterTests
     {
         [Test]
-        public void OnActionExecuting_ValidCollection_NoResponse()
+        public void OnActionExecutingTests_ValidCollection_NoResponse()
         {
             var actionContext = new HttpActionContext();
             var theCollection = new List<ListItem>
@@ -166,7 +166,7 @@ namespace ListApp.Api.Tests
     }
 
     [TestFixture]
-    public class PatchSingleResourceFilter
+    public class PatchSingleResourceFilterTests
     {
         [Test]
         public void OnActionExecuting_ValidPatchRequest_NoResponse()

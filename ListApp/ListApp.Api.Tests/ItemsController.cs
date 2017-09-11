@@ -183,7 +183,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Delete_NonExistingIdInCollection_ReturnsNotFound()
         {
-            var receivedDeleteResponse = await _itemsController.DeleteItemsAsync(new List<Guid>
+            var receivedDeleteResponse = await _itemsController.DeleteItemsCollectionAsync(new List<Guid>
             {
                 Constants.Guid2,
                 Constants.NonExistingItemGuid
@@ -196,7 +196,7 @@ namespace ListApp.Api.Tests
         {
             var expectedItems = Constants.MockListItems.Take(1).ToList();
 
-            var receivedDeleteResponse = await _itemsController.DeleteItemsAsync(new List<Guid>
+            var receivedDeleteResponse = await _itemsController.DeleteItemsCollectionAsync(new List<Guid>
             {
                 Constants.Guid2,
                 Constants.Guid3

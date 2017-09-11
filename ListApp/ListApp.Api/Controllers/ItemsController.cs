@@ -104,7 +104,7 @@ namespace ListApp.Api.Controllers
 
             [Route]
             [HttpDelete]
-            public async Task<IHttpActionResult> DeleteItemsAsync([FromBody]IEnumerable<Guid> idsToDelete)
+            public async Task<IHttpActionResult> DeleteItemsCollectionAsync([FromBody]IEnumerable<Guid> idsToDelete)
             {
                 var toDelete = idsToDelete as IList<Guid> ?? idsToDelete.ToList();
 

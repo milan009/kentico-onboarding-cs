@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading.Tasks;
-using System.Web.Http;
 using System.Web.Http.Results;
-using JsonPatch;
 using NUnit.Framework;
 using ListApp.Api.Controllers.V1;
 using ListApp.Api.Models;
@@ -31,10 +27,6 @@ namespace ListApp.Api.Tests
             _itemsController = new ItemsController(GuidCreator);
         }
 
-        // Some of the tests require to create an instance of Http server/client,
-        // as passing direct invalid method argument is not possible (GUID) OR 
-        // since the validity check is done by action filters, not the controller.
-
         #region GET tests
         
         [Test]
@@ -45,24 +37,6 @@ namespace ListApp.Api.Tests
 
             var receivedItems = ((OkNegotiatedContentResult<List<ListItem>>)receivedResponse).Content;
             Assert.That(receivedItems, Is.EqualTo(Utils.Constants.MockListItems).Using(new ListItemEqualityComparer()));
-        }
-
-        // It is not possible to send a invalid GUID object, but it can easily happen when using the API
-        // The server/client has to be used to test this.
-        // The argument validity check is handled by the action filter
-        [Test]
-        public async Task Get_InvalidGuidFormat_ReturnsBadRequest()
-        {
-            var config = new HttpConfiguration();
-            WebApiConfig.Register(config);
-
-            using (var server = new HttpServer(config))
-            using (var client = new HttpClient(server))
-            {
-                var receivedResponse = await client.GetAsync("http://localhost:57187/api/v1/items/1");
-
-                Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.BadRequest);
-            }
         }
 
         [Test]
@@ -87,24 +61,6 @@ namespace ListApp.Api.Tests
         #endregion
 
         #region POST tests
-
-        // The server/client has to be used to test this.
-        // The null argument check is handled by the action filter
-        [Test]
-        public async Task Post_NullText_ReturnsBadRequest()
-        {
-            var config = new HttpConfiguration();
-            WebApiConfig.Register(config);
-
-            using (var server = new HttpServer(config))
-            using (var client = new HttpClient(server))
-            {
-                var receivedResponse =
-                    await client.PostAsJsonAsync<string>(new Uri("http://localhost:57187/api/v1/items"), null);
-
-                Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.BadRequest);
-            }
-        }
 
         [Test]
         public async Task Post_ValidText_ReturnsPostedItem()
@@ -136,43 +92,6 @@ namespace ListApp.Api.Tests
         #endregion
 
         #region PUT tests
-
-        [Test]
-        // The server/client has to be used to test this.
-        // The null argument check is handled by the action filter
-        public async Task Put_NullArgument_ReturnsBadRequest()
-        {
-            var config = new HttpConfiguration();
-            WebApiConfig.Register(config);
-
-            using (var server = new HttpServer(config))
-            using (var client = new HttpClient(server))
-            {
-                var receivedResponse = await client.PutAsJsonAsync<ListItem>(
-                    new Uri("http://localhost:57187/api/v1/items/00000000-0000-0000-0000-000000000004"), null);
-
-                Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.BadRequest);
-            }
-        }
-
-        // The server/client has to be used to test this.
-        // The ID consistency check is handled by the action filter
-        [Test]
-        public async Task Put_InconsistentIDs_ReturnsBadRequest()
-        {
-            var config = new HttpConfiguration();
-            WebApiConfig.Register(config);
-
-            using (var server = new HttpServer(config))
-            using (var client = new HttpClient(server))
-            {
-                var receivedResponse =
-                    await client.PutAsJsonAsync<ListItem>(new Uri("http://localhost:57187/api/v1/items/00000000-0000-0000-0000-000000000007"), PostedItem);
-
-                Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.BadRequest);
-            }
-        }
-
         [Test]
         public async Task Put_ValidItem_ReturnsPutItem()
         {
@@ -321,32 +240,6 @@ namespace ListApp.Api.Tests
 
             var receivedItem = ((OkNegotiatedContentResult<ListItem>) receivedResponse).Content;
             Assert.That(receivedItem, Is.EqualTo(expectedItem).Using(new ListItemEqualityComparer()));
-        }
-
-        [Test]
-        public async Task Patch_ForbiddenOperation_ReturnsForbidden()
-        {
-            var patch = new JsonPatch.JsonPatchDocument<ListItem>();
-            patch.Replace("/Text", "Buy some aubergine!");
-            patch.Replace("/Id", new Guid());
-            patch.Remove("/Id");
-
-            var config = new HttpConfiguration();
-            WebApiConfig.Register(config);
-
-            using (var server = new HttpServer(config))
-            using (var client = new HttpClient(server))
-            {
-                var receivedResponse =
-                    await client.SendAsync(new HttpRequestMessage
-                    {
-                        Method = new HttpMethod("PATCH"),
-                        RequestUri = new Uri("http://localhost:57187/api/v1/items/00000000-0000-0000-0000-000000000000"),
-                        Content = new ObjectContent<JsonPatchDocument<ListItem>>(patch, new JsonMediaTypeFormatter())
-                    });
-
-                Assert.AreEqual(receivedResponse.StatusCode, HttpStatusCode.Forbidden);
-            }
         }
         #endregion
     }

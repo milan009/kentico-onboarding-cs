@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Interfaces;
 using ListApp.Api.Models;
 using ListApp.Api.Repositories;
-using ListApp.Api.Utils;
 using Microsoft.Web.Http;
 
 namespace ListApp.Api.Controllers

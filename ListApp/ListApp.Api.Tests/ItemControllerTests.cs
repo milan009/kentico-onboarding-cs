@@ -39,7 +39,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Get_NoId_CallsRepoGetAllAsyncMethodOnce()
         {
-            var receivedResponse = await _itemsController.GetAsync();
+            await _itemsController.GetAsync();
             await _itemsRepository.Received(1).GetAllAsync();
         }
 
@@ -153,7 +153,7 @@ namespace ListApp.Api.Tests
         #region DELETE tests
 
         [Test]
-        public async Task Put_ValidItem_CallsRepoDeleteAsyncOnce()
+        public async Task Delete_ValidItem_CallsRepoDeleteAsyncOnce()
         {
             await _itemsController.DeleteAsync(PostedItemGuid);
             await _itemsRepository.Received(1).DeleteAsync(PostedItemGuid);

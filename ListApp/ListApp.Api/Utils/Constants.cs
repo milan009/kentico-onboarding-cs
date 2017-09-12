@@ -17,7 +17,5 @@ namespace ListApp.Api.Utils
             new ListItem {Id = Guid2, Text = "Make a coffey"},
             new ListItem {Id = Guid3, Text = "Take over the world"}
         };
-
-
     }
 }

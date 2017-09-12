@@ -3,7 +3,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using ListApp.Api.Interfaces;
 using ListApp.Api.Models;
+using ListApp.Api.Repositories;
 using ListApp.Api.Utils;
 using Microsoft.Web.Http;
 
@@ -17,25 +19,40 @@ namespace ListApp.Api.Controllers
         {
             #region HTTP verbs implementations
 
+            private ListItemRepository _repository;
+
             [Route]
             public async Task<IHttpActionResult> GetAsync()
-                => await Task.FromResult(Ok(Constants.MockListItems));
+                => Ok(await _repository.GetAllAsync());
 
             [Route("{id}")]
             public async Task<IHttpActionResult> GetAsync([FromUri]Guid id) 
-                => await Task.FromResult(Ok(Constants.MockListItems.ElementAt(0)));
+                => Ok(await _repository.GetAsync(id));
 
             [Route]
-            public async Task<IHttpActionResult> PostAsync([FromBody]ListItem newItem) 
-                => await Task.FromResult(Created($"/items/{newItem.Id}", newItem));
+            public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
+            {
+                await _repository.AddAsync(newItem.Id, newItem);
+
+                return Created($"/items/{newItem.Id}", newItem);
+            }
 
             [Route("{id}")]
-            public async Task<IHttpActionResult> PutAsync([FromUri]Guid id, [FromBody]ListItem newItem) 
-                => await Task.FromResult(Created($"/items/{id}", newItem));
+            public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem)
+            {
+                await _repository.DeleteAsync(id);
+                await _repository.AddAsync(id, newItem);
+
+                return Created($"/items/{id}", newItem);
+            }
 
             [Route("{id}")]
-            public async Task<IHttpActionResult> DeleteAsync([FromUri]Guid id) 
-                => await Task.FromResult(StatusCode(HttpStatusCode.NoContent));
+            public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id)
+            {
+                await _repository.DeleteAsync(id);
+
+                return StatusCode(HttpStatusCode.NoContent);
+            }
 
             #endregion
         }

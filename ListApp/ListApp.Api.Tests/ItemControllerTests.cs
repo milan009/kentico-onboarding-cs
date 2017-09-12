@@ -4,11 +4,11 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.Results;
-using NUnit.Framework;
 using ListApp.Api.Controllers.V1;
 using ListApp.Api.Models;
-using ListApp.Api.Utils;
 using ListApp.Api.Tests.Utils;
+using ListApp.Api.Utils;
+using NUnit.Framework;
 
 namespace ListApp.Api.Tests
 {

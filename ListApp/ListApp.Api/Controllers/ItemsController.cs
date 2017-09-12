@@ -3,9 +3,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Microsoft.Web.Http;
 using ListApp.Api.Models;
 using ListApp.Api.Utils;
+using Microsoft.Web.Http;
 
 namespace ListApp.Api.Controllers
 {

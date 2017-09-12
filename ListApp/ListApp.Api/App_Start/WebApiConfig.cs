@@ -1,5 +1,11 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using System.Web.Http.Routing;
+using ListApp.Api.Interfaces;
+using ListApp.Api.Models;
+using ListApp.Api.Repositories;
+using ListApp.Api.Utils;
+using Microsoft.Practices.Unity;
 using Microsoft.Web.Http.Routing;
 
 namespace ListApp.Api
@@ -9,6 +15,9 @@ namespace ListApp.Api
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            var container = new UnityContainer();
+            container.RegisterType<IRepository<Guid, ListItem>, ListItemRepository>(new HierarchicalLifetimeManager());
+            config.DependencyResolver = new UnityResolver(container);
 
             var constraintResolver = new DefaultInlineConstraintResolver
             {

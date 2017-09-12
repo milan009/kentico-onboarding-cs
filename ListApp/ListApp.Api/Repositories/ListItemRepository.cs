@@ -13,7 +13,7 @@ namespace ListApp.Api.Repositories
         public async Task<IEnumerable<Guid>> GetKeysAsync()
         {
             return await Task.FromResult(Constants.MockListItems.Select(
-                (listItem) => listItem.Id));
+                listItem => listItem.Id));
         }
 
         public async Task<IEnumerable<ListItem>> GetAllAsync(Func<ListItem, bool> predicate = null)

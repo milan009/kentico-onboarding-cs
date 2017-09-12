@@ -17,15 +17,12 @@ namespace ListApp.Api.Controllers
         {
             #region HTTP verbs implementations
 
-            private IRepository<Guid, ListItem> _repository;
-
-            public ItemsController() : this(new ListItemRepository()) { }
+            private readonly IRepository<Guid, ListItem> _repository;
 
             public ItemsController(IRepository<Guid, ListItem> repository)
             {
                 _repository = repository;
             }
-
 
             [Route]
             public async Task<IHttpActionResult> GetAsync()

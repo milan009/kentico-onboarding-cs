@@ -1,74 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Http;
-using ListApp.Api.Models;
 using Microsoft.Web.Http;
+using ListApp.Api.Models;
 
 namespace ListApp.Api.Controllers
 {
     namespace V1
     {
         [ApiVersion("1.0")]
-        [Route("api/v{version:apiVersion}/items")]
+        [RoutePrefix("api/v{version:apiVersion}/items")]
         public class ItemsController : ApiController
         {
-            private static List<ListItem> items = new List<ListItem>();
+            #region HTTP verbs implementations
 
-            static ItemsController()
-            {
-                items.Add(new ListItem{Id = "0", Text = "Stretch correctly"});
-                items.Add(new ListItem{Id = "1", Text = "Make a coffey"});
-                items.Add(new ListItem{Id = "2", Text = "Take over the world"});
-            }
-
-            public IEnumerable<ListItem> GetItems()
-            {
-                return items;
-            }
-
-            [Route("api/v{version:apiVersion}/items/{id}")]
-            public IHttpActionResult GetItem(string id)
-            {
-                var theItem = items.First((item) => item.Id == id);
-                if (theItem != null)
+            [Route]
+            public async Task<IHttpActionResult> GetAsync()
+                => await Task.FromResult(Ok(new List<ListItem>
                 {
-                    return Ok(theItem);
-                }
+                    new ListItem {Id = Guid.Parse("226CFFBC-2B4B-4178-828E-62709FCAB951"), Text = "Stretch correctly"},
+                    new ListItem {Id = Guid.Parse("31100C72-C22A-4C8E-98E9-DDAEA5785660"), Text = "Make a coffey"},
+                    new ListItem {Id = Guid.Parse("01D90A78-4A61-4E69-A714-A374044C163A"), Text = "Take over the world"}
+                }));
 
-                return NotFound();
-            }
-
-            public IHttpActionResult PostItem(ListItem newItem)
-            {
-                var checkedItem = items.FirstOrDefault((item) => item.Id == newItem.Id);
-
-                if (checkedItem == null)
+            [Route("{id}")]
+            public async Task<IHttpActionResult> GetAsync([FromUri]Guid id) 
+                => await Task.FromResult(Ok(new ListItem
                 {
-                    items.Add(newItem);
-                    return Created($"/items/{newItem.Id}", newItem);
-                }
+                      Id = Guid.Parse("226CFFBC-2B4B-4178-828E-62709FCAB951"), Text = "Stretch correctly"
+                }));
 
-                return Conflict();
-            }
+            [Route]
+            public async Task<IHttpActionResult> PostAsync([FromBody]ListItem newItem) 
+                => await Task.FromResult(Created($"/items/{newItem.Id}", newItem));
 
-            [Route("api/v{version:apiVersion}/items/{id}")]
-            public IHttpActionResult PutItem(string id, ListItem newItem)
-            {
-                var checkedItem = items.First((item) => item.Id == id);
+            [Route("{id}")]
+            public async Task<IHttpActionResult> PutAsync([FromUri]Guid id, [FromBody]ListItem newItem) 
+                => await Task.FromResult(Created($"/items/{id}", newItem));
 
-                if (checkedItem == null)
-                {
-                    return NotFound();
-                }
+            [Route("{id}")]
+            public async Task<IHttpActionResult> DeleteAsync([FromUri]Guid id) 
+                => await Task.FromResult(StatusCode(HttpStatusCode.NoContent));
 
-                checkedItem.Text = newItem.Text;
-
-                return Ok(checkedItem);
-            }
+            #endregion
         }
     }
 }

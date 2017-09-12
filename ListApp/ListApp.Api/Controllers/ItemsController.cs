@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.Web.Http;
 using ListApp.Api.Models;
+using ListApp.Api.Utils;
 
 namespace ListApp.Api.Controllers
 {
@@ -18,19 +19,11 @@ namespace ListApp.Api.Controllers
 
             [Route]
             public async Task<IHttpActionResult> GetAsync()
-                => await Task.FromResult(Ok(new List<ListItem>
-                {
-                    new ListItem {Id = Guid.Parse("226CFFBC-2B4B-4178-828E-62709FCAB951"), Text = "Stretch correctly"},
-                    new ListItem {Id = Guid.Parse("31100C72-C22A-4C8E-98E9-DDAEA5785660"), Text = "Make a coffey"},
-                    new ListItem {Id = Guid.Parse("01D90A78-4A61-4E69-A714-A374044C163A"), Text = "Take over the world"}
-                }));
+                => await Task.FromResult(Ok(Constants.MockListItems));
 
             [Route("{id}")]
             public async Task<IHttpActionResult> GetAsync([FromUri]Guid id) 
-                => await Task.FromResult(Ok(new ListItem
-                {
-                      Id = Guid.Parse("226CFFBC-2B4B-4178-828E-62709FCAB951"), Text = "Stretch correctly"
-                }));
+                => await Task.FromResult(Ok(Constants.MockListItems.ElementAt(0)));
 
             [Route]
             public async Task<IHttpActionResult> PostAsync([FromBody]ListItem newItem) 

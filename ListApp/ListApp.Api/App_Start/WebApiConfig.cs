@@ -10,7 +10,7 @@ namespace ListApp.Api
         {
             // Web API configuration and services
 
-            var constraintResolver = new DefaultInlineConstraintResolver()
+            var constraintResolver = new DefaultInlineConstraintResolver
             {
                 ConstraintMap =
                 {

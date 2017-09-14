@@ -94,6 +94,13 @@ namespace ListApp.Api.Tests
         #region POST tests
 
         [Test]
+        public async Task Post_ValidItem_GeneratesAGuid()
+        {
+            await _itemsController.PostAsync(PostedItem);
+            _guidGenerator.Received(1).GenerateGuid();
+        }
+
+        [Test]
         public async Task Post_ValidItem_CallsRepoAddAsyncOnce()
         {
             await _itemsController.PostAsync(PostedItem);

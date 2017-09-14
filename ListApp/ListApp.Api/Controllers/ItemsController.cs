@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Interfaces;
 using ListApp.Api.Models;
-using ListApp.Api.Repositories;
 using Microsoft.Web.Http;
 
 namespace ListApp.Api.Controllers
@@ -35,6 +34,8 @@ namespace ListApp.Api.Controllers
             [Route]
             public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
             {
+                // Generate the guid - dummy functionality, no need to do checks.
+                newItem.Id = Guid.NewGuid();
                 await _repository.AddAsync(newItem.Id, newItem);
 
                 return Created($"/items/{newItem.Id}", newItem);

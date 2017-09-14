@@ -23,15 +23,20 @@ namespace ListApp.Api.Tests
 
         private ItemsController _itemsController;
         private IRepository<Guid, ListItem> _itemsRepository;
+        private IGuidGenerator _guidGenerator;
 
         [SetUp]
         public void SetUp()
         {
             _itemsRepository = Substitute.For<IRepository<Guid, ListItem>>();
-            _itemsController = new ItemsController(_itemsRepository);
-        
             _itemsRepository.GetAllAsync().Returns(Constants.MockListItems);
             _itemsRepository.GetAsync(Arg.Any<Guid>()).Returns(Constants.MockListItems.ElementAt(0));
+
+            _guidGenerator = Substitute.For<IGuidGenerator>();
+            _guidGenerator.GenerateGuid().Returns(Constants.NonExistingItemGuid);
+
+            _itemsController = new ItemsController(_itemsRepository, _guidGenerator);
+        
         }
 
         #region GET tests

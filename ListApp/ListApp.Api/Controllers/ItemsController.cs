@@ -17,10 +17,13 @@ namespace ListApp.Api.Controllers
             #region HTTP verbs implementations
 
             private readonly IRepository<Guid, ListItem> _repository;
+            private readonly IGuidGenerator _guidGenerator;
 
-            public ItemsController(IRepository<Guid, ListItem> repository)
+
+            public ItemsController(IRepository<Guid, ListItem> repository, IGuidGenerator guidGenerator)
             {
                 _repository = repository;
+                _guidGenerator = guidGenerator;
             }
 
             [Route]
@@ -35,7 +38,7 @@ namespace ListApp.Api.Controllers
             public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
             {
                 // Generate the guid - dummy functionality, no need to do checks.
-                newItem.Id = Guid.NewGuid();
+                newItem.Id = _guidGenerator.GenerateGuid();
                 await _repository.AddAsync(newItem.Id, newItem);
 
                 return Created($"/items/{newItem.Id}", newItem);

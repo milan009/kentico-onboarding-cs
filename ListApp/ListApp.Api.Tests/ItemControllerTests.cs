@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http.Results;
 using ListApp.Api.Controllers.V1;
 using ListApp.Api.Models;
-using ListApp.Api.Tests.Utils;
+using ListApp.Api.Tests.Extensions;
 using ListApp.Api.Utils;
 using NUnit.Framework;
 
@@ -42,7 +42,7 @@ namespace ListApp.Api.Tests
             var receivedResponse = await _itemsController.GetAsync();
 
             var receivedItems = ((OkNegotiatedContentResult<IEnumerable<ListItem>>)receivedResponse).Content;
-            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems).Using(new ListItemEqualityComparer()));
+            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems).UsingListItemComparer());
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace ListApp.Api.Tests
             var receivedResponse = await _itemsController.GetAsync(Guid.NewGuid());
 
             var receivedItems = ((OkNegotiatedContentResult<ListItem>)receivedResponse).Content;
-            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems.ElementAt(0)).Using(new ListItemEqualityComparer()));
+            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems.ElementAt(0)).UsingListItemComparer());
         }
 
         #endregion
@@ -83,7 +83,7 @@ namespace ListApp.Api.Tests
             var receivedItem = castResponse.Content;
             var receivedLocation = castResponse.Location;
 
-            Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
+            Assert.That(receivedItem, Is.EqualTo(PostedItem).UsingListItemComparer());
             Assert.That(receivedLocation.ToString(), Is.EqualTo($"/items/{PostedItemGuid}"));
         }
 
@@ -107,7 +107,7 @@ namespace ListApp.Api.Tests
             var receivedItem = castResponse.Content;
             var receivedLocation = castResponse.Location;
 
-            Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
+            Assert.That(receivedItem, Is.EqualTo(PostedItem).UsingListItemComparer());
             Assert.That(receivedLocation.ToString(), Is.EqualTo($"/items/{PostedItemGuid}"));
         }
 

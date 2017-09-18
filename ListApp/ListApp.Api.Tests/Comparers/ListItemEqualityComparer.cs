@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ListApp.Api.Models;
 
-namespace ListApp.Api.Tests.Utils
+namespace ListApp.Api.Tests.Comparers
 {
     /// <summary>
     /// Equality comparer used for testing equality of <see cref="ListItem"/> models
@@ -10,6 +10,11 @@ namespace ListApp.Api.Tests.Utils
     /// </summary>
     public class ListItemEqualityComparer : IEqualityComparer<ListItem>
     {
+        private ListItemEqualityComparer() { }
+
+        public static ListItemEqualityComparer Instance { get; }
+            = new ListItemEqualityComparer();
+
         public bool Equals(ListItem x, ListItem y)
         {
             if (ReferenceEquals(x, y)) return true;

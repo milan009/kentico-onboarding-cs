@@ -10,14 +10,14 @@ namespace ListApp.Api.Utils
         private static readonly Guid Guid3 = Guid.Parse("00000000-0000-0000-0000-000000000002");
         public static readonly Guid NonExistingItemGuid = Guid.Parse("00000000-0000-0000-0000-000000000003");
 
-        public static ListItem[] MockListItems => new []
+        public static readonly ListItem[] MockListItems =
         {
             new ListItem {Id = Guid1, Text = "Stretch correctly"},
             new ListItem {Id = Guid2, Text = "Make a coffey"},
             new ListItem {Id = Guid3, Text = "Take over the world"}
         };
 
-        public static ListItem CreatedListItem => new ListItem
+        public static readonly ListItem CreatedListItem = new ListItem
         {
             Id = NonExistingItemGuid,
             Text = "Create another ListItem item!"

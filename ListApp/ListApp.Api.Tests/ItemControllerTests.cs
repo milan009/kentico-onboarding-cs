@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Caching;
 using System.Web.Http;
-using System.Web.Http.Results;
 using ListApp.Api.Controllers.V1;
 using ListApp.Api.Models;
 using ListApp.Api.Tests.Extensions;
-using ListApp.Api.Utils;
 using NSubstitute;
 using NUnit.Framework;
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ListApp.Api.Tests.Comparers;
+﻿using ListApp.Api.Tests.Comparers;
 using NUnit.Framework.Constraints;
 
 namespace ListApp.Api.Tests.Extensions

@@ -9,25 +9,21 @@ namespace ListApp.Api
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            config.AddApiVersioning();
 
-            var constraintResolver = new DefaultInlineConstraintResolver
+            // Web API routes
+            config.MapHttpAttributeRoutes(InitializeConstraintResolver());
+        }
+
+        private static IInlineConstraintResolver InitializeConstraintResolver()
+        {
+            return new DefaultInlineConstraintResolver
             {
                 ConstraintMap =
                 {
                     ["apiVersion"] = typeof( ApiVersionRouteConstraint )
                 }
             };
-
-            config.AddApiVersioning();
-
-            // Web API routes
-            config.MapHttpAttributeRoutes(constraintResolver);
-
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/v{version:apiVersion}/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
         }
     }
 }

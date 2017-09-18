@@ -15,8 +15,6 @@ namespace ListApp.Api.Controllers
         [RoutePrefix("api/v{version:apiVersion}/items")]
         public class ItemsController : ApiController
         {
-            #region HTTP verbs implementations
-
             [Route]
             public async Task<IHttpActionResult> GetAsync()
                 => await Task.FromResult(Ok(Constants.MockListItems));
@@ -27,17 +25,15 @@ namespace ListApp.Api.Controllers
 
             [Route]
             public async Task<IHttpActionResult> PostAsync([FromBody]ListItem newItem) 
-                => await Task.FromResult(Created($"/items/{newItem.Id}", newItem));
+                => await Task.FromResult(Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem));
 
             [Route("{id}")]
             public async Task<IHttpActionResult> PutAsync([FromUri]Guid id, [FromBody]ListItem newItem) 
-                => await Task.FromResult(Created($"/items/{id}", newItem));
+                => await Task.FromResult(Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem));
 
             [Route("{id}")]
             public async Task<IHttpActionResult> DeleteAsync([FromUri]Guid id) 
                 => await Task.FromResult(StatusCode(HttpStatusCode.NoContent));
-
-            #endregion
         }
     }
 }

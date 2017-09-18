@@ -59,7 +59,7 @@ namespace ListApp.Api.Tests
             var receivedResponse = await _itemsController.GetAsync(Guid.NewGuid());
 
             var receivedItems = ((OkNegotiatedContentResult<ListItem>)receivedResponse).Content;
-            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems.ElementAt(0)).UsingListItemComparer());
+            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems[0]).UsingListItemComparer());
         }
 
         #endregion

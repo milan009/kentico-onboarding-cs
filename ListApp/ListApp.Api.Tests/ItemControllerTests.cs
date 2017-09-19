@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -9,6 +10,7 @@ using ListApp.Api.Controllers.V1;
 using ListApp.Api.Interfaces;
 using ListApp.Api.Models;
 using ListApp.Api.Tests.Extensions;
+using ListApp.Api.Utils;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -35,9 +37,11 @@ namespace ListApp.Api.Tests
             _guidGenerator = Substitute.For<IGuidGenerator>();
             _guidGenerator.GenerateGuid().Returns(Constants.NonExistingItemGuid);
 
-            _itemsController = new ItemsController(_itemsRepository, _guidGenerator);
-            _itemsController.Configuration = Substitute.For<HttpConfiguration>();
-            _itemsController.Request = Substitute.For<HttpRequestMessage>();
+            _itemsController = new ItemsController(_itemsRepository, _guidGenerator)
+            {
+                Configuration = Substitute.For<HttpConfiguration>(),
+                Request = Substitute.For<HttpRequestMessage>()
+            };
         }
 
         [Test]
@@ -54,7 +58,7 @@ namespace ListApp.Api.Tests
             var receivedResponse = await _itemsController.GetAsync();
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            await _itemsRepository.Received(1).GetAllAsync();
+            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).GetAllAsync());
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
             Assert.IsTrue(responseMessage.TryGetContentValue(out IEnumerable<ListItem> responseItems));
             Assert.That(responseItems, Is.EqualTo(expectedItems).UsingListItemComparer());
@@ -73,7 +77,7 @@ namespace ListApp.Api.Tests
             var receivedResponse = await _itemsController.GetAsync(Guid.NewGuid());
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            await _itemsRepository.Received(1).GetAsync(Arg.Any<Guid>());
+            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).GetAsync(Arg.Any<Guid>()));
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
             Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));
             Assert.That(responseItem, Is.EqualTo(expectedItem).UsingListItemComparer());
@@ -93,8 +97,8 @@ namespace ListApp.Api.Tests
             var receivedResponse = await _itemsController.PostAsync(PostedItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            _guidGenerator.Received(1).GenerateGuid();
-            await _itemsRepository.Received(1).AddAsync(PostedItemGuid, PostedItem);
+            Assert.DoesNotThrow(() => _guidGenerator.Received(1).GenerateGuid());
+            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).AddAsync(PostedItemGuid, PostedItem));
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
             Assert.AreEqual(expectedLocation, responseMessage.Headers.Location.ToString());
             Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));
@@ -112,11 +116,11 @@ namespace ListApp.Api.Tests
                 Text = "Create another ListItem item!"
             };
 
-            var receivedResponse = await _itemsController.PutAsync(Guid.NewGuid(), PostedItem);
+            var receivedResponse = await _itemsController.PutAsync(PostedItemGuid, PostedItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            await _itemsRepository.Received(1).DeleteAsync(PostedItemGuid);
-            await _itemsRepository.Received(1).AddAsync(PostedItemGuid, PostedItem);
+            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).DeleteAsync(PostedItemGuid));
+            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).AddAsync(PostedItemGuid, PostedItem));
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
             Assert.AreEqual(expectedLocation, responseMessage.Headers.Location.ToString());
             Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));
@@ -128,10 +132,10 @@ namespace ListApp.Api.Tests
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.NoContent;
 
-            var receivedResponse = await _itemsController.DeleteAsync(Guid.NewGuid());
+            var receivedResponse = await _itemsController.DeleteAsync(PostedItemGuid);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            await _itemsRepository.Received(1).DeleteAsync(Arg<Guid>.Any());
+            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).DeleteAsync(PostedItemGuid));
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
         }
     }

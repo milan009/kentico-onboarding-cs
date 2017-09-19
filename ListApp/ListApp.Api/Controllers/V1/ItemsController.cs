@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Interfaces;
 using ListApp.Api.Models;
+using ListApp.Api.Utils;
 using Microsoft.Web.Http;
 
 namespace ListApp.Api.Controllers.V1
@@ -45,7 +46,7 @@ namespace ListApp.Api.Controllers.V1
             await _repository.DeleteAsync(id);
             await _repository.AddAsync(id, newItem);
 
-            return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}"), Constants.CreatedListItem);
+            return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);
         }
 
         [Route("{id}")]

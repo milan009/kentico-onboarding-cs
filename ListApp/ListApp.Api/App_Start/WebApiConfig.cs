@@ -15,15 +15,12 @@ namespace ListApp.Api
             config.MapHttpAttributeRoutes(InitializeConstraintResolver());
         }
 
-        private static IInlineConstraintResolver InitializeConstraintResolver()
+        private static IInlineConstraintResolver InitializeConstraintResolver() => new DefaultInlineConstraintResolver
         {
-            return new DefaultInlineConstraintResolver
+            ConstraintMap =
             {
-                ConstraintMap =
-                {
-                    ["apiVersion"] = typeof( ApiVersionRouteConstraint )
-                }
-            };
-        }
+                ["apiVersion"] = typeof( ApiVersionRouteConstraint )
+            }
+        };
     }
 }

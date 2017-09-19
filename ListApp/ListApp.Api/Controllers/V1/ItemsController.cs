@@ -12,8 +12,6 @@ namespace ListApp.Api.Controllers.V1
     [RoutePrefix("api/v{version:apiVersion}/items")]
     public class ItemsController : ApiController
     {
-        #region HTTP verbs implementations
-
         private readonly IRepository<Guid, ListItem> _repository;
         private readonly IGuidGenerator _guidGenerator;
 
@@ -58,7 +56,5 @@ namespace ListApp.Api.Controllers.V1
 
             return StatusCode(HttpStatusCode.NoContent);
         }
-
-        #endregion
     }
 }

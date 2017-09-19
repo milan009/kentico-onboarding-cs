@@ -39,8 +39,6 @@ namespace ListApp.Api.Tests
         
         }
 
-        #region GET tests
-
         [Test]
         public async Task Get_NoId_CallsRepoGetAllAsyncMethodOnce()
         {
@@ -89,10 +87,6 @@ namespace ListApp.Api.Tests
             Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems.ElementAt(0)).Using(new ListItemEqualityComparer()));
         }
 
-        #endregion
-
-        #region POST tests
-
         [Test]
         public async Task Post_ValidItem_GeneratesAGuid()
         {
@@ -128,10 +122,6 @@ namespace ListApp.Api.Tests
             Assert.That(receivedLocation.ToString(), Is.EqualTo($"/items/{PostedItemGuid}"));
         }
 
-        #endregion
-
-        #region PUT tests
-
         [Test]
         public async Task Put_ValidItem_CallsRepoAddAndRepoDeleteAsyncOnce()
         {
@@ -160,10 +150,6 @@ namespace ListApp.Api.Tests
             Assert.That(receivedLocation.ToString(), Is.EqualTo($"/items/{PostedItemGuid}"));
         }
 
-        #endregion
-
-        #region DELETE tests
-
         [Test]
         public async Task Delete_ValidItem_CallsRepoDeleteAsyncOnce()
         {
@@ -179,7 +165,5 @@ namespace ListApp.Api.Tests
 
             Assert.AreEqual(HttpStatusCode.NoContent, ((StatusCodeResult) receivedResponse).StatusCode);
         }
-
-        #endregion
     }
 }

@@ -16,6 +16,7 @@ namespace ListApp.Api
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            config.AddApiVersioning();
 
             // Dependency resolver
             var container = new UnityContainer();
@@ -23,25 +24,19 @@ namespace ListApp.Api
             container.RegisterType<IGuidGenerator, GuidGenerator>(new HierarchicalLifetimeManager());
             config.DependencyResolver = new UnityResolver(container);
 
+            // Web API routes
+            config.MapHttpAttributeRoutes(InitializeConstraintResolver());
+        }
 
-            var constraintResolver = new DefaultInlineConstraintResolver
+        private static IInlineConstraintResolver InitializeConstraintResolver()
+        {
+            return new DefaultInlineConstraintResolver
             {
                 ConstraintMap =
                 {
                     ["apiVersion"] = typeof( ApiVersionRouteConstraint )
                 }
             };
-
-            config.AddApiVersioning();
-
-            // Web API routes
-            config.MapHttpAttributeRoutes(constraintResolver);
-
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/v{version:apiVersion}/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
         }
     }
 }

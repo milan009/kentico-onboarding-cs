@@ -15,7 +15,6 @@ namespace ListApp.Api.Controllers.V1
         private readonly IRepository<Guid, ListItem> _repository;
         private readonly IGuidGenerator _guidGenerator;
 
-
         public ItemsController(IRepository<Guid, ListItem> repository, IGuidGenerator guidGenerator)
         {
             _repository = repository;
@@ -27,7 +26,7 @@ namespace ListApp.Api.Controllers.V1
             => Ok(await _repository.GetAllAsync());
 
         [Route("{id}")]
-        public async Task<IHttpActionResult> GetAsync([FromUri]Guid id) 
+        public async Task<IHttpActionResult> GetAsync([FromUri] Guid id) 
             => Ok(await _repository.GetAsync(id));
 
         [Route]
@@ -37,7 +36,7 @@ namespace ListApp.Api.Controllers.V1
             newItem.Id = _guidGenerator.GenerateGuid();
             await _repository.AddAsync(newItem.Id, newItem);
 
-            return Created($"/items/{newItem.Id}", newItem);
+            return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);
         }
 
         [Route("{id}")]
@@ -46,7 +45,7 @@ namespace ListApp.Api.Controllers.V1
             await _repository.DeleteAsync(id);
             await _repository.AddAsync(id, newItem);
 
-            return Created($"/items/{id}", newItem);
+            return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}"), Constants.CreatedListItem);
         }
 
         [Route("{id}")]

@@ -36,7 +36,7 @@ namespace ListApp.Api.Tests
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItems = new []
             {
-                new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "Stretch correctly"},
+                new ListItem {Id = Guid.Empty, Text = "Stretch correctly"},
                 new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"},
                 new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world"}
             };
@@ -55,7 +55,7 @@ namespace ListApp.Api.Tests
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItem = new ListItem
             {
-                Id = Guid.Parse("00000000-0000-0000-0000-000000000000"),
+                Id = Guid.Empty,
                 Text = "Stretch correctly"
             };
 
@@ -70,11 +70,11 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Post_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocation()
         {
-            var expectedLocation = _itemsController.Url.Request.RequestUri + "/00000000-0000-0000-0000-000000000003";
+            var expectedLocation = _itemsController.Url.Request.RequestUri + $"/{PostedItemGuid}";
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
             var expectedItem = new ListItem
             {
-                Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                Id = PostedItemGuid,
                 Text = "Create another ListItem item!"
             };
 
@@ -90,11 +90,11 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Put_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocation()
         {
-            var expectedLocation = _itemsController.Url.Request.RequestUri + "/00000000-0000-0000-0000-000000000003";
+            var expectedLocation = _itemsController.Url.Request.RequestUri + $"/{PostedItemGuid}";
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
             var expectedItem = new ListItem
             {
-                Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                Id = PostedItemGuid,
                 Text = "Create another ListItem item!"
             };
 

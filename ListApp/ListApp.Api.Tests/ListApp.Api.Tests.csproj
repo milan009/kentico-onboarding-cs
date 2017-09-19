@@ -59,7 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\NUnitExtensions.cs" />
+    <Compile Include="Extensions\EqualConstraintExtensions.cs" />
     <Compile Include="ItemControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

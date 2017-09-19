@@ -4,7 +4,7 @@ using NUnit.Framework.Constraints;
 
 namespace ListApp.Api.Tests.Extensions
 {
-    public static class NUnitExtensions
+    public static class EqualConstraintExtensions
     {
         public static EqualConstraint UsingListItemComparer(this EqualConstraint constr)
         {

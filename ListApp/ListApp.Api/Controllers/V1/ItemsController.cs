@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Interfaces;
 using ListApp.Api.Models;
+using ListApp.Api.Utils;
 using Microsoft.Web.Http;
 
 namespace ListApp.Api.Controllers.V1
@@ -12,8 +13,6 @@ namespace ListApp.Api.Controllers.V1
     [RoutePrefix("api/v{version:apiVersion}/items")]
     public class ItemsController : ApiController
     {
-        #region HTTP verbs implementations
-
         private readonly IRepository<Guid, ListItem> _repository;
         private readonly IGuidGenerator _guidGenerator;
 
@@ -39,7 +38,7 @@ namespace ListApp.Api.Controllers.V1
             newItem.Id = _guidGenerator.GenerateGuid();
             await _repository.AddAsync(newItem.Id, newItem);
 
-            return Created(Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem));
+            return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);
         }
 
         [Route("{id}")]
@@ -48,7 +47,7 @@ namespace ListApp.Api.Controllers.V1
             await _repository.DeleteAsync(id);
             await _repository.AddAsync(id, newItem);
 
-            return Created(Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem));
+            return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);
         }
 
         [Route("{id}")]

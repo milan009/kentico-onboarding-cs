@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Http.Results;
+using System.Web.Http;
 using ListApp.Api.Controllers.V1;
 using ListApp.Api.Interfaces;
 using ListApp.Api.Models;
-using ListApp.Api.Tests.Utils;
-using ListApp.Api.Utils;
+using ListApp.Api.Tests.Extensions;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -36,62 +36,54 @@ namespace ListApp.Api.Tests
             _guidGenerator.GenerateGuid().Returns(Constants.NonExistingItemGuid);
 
             _itemsController = new ItemsController(_itemsRepository, _guidGenerator);
-        
+            _itemsController.Configuration = Substitute.For<HttpConfiguration>();
+            _itemsController.Request = Substitute.For<HttpRequestMessage>();
         }
 
-        #region GET tests
-
         [Test]
-        public async Task Get_NoId_CallsRepoGetAllAsyncMethodOnce()
+        public async Task Get_NoId_ResponseIsOfCorrectTypeAndReturnsDefaultItemsAndCallsRepoGetAsyncMethodOnce()
         {
+            const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
+            var expectedItems = new []
+            {
+                new ListItem {Id = Guid.Empty, Text = "Stretch correctly"},
+                new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"},
+                new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world"}
+            };
+
+            var receivedResponse = await _itemsController.GetAsync();
+            var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
+
             await _itemsController.GetAsync();
             await _itemsRepository.Received(1).GetAllAsync();
+
+            Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
+            Assert.IsTrue(responseMessage.TryGetContentValue(out IEnumerable<ListItem> responseItems));
+            Assert.That(responseItems, Is.EqualTo(expectedItems).UsingListItemComparer());
         }
 
-        [Test]
-        public async Task Get_NoId_ResponseIsOfCorrectType()
-        {
-            var receivedResponse = await _itemsController.GetAsync();
-            Assert.IsInstanceOf<OkNegotiatedContentResult<IEnumerable<ListItem>>>(receivedResponse);
-        }
 
         [Test]
-        public async Task Get_NoId_ReturnsAllDefaultItems()
+        public async Task Get_WithAnyId_ResponseIsOfCorrectTypeAndReturnsFirtsItemAndCallsRepoGetAsyncMethodOnceWithCorrectId()
         {
-            var receivedResponse = await _itemsController.GetAsync();
-        
-            var receivedItems = ((OkNegotiatedContentResult<IEnumerable<ListItem>>)receivedResponse).Content;
-            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems).Using(new ListItemEqualityComparer()));
-        }
+            const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
+            var expectedItem = new ListItem
+            {
+                Id = Guid.Empty,
+                Text = "Stretch correctly"
+            };
 
-        [Test]
-        public async Task Get_WithAnyId_CallsRepoGetAsyncMethodOnceWithCorrectId()
-        {
-            var guid = Guid.NewGuid();
+            var receivedResponse = await _itemsController.GetAsync(Guid.NewGuid());
+            var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
+
+                        var guid = Guid.NewGuid();
             await _itemsController.GetAsync(guid);
             await _itemsRepository.Received(1).GetAsync(Arg.Any<Guid>());
+
+            Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
+            Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));
+            Assert.That(responseItem, Is.EqualTo(expectedItem).UsingListItemComparer());
         }
-
-        [Test]
-        public async Task Get_WithAnyId_ResponseIsOfCorrectType()
-        {
-            var receivedResponse = await _itemsController.GetAsync(Guid.NewGuid());
-            Assert.IsInstanceOf<OkNegotiatedContentResult<ListItem>>(receivedResponse);
-        }
-
-
-        [Test]
-        public async Task Get_WithAnyId_ReturnsFirstItem()
-        {
-            var receivedResponse = await _itemsController.GetAsync(Guid.NewGuid());
-        
-            var receivedItems = ((OkNegotiatedContentResult<ListItem>)receivedResponse).Content;
-            Assert.That(receivedItems, Is.EqualTo(Constants.MockListItems.ElementAt(0)).Using(new ListItemEqualityComparer()));
-        }
-
-        #endregion
-
-        #region POST tests
 
         [Test]
         public async Task Post_ValidItem_GeneratesAGuid()
@@ -100,86 +92,65 @@ namespace ListApp.Api.Tests
             _guidGenerator.Received(1).GenerateGuid();
         }
 
+     
+        }
+
         [Test]
-        public async Task Post_ValidItem_CallsRepoAddAsyncOnce()
+        public async Task Post_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocationAndCallsRepoAddAsyncOnce()
         {
+            var expectedLocation = _itemsController.Url.Request.RequestUri + $"/{PostedItemGuid}";
+            const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
+            var expectedItem = new ListItem
+            {
+                Id = PostedItemGuid,
+                Text = "Create another ListItem item!"
+            };
+
+            var receivedResponse = await _itemsController.PostAsync(PostedItem);
+            var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
+
             await _itemsController.PostAsync(PostedItem);
             await _itemsRepository.Received(1).AddAsync(PostedItemGuid, PostedItem);
+            Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
+            Assert.AreEqual(expectedLocation, responseMessage.Headers.Location.ToString());
+            Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));
+            Assert.That(responseItem, Is.EqualTo(expectedItem).UsingListItemComparer());
         }
 
         [Test]
-        public async Task Post_ValidItem_ResponseIsOfCorrectType()
+        public async Task Put_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocationAndCallsRepoAddAndDeleteOnce()
         {
-            var receivedResponse = await _itemsController.PostAsync(PostedItem);
-            Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedResponse);
-        }
+            var expectedLocation = _itemsController.Url.Request.RequestUri + $"/{PostedItemGuid}";
+            const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
+            var expectedItem = new ListItem
+            {
+                Id = PostedItemGuid,
+                Text = "Create another ListItem item!"
+            };
 
+            var receivedResponse = await _itemsController.PutAsync(Guid.NewGuid(), PostedItem);
+            var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-        [Test]
-        public async Task Post_ValidItem_ReturnsPostedItemAndCorrectLocation()
-        {
-            var receivedResponse = await _itemsController.PostAsync(PostedItem);
-            var castResponse = (CreatedNegotiatedContentResult<ListItem>)receivedResponse;
-
-            var receivedItem = castResponse.Content;
-            var receivedLocation = castResponse.Location;
-
-            Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
-            Assert.That(receivedLocation.ToString(), Is.EqualTo($"/items/{PostedItemGuid}"));
-        }
-
-        #endregion
-
-        #region PUT tests
-
-        [Test]
-        public async Task Put_ValidItem_CallsRepoAddAndRepoDeleteAsyncOnce()
-        {
             await _itemsController.PutAsync(PostedItemGuid, PostedItem);
             await _itemsRepository.Received(1).DeleteAsync(PostedItemGuid);
             await _itemsRepository.Received(1).AddAsync(PostedItemGuid, PostedItem);
+            Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
+            Assert.AreEqual(expectedLocation, responseMessage.Headers.Location.ToString());
+            Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));
+            Assert.That(responseItem, Is.EqualTo(expectedItem).UsingListItemComparer());
         }
 
         [Test]
-        public async Task Put_ValidItem_ResponseIsOfCorrectType()
+        public async Task Delete_WithAnyId_ReturnsNoContentAndCallsRepoDeleteAsyncOnce()
         {
-            var receivedResponse = await _itemsController.PutAsync(PostedItemGuid, PostedItem);
-            Assert.IsInstanceOf<CreatedNegotiatedContentResult<ListItem>>(receivedResponse);
-        }
+            const HttpStatusCode expectedResponseCode = HttpStatusCode.NoContent;
 
-        [Test]
-        public async Task Put_ValidItem_ReturnsPutItem()
-        {
-            var receivedResponse = await _itemsController.PutAsync(PostedItemGuid, PostedItem);
-            var castResponse = (CreatedNegotiatedContentResult<ListItem>)receivedResponse;
+            var receivedResponse = await _itemsController.DeleteAsync(Guid.NewGuid());
+            var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            var receivedItem = castResponse.Content;
-            var receivedLocation = castResponse.Location;
-
-            Assert.That(receivedItem, Is.EqualTo(PostedItem).Using(new ListItemEqualityComparer()));
-            Assert.That(receivedLocation.ToString(), Is.EqualTo($"/items/{PostedItemGuid}"));
-        }
-
-        #endregion
-
-        #region DELETE tests
-
-        [Test]
-        public async Task Delete_ValidItem_CallsRepoDeleteAsyncOnce()
-        {
             await _itemsController.DeleteAsync(PostedItemGuid);
             await _itemsRepository.Received(1).DeleteAsync(PostedItemGuid);
+            Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
         }
-
-        [Test]
-        public async Task Delete_WithAnyId_ReturnsNoContent()
-        {
-            var receivedResponse = await _itemsController.DeleteAsync(Guid.NewGuid());
-            Assert.IsInstanceOf<StatusCodeResult>(receivedResponse);
-
-            Assert.AreEqual(HttpStatusCode.NoContent, ((StatusCodeResult) receivedResponse).StatusCode);
-        }
-
-        #endregion
     }
 }

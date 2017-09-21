@@ -1,21 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using ListApp.Api.Models;
 
 namespace ListApp.Api.Utils
 {
     public static class Constants
     {
-        public static Guid Guid1 = Guid.Parse("00000000-0000-0000-0000-000000000000");
-        public static Guid Guid2 = Guid.Parse("00000000-0000-0000-0000-000000000001");
-        public static Guid Guid3 = Guid.Parse("00000000-0000-0000-0000-000000000002");
-        public static Guid NonExistingItemGuid = Guid.Parse("00000000-0000-0000-0000-000000000003");
+        private static readonly ListItem Item1 = new ListItem { Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "Stretch correctly" };
+        private static readonly ListItem Item2 = new ListItem { Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey" };
+        private static readonly ListItem Item3 = new ListItem { Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world" };
 
-        public static IEnumerable<ListItem> MockListItems => new List<ListItem>
+        public static readonly Guid NonExistingItemGuid = Guid.Parse("00000000-0000-0000-0000-000000000003");
+
+        public static readonly ListItem[] MockListItems = { Item1, Item2, Item3 };
+
+        public static readonly ListItem CreatedListItem = new ListItem
         {
-            new ListItem {Id = Guid1, Text = "Stretch correctly"},
-            new ListItem {Id = Guid2, Text = "Make a coffey"},
-            new ListItem {Id = Guid3, Text = "Take over the world"}
+            Id = NonExistingItemGuid,
+            Text = "Create another ListItem item!"
         };
     }
 }

@@ -39,7 +39,7 @@ namespace ListApp.Api.Controllers.V1
             newItem.Id = _guidGenerator.GenerateGuid();
             await _repository.AddAsync(newItem.Id, newItem);
 
-            return Created($"/items/{newItem.Id}", newItem);
+            return Created(Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem));
         }
 
         [Route("{id}")]
@@ -48,7 +48,7 @@ namespace ListApp.Api.Controllers.V1
             await _repository.DeleteAsync(id);
             await _repository.AddAsync(id, newItem);
 
-            return Created($"/items/{id}", newItem);
+            return Created(Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem));
         }
 
         [Route("{id}")]
@@ -59,6 +59,5 @@ namespace ListApp.Api.Controllers.V1
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        #endregion
     } 
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using ListApp.Api.Models;
 using NUnit.Framework.Constraints;
+using ListApp.Contracts.Models;
 
 namespace ListApp.Api.Tests.Extensions
 {

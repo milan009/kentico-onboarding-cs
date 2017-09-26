@@ -42,6 +42,12 @@ namespace ListApp.Api.Tests
             _itemsController.Request = Substitute.For<HttpRequestMessage>();
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _itemsController.Dispose();
+        }
+        
         [Test]
         public async Task Get_NoId_ResponseIsOfCorrectTypeAndReturnsDefaultItemsAndCallsRepoGetAsyncMethodOnce()
         {

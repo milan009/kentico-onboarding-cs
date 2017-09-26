@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using ListApp.Api.Interfaces;
-using ListApp.Api.Models;
-using ListApp.Api.Utils;
+using ListApp.Contracts.Interfaces;
+using ListApp.Contracts.Models;
+using ListApp.Utils;
 
-namespace ListApp.Api.Repositories
+namespace ListApp.Repositories
 {
     public class ListItemRepository : IRepository<Guid, ListItem>
     {

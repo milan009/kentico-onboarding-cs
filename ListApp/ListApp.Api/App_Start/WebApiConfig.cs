@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Web.Http;
 using System.Web.Http.Routing;
-using ListApp.Api.Interfaces;
-using ListApp.Api.Models;
-using ListApp.Api.Repositories;
+using ListApp.Contracts.Interfaces;
+using ListApp.Contracts.Models;
+using ListApp.Repositories;
 using ListApp.Api.Services;
-using ListApp.Api.Utils;
+using ListApp.Utils;
 using Microsoft.Practices.Unity;
 using Microsoft.Web.Http.Routing;
 

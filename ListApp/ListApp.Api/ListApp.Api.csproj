@@ -121,6 +121,20 @@
     <Folder Include="App_Data\" />
     <Folder Include="Utils\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ListApp.Contracts\ListApp.Contracts.csproj">
+      <Project>{f895dfd4-2ab2-4935-9da8-8d2a5c3d91fa}</Project>
+      <Name>ListApp.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ListApp.Repositories\ListApp.Repositories.csproj">
+      <Project>{57619956-4577-4376-8f67-17dda4320310}</Project>
+      <Name>ListApp.Repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ListApp.Utils\ListApp.Utils.csproj">
+      <Project>{f66d6548-7b1c-403f-a586-1e90c3a9a85e}</Project>
+      <Name>ListApp.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -43,6 +43,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ListItemRepository.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ListApp.Contracts\ListApp.Contracts.csproj">
+      <Project>{f895dfd4-2ab2-4935-9da8-8d2a5c3d91fa}</Project>
+      <Name>ListApp.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ListApp.Utils\ListApp.Utils.csproj">
+      <Project>{f66d6548-7b1c-403f-a586-1e90c3a9a85e}</Project>
+      <Name>ListApp.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System;
-using ListApp.Api.Models;
+using ListApp.Contracts.Models;
 
-namespace ListApp.Api.Utils
+namespace ListApp.Utils
 {
     public static class Constants
     {

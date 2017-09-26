@@ -7,10 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Controllers.V1;
-using ListApp.Api.Interfaces;
-using ListApp.Api.Models;
+using ListApp.Contracts.Interfaces;
+using ListApp.Contracts.Models;
 using ListApp.Api.Tests.Extensions;
-using ListApp.Api.Utils;
+using ListApp.Utils;
 using NSubstitute;
 using NUnit.Framework;
 

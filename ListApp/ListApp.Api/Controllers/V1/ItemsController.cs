@@ -2,9 +2,9 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using ListApp.Api.Interfaces;
-using ListApp.Api.Models;
-using ListApp.Api.Utils;
+using ListApp.Contracts.Interfaces;
+using ListApp.Contracts.Models;
+using ListApp.Utils;
 using Microsoft.Web.Http;
 
 namespace ListApp.Api.Controllers.V1

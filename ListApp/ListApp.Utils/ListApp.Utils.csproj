@@ -44,5 +44,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnityResolver.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ListApp.Contracts\ListApp.Contracts.csproj">
+      <Project>{f895dfd4-2ab2-4935-9da8-8d2a5c3d91fa}</Project>
+      <Name>ListApp.Contracts</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

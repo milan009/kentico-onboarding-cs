@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ListApp.Api.Interfaces
+namespace ListApp.Contracts.Interfaces
 {
     public interface IGuidGenerator
     {

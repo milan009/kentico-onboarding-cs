@@ -1,5 +1,5 @@
 ﻿using System;
-using ListApp.Api.Interfaces;
+using ListApp.Contracts.Interfaces;
 
 namespace ListApp.Api.Services
 {

@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Api", "ListApp.Api\ListApp.Api.csproj", "{5323BC7A-28EB-4CE4-99EB-E376E52DD362}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Api", "Sources\ListApp.Api\ListApp.Api.csproj", "{5323BC7A-28EB-4CE4-99EB-E376E52DD362}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Api.Tests", "ListApp.Api.Tests\ListApp.Api.Tests.csproj", "{CE125463-A43E-49C3-B275-3E4F5D145BE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Api.Tests", "Tests\ListApp.Api.Tests\ListApp.Api.Tests.csproj", "{CE125463-A43E-49C3-B275-3E4F5D145BE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Repositories", "ListApp.Repositories\ListApp.Repositories.csproj", "{57619956-4577-4376-8F67-17DDA4320310}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Repositories", "Sources\ListApp.Repositories\ListApp.Repositories.csproj", "{57619956-4577-4376-8F67-17DDA4320310}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Contracts", "ListApp.Contracts\ListApp.Contracts.csproj", "{F895DFD4-2AB2-4935-9DA8-8D2A5C3D91FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Contracts", "Sources\ListApp.Contracts\ListApp.Contracts.csproj", "{F895DFD4-2AB2-4935-9DA8-8D2A5C3D91FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Utils", "ListApp.Utils\ListApp.Utils.csproj", "{F66D6548-7B1C-403F-A586-1E90C3A9A85E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Utils", "Sources\ListApp.Utils\ListApp.Utils.csproj", "{F66D6548-7B1C-403F-A586-1E90C3A9A85E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{21FC6F99-9F22-447B-BA66-AAFC13393AF6}"
 EndProject

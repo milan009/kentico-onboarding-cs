@@ -8,7 +8,7 @@ using ListApp.Utils;
 
 namespace ListApp.Repositories
 {
-    public class ListItemRepository : IRepository<Guid, ListItem>
+    internal class ListItemRepository : IRepository<Guid, ListItem>
     {
         public async Task<IEnumerable<Guid>> GetKeysAsync()
         {

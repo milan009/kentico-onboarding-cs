@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ListApp.Contracts.Interfaces
 {
-    internal interface IRepository<TKeyType, TItemType>
+    public interface IRepository<TKeyType, TItemType>
     {
         /// <summary>
         /// A method that returns all keys from repository

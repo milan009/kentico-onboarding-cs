@@ -37,9 +37,12 @@ namespace ListApp.Api.Tests
             _guidGenerator = Substitute.For<IGuidGenerator>();
             _guidGenerator.GenerateGuid().Returns(Constants.NonExistingItemGuid);
 
-            _itemsController = new ItemsController(_itemsRepository, _guidGenerator);
-            _itemsController.Configuration = Substitute.For<HttpConfiguration>();
-            _itemsController.Request = Substitute.For<HttpRequestMessage>();
+            _itemsController =
+                new ItemsController(_itemsRepository, _guidGenerator)
+                {
+                    Configuration = Substitute.For<HttpConfiguration>(),
+                    Request = Substitute.For<HttpRequestMessage>()
+                };
         }
 
         [TearDown]

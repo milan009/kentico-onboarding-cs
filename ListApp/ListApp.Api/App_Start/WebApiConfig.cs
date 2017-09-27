@@ -16,20 +16,11 @@ namespace ListApp.Api
     {
         public static void Register(HttpConfiguration config)
         {
-            // todo: decompose into multiple configs
             // Web API configuration and services
             config.AddApiVersioning();
 
-            // Dependency resolver
-            var container = new UnityContainer();
-            //container.RegisterType<IRepository<Guid, ListItem>, ListItemRepository>(new HierarchicalLifetimeManager());
-            container.RegisterListItemRepository();
-            config.DependencyResolver = new UnityResolver(container);
-
             // Web API routes
             config.MapHttpAttributeRoutes(InitializeConstraintResolver());
-
-            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
 
         private static IInlineConstraintResolver InitializeConstraintResolver() => new DefaultInlineConstraintResolver

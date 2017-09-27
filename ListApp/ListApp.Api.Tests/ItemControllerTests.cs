@@ -25,7 +25,7 @@ namespace ListApp.Api.Tests
 
         private ItemsController _itemsController;
         private IRepository<Guid, ListItem> _itemsRepository;
-        private IGuidGenerator _guidGenerator;
+
 
         [SetUp]
         public void SetUp()
@@ -34,11 +34,8 @@ namespace ListApp.Api.Tests
             _itemsRepository.GetAllAsync().Returns(Constants.MockListItems);
             _itemsRepository.GetAsync(Arg.Any<Guid>()).Returns(Constants.MockListItems.ElementAt(0));
 
-            _guidGenerator = Substitute.For<IGuidGenerator>();
-            _guidGenerator.GenerateGuid().Returns(Constants.NonExistingItemGuid);
-
             _itemsController =
-                new ItemsController(_itemsRepository, _guidGenerator)
+                new ItemsController(_itemsRepository)
                 {
                     Configuration = Substitute.For<HttpConfiguration>(),
                     Request = Substitute.For<HttpRequestMessage>()
@@ -89,14 +86,6 @@ namespace ListApp.Api.Tests
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
             Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));
             Assert.That(responseItem, Is.EqualTo(expectedItem).UsingListItemComparer());
-        }
-
-        [Test]
-        public async Task Post_ValidItem_GeneratesAGuid()
-        {
-            await _itemsController.PostAsync(PostedItem);
-
-            Assert.DoesNotThrow(() => _guidGenerator.Received(1).GenerateGuid());
         }
 
         [Test]

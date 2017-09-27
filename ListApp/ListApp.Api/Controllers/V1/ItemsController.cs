@@ -14,9 +14,9 @@ namespace ListApp.Api.Controllers.V1
     [Route("", Name = "itemsBaseRoute")]
     public class ItemsController : ApiController
     {
-        private readonly IRepository<Guid, ListItem> _repository;
+        private readonly IRepository _repository;
 
-        public ItemsController(IRepository<Guid, ListItem> repository)
+        public ItemsController(IRepository repository)
         {
             _repository = repository;
         }

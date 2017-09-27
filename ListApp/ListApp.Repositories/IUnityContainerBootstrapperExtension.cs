@@ -13,7 +13,7 @@ namespace ListApp.Repositories
     {
         public static void RegisterListItemRepository(this IUnityContainer container)
         {
-            container.RegisterType<IRepository<Guid, ListItem>, ListItemRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IRepository, ListItemRepository>(new HierarchicalLifetimeManager());
         }
     }
 }

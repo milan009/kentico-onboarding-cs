@@ -11,7 +11,7 @@ namespace ListApp.Api.Controllers.V1
 {
     [ApiVersion("1.0")]
     [RoutePrefix("api/v{version:apiVersion}/items")]
-    [Route]
+    [Route("", Name = "itemsBaseRoute")]
     public class ItemsController : ApiController
     {
         private readonly IRepository<Guid, ListItem> _repository;
@@ -21,7 +21,7 @@ namespace ListApp.Api.Controllers.V1
             _repository = repository;
         }
 
-        public async Task<IHttpActionResult> GetAsync()
+        public async Task<IHttpActionResult> GetAsync() 
             => Ok(await _repository.GetAllAsync());
 
         [Route("{id}")]
@@ -31,27 +31,24 @@ namespace ListApp.Api.Controllers.V1
 
         public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
         {
-            // todo: remove guid generation
-            // Generate the guid - dummy functionality, no need to do checks.
-            // newItem.Id = _guidGenerator.GenerateGuid();
             await _repository.AddAsync(newItem.Id, newItem);
 
-            return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);
+            return Created(Url.Route("itemsBaseRoute", null) + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);
         }
 
-        [Route("{id}")]
+        [Route("{id}", Name = "itemsPutRoute")]
         public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem)
         {
             await _repository.UpdateAsync(id, newItem);
-
-            return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);
+ 
+            return Created(Url.Route("itemsPutRoute", Constants.NonExistingItemGuid), Constants.CreatedListItem);
         }
 
         [Route("{id}")]
         public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id)
         {
             await _repository.DeleteAsync(id);
-
+           
             return StatusCode(HttpStatusCode.NoContent);
         }
 

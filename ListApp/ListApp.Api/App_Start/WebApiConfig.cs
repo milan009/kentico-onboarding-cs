@@ -21,7 +21,6 @@ namespace ListApp.Api
             // Dependency resolver
             var container = new UnityContainer();
             container.RegisterType<IRepository<Guid, ListItem>, ListItemRepository>(new HierarchicalLifetimeManager());
-            container.RegisterType<IGuidGenerator, GuidGenerator>(new HierarchicalLifetimeManager());
             config.DependencyResolver = new UnityResolver(container);
 
             // Web API routes

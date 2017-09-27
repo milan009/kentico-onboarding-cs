@@ -15,14 +15,11 @@ namespace ListApp.Api.Controllers.V1
     public class ItemsController : ApiController
     {
         private readonly IRepository<Guid, ListItem> _repository;
-        private readonly IGuidGenerator _guidGenerator;
 
-        public ItemsController(IRepository<Guid, ListItem> repository, IGuidGenerator guidGenerator)
+        public ItemsController(IRepository<Guid, ListItem> repository)
         {
             _repository = repository;
-            _guidGenerator = guidGenerator;
         }
-
 
         public async Task<IHttpActionResult> GetAsync()
             => Ok(await _repository.GetAllAsync());
@@ -36,7 +33,7 @@ namespace ListApp.Api.Controllers.V1
         {
             // todo: remove guid generation
             // Generate the guid - dummy functionality, no need to do checks.
-            newItem.Id = _guidGenerator.GenerateGuid();
+            // newItem.Id = _guidGenerator.GenerateGuid();
             await _repository.AddAsync(newItem.Id, newItem);
 
             return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);

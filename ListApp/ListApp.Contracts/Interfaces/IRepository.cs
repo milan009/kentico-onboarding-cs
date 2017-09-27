@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ListApp.Contracts.Interfaces
 {
-    public interface IRepository<TKeyType, TItemType>
+    internal interface IRepository<TKeyType, TItemType>
     {
         /// <summary>
         /// A method that returns all keys from repository
@@ -49,5 +49,13 @@ namespace ListApp.Contracts.Interfaces
         /// Removes all entities from the repository
         /// </summary>
         Task ClearAsync();
+
+        // FRESH CODE
+        /// <summary>
+        /// Updates entity found under given key with given entity
+        /// </summary>
+        /// <param name="key">Key indetifyign the entity to update</param>
+        /// <param name="entity">The entity containing the updated data</param>
+        Task UpdateAsync(TKeyType key, TItemType entity);
     }
 }

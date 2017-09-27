@@ -41,5 +41,11 @@ namespace ListApp.Repositories
         {
             await Task.CompletedTask;
         }
+
+        // FRESH CODE
+        public async Task UpdateAsync(Guid key, ListItem entity)
+        {
+            await Task.CompletedTask;
+        }
     }
 }

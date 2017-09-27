@@ -4,10 +4,11 @@ using System.Web.Http.Routing;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 using ListApp.Repositories;
-using ListApp.Api.Services;
+
 using ListApp.Api.Utils;
 using Microsoft.Practices.Unity;
 using Microsoft.Web.Http.Routing;
+using Newtonsoft.Json.Serialization;
 
 namespace ListApp.Api
 {
@@ -15,6 +16,7 @@ namespace ListApp.Api
     {
         public static void Register(HttpConfiguration config)
         {
+            // todo: decompose into multiple configs
             // Web API configuration and services
             config.AddApiVersioning();
 
@@ -25,6 +27,8 @@ namespace ListApp.Api
 
             // Web API routes
             config.MapHttpAttributeRoutes(InitializeConstraintResolver());
+
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
 
         private static IInlineConstraintResolver InitializeConstraintResolver() => new DefaultInlineConstraintResolver

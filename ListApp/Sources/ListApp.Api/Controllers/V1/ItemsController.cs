@@ -41,7 +41,7 @@ namespace ListApp.Api.Controllers.V1
         {
             await _repository.UpdateAsync(id, newItem);
  
-            return Created(Url.Route("itemsPutRoute", Constants.NonExistingItemGuid), Constants.CreatedListItem);
+            return Created(Url.Route("itemsPutRoute", new {id = Constants.NonExistingItemGuid}), Constants.CreatedListItem);
         }
 
         [Route("{id}")]

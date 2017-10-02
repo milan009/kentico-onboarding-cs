@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Routing;
 using ListApp.Api.Controllers.V1;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
@@ -33,10 +34,14 @@ namespace ListApp.Api.Tests
             _itemsRepository.GetAllAsync().Returns(Constants.MockListItems);
             _itemsRepository.GetAsync(Arg.Any<Guid>()).Returns(Constants.MockListItems.ElementAt(0));
 
+            var config = new HttpConfiguration();
+            config.Routes.MapHttpRoute("itemsBaseRoute", "api/v{version}/items", new {version = 1});
+            config.Routes.MapHttpRoute("itemsPutRoute", "api/v{version}/items/{id}", new {version = 1});
+
             _itemsController =
                 new ItemsController(_itemsRepository)
                 {
-                    Configuration = Substitute.For<HttpConfiguration>(),
+                    Configuration = config,
                     Request = Substitute.For<HttpRequestMessage>()
                 };
         }
@@ -50,6 +55,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Get_NoId_ResponseIsOfCorrectTypeAndReturnsDefaultItemsAndCallsRepoGetAsyncMethodOnce()
         {
+     
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItems = new []
             {
@@ -89,7 +95,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Post_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocationAndCallsRepoAddAsyncOnce()
         {
-            var expectedLocation = _itemsController.Url.Request.RequestUri + $"/{PostedItemGuid}";
+            var expectedLocation = $"/api/v1/items/{PostedItemGuid}";
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
             var expectedItem = new ListItem
             {
@@ -110,7 +116,7 @@ namespace ListApp.Api.Tests
         [Test]
         public async Task Put_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocationAndCallsRepoAddAndDeleteOnce()
         {
-            var expectedLocation = _itemsController.Url.Request.RequestUri + $"/{PostedItemGuid}";
+            var expectedLocation = $"/api/v1/items/{PostedItemGuid}";
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
             var expectedItem = new ListItem
             {
@@ -121,8 +127,7 @@ namespace ListApp.Api.Tests
             var receivedResponse = await _itemsController.PutAsync(PostedItemGuid, PostedItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).DeleteAsync(PostedItemGuid));
-            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).AddAsync(PostedItemGuid, PostedItem));
+            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).UpdateAsync(PostedItemGuid, PostedItem));
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
             Assert.AreEqual(expectedLocation, responseMessage.Headers.Location.ToString());
             Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));

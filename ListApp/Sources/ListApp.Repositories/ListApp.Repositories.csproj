@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ListItemRepository.cs" />
-    <Compile Include="UnityContainerBootstrapperExtension.cs" />
+    <Compile Include="Bootstrapper\UnityContainerBootstrapperExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ListApp.Contracts\ListApp.Contracts.csproj">
@@ -70,8 +70,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Bootstrapper\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

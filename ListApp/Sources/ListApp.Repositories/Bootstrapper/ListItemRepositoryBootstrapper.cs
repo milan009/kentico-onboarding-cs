@@ -1,11 +1,12 @@
 ﻿using ListApp.Contracts.Interfaces;
+using ListApp.Repositories.Bootstrapper;
 using Microsoft.Practices.Unity;
 
 namespace ListApp.Repositories
 {
-    public static class UnityContainerBootstrapperExtension
+    public class ListItemRepositoryBootstrapper : IBootstrapper
     {
-        public static IUnityContainer RegisterListItemRepository(this IUnityContainer container)
+        public IUnityContainer RegisterListItemRepository(IUnityContainer container)
             => container
                 .RegisterType<IRepository, ListItemRepository>(new HierarchicalLifetimeManager());
     }

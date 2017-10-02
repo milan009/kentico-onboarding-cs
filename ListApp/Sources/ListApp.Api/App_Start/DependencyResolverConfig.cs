@@ -5,9 +5,9 @@ using Microsoft.Practices.Unity;
 
 namespace ListApp.Api
 {
-    public class DependencyResolverConfig
+    internal class DependencyResolverConfig
     {
-        public static void Register(HttpConfiguration config)
+        internal static void Register(HttpConfiguration config)
         {
             var container = new UnityContainer();
 

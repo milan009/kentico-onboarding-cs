@@ -14,6 +14,5 @@ namespace ListApp.Api
             container.RegisterListItemRepository();
             config.DependencyResolver = new UnityResolver(container);
         }
-
     }
 }

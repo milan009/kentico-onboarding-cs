@@ -26,9 +26,6 @@ namespace ListApp.Repositories
         public async Task DeleteAsync(Guid key) 
             => await Task.CompletedTask;
 
-        public async Task ClearAsync() 
-            => await Task.CompletedTask;
-
         public async Task UpdateAsync(Guid key, ListItem entity) 
             => await Task.CompletedTask;
     }

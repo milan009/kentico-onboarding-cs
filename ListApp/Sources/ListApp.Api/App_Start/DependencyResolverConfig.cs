@@ -11,7 +11,9 @@ namespace ListApp.Api
         {
             var container = new UnityContainer();
 
-            container.RegisterListItemRepository();
+            var listItemRepositoryBootstrapper = new ListItemRepositoryBootstrapper();
+            listItemRepositoryBootstrapper.RegisterListItemRepository(container);
+            
             config.DependencyResolver = new UnityResolver(container);
         }
     }

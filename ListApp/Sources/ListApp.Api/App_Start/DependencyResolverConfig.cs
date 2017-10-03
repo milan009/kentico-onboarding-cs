@@ -1,9 +1,9 @@
 ﻿using System.Web.Http;
-using ListApp.Api.Services;
+using ListApp.Api.Bootstrapper;
+using ListApp.Api.Services.RouteHelper;
 using ListApp.Api.Utils;
 using ListApp.Contracts.Interfaces;
 using ListApp.Repositories.Bootstrapper;
-using ListApp.Utils.RouteHelper;
 using Microsoft.Practices.Unity;
 
 namespace ListApp.Api

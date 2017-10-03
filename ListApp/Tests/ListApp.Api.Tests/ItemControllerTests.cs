@@ -7,11 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Controllers.V1;
+using ListApp.Api.Services.RouteHelper;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 using ListApp.Api.Tests.Extensions;
 using ListApp.Utils;
-using ListApp.Utils.RouteHelper;
 using NSubstitute;
 using NUnit.Framework;
 

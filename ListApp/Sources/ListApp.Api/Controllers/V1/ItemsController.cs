@@ -2,10 +2,9 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using ListApp.Api.Services.RouteHelper;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
-using ListApp.Utils;
-using ListApp.Utils.RouteHelper;
 using Microsoft.Web.Http;
 
 namespace ListApp.Api.Controllers.V1

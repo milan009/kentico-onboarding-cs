@@ -1,7 +1,7 @@
 ﻿using ListApp.Contracts.Interfaces;
 using Microsoft.Practices.Unity;
 
-namespace ListApp.Utils.RouteHelper
+namespace ListApp.Api.Services.RouteHelper
 {
     public class RouteHelperBootstrapper : IUnityContainerBootstrapper
     {

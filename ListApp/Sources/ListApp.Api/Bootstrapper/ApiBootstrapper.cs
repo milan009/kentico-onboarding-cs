@@ -3,7 +3,7 @@ using System.Web;
 using ListApp.Contracts.Interfaces;
 using Microsoft.Practices.Unity;
 
-namespace ListApp.Api.Services
+namespace ListApp.Api.Bootstrapper
 {
     internal class ApiBootstrapper : IUnityContainerBootstrapper
     {

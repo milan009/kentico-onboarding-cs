@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Web.Http.Routing;
 using ListApp.Contracts.Interfaces;
 
-namespace ListApp.Utils.RouteHelper
+namespace ListApp.Api.Services.RouteHelper
 {
     internal class RouteHelper : IRouteHelper
     {

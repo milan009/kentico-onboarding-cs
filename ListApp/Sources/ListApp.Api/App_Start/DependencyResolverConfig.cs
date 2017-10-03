@@ -13,17 +13,15 @@ namespace ListApp.Api
     {
         internal static void Register(HttpConfiguration config)
         {
-            var container = new UnityContainer();
-
-            container
-                .RegisterBootstrapper<ListItemRepositoryBootstrapper>()
-                .RegisterBootstrapper<RouteHelperBootstrapper>()
-                .RegisterBootstrapper<ApiBootstrapper>();
+            var container = new UnityContainer()
+                .ExecuteBootstrapper<ListItemRepositoryBootstrapper>()
+                .ExecuteBootstrapper<RouteHelperBootstrapper>()
+                .ExecuteBootstrapper<ApiBootstrapper>();
 
             config.DependencyResolver = new UnityResolver(container);
         }
 
-        private static IUnityContainer RegisterBootstrapper<TBootstrapper>(this IUnityContainer container)
+        private static IUnityContainer ExecuteBootstrapper<TBootstrapper>(this IUnityContainer container)
             where TBootstrapper : IUnityContainerBootstrapper, new()
                 => new TBootstrapper().RegisterTypes(container);
     }

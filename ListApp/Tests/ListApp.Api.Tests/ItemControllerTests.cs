@@ -141,15 +141,22 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Delete_WithAnyId_ReturnsNoContentAndCallsRepoDeleteAsyncOnce()
+        public async Task Delete_WithAnyId_ResponseIsOfCorrectTypeAndReturnsDefaultItemAndCallsRepoDeleteAsyncOnce()
         {
-            const HttpStatusCode expectedResponseCode = HttpStatusCode.NoContent;
+            const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
+            var expectedItem = new ListItem
+            {
+                Id = Guid.Empty,
+                Text = "Stretch correctly"
+            };
 
             var receivedResponse = await _itemsController.DeleteAsync(PostedItemGuid);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
             Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).DeleteAsync(PostedItemGuid));
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
+            Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));
+            Assert.That(responseItem, Is.EqualTo(expectedItem).UsingListItemComparer());
         }
     }
 }

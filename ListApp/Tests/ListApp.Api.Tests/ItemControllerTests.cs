@@ -37,12 +37,7 @@ namespace ListApp.Api.Tests
             _itemsRepository.GetAsync(Arg.Any<Guid>())
                 .Returns(Constants.MockListItems.ElementAt(0));
             _itemsRepository.AddAsync(Arg.Any<ListItem>())
-                .Returns(new ListItem
-                    {
-                        Id = PostedItemGuid,
-                        Text = "Create another ListItem item!"
-                    });
-
+                .Returns(Constants.MockListItems.ElementAt(0));
             _itemsRepository.DeleteAsync(Arg.Any<Guid>())
                 .Returns(Constants.MockListItems.ElementAt(0));
             _itemsRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<ListItem>())
@@ -112,8 +107,8 @@ namespace ListApp.Api.Tests
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
             var expectedItem = new ListItem
             {
-                Id = PostedItemGuid,
-                Text = "Create another ListItem item!"
+                Id = Guid.Empty,
+                Text = "Stretch correctly"
             };
 
             var receivedResponse = await _itemsController.PostAsync(PostedItem);
@@ -132,8 +127,8 @@ namespace ListApp.Api.Tests
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItem = new ListItem
             {
-                Id = PostedItemGuid,
-                Text = "Create another ListItem item!"
+                Id = Guid.Empty,
+                Text = "Stretch correctly"
             };
 
             var receivedResponse = await _itemsController.PutAsync(PostedItemGuid, PostedItem);

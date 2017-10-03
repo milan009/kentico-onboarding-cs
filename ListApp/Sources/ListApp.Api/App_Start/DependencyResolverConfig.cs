@@ -2,7 +2,6 @@
 using ListApp.Api.Services;
 using ListApp.Api.Utils;
 using ListApp.Contracts.Interfaces;
-using ListApp.Repositories;
 using ListApp.Repositories.Bootstrapper;
 using ListApp.Utils.RouteHelper;
 using Microsoft.Practices.Unity;

@@ -31,6 +31,10 @@ namespace ListApp.Api.Controllers.V1
 
         public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
         { 
+            // todo: implement GUID generating service
+            // testing piece of code 
+            // newItem.Id = Guid.NewGuid();
+
             var addedItem = await _repository.AddAsync(newItem);
             var location = _routeHelper.GetItemUrl(addedItem.Id);
 

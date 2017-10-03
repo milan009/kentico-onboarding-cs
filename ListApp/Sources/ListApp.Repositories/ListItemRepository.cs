@@ -22,40 +22,40 @@ namespace ListApp.Repositories
 
         public async Task<IEnumerable<Guid>> GetKeysAsync()
         {
-            var l = (await _database.GetCollection<ListItem>("listitems")
+            return await _database.GetCollection<ListItem>("listitems")
                 .Find(FilterDefinition<ListItem>.Empty)
-                .Project<Guid>(Builders<ListItem>.Projection.Include((item => item.Id))).ToListAsync());
-            return null;
-            /*return await Task.FromResult(Constants.MockListItems.Select(
-                listItem => listItem.Id));*/
+                .Project<Guid>(Builders<ListItem>.Projection.Include((item => item.Id))).ToListAsync();
         }
 
         public async Task<IEnumerable<ListItem>> GetAllAsync()
         {
-            return await 
-                (await _database.GetCollection<ListItem>("listitems")
-                    .FindAsync(Builders<ListItem>.Filter.Empty)
-                )
+            return await (await _database.GetCollection<ListItem>("listitems")
+                .FindAsync(_ => true))
                 .ToListAsync();
         }
 
         public async Task<ListItem> GetAsync(Guid key)
         {
-            return (await _database.GetCollection<ListItem>("listitems").FindAsync(Builders<ListItem>.Filter.Eq(e => e.Id, key))).FirstOrDefault();
-            /*  return await Task.FromResult(Constants.MockListItems.ElementAt(0));*/
+            return (await _database.GetCollection<ListItem>("listitems").FindAsync(e => e.Id == key)).FirstOrDefault();
         }
 
         public async Task<ListItem> AddAsync(ListItem entity)
         {
             await _database.GetCollection<ListItem>("listitems").InsertOneAsync(entity);
             return entity;
-            //  await Task.CompletedTask;
         }
 
-        public async Task<ListItem> DeleteAsync(Guid key) 
-            => await Task.FromResult(Constants.MockListItems.ElementAt(0));
+        public async Task<ListItem> DeleteAsync(Guid key)
+        {
+            return await _database.GetCollection<ListItem>("listitems")
+                .FindOneAndDeleteAsync(e => e.Id == key);
+        }
 
-        public async Task<ListItem> UpdateAsync(Guid key, ListItem entity) 
-            => await Task.FromResult(Constants.MockListItems.ElementAt(0));
+        public async Task<ListItem> UpdateAsync(Guid key, ListItem entity)
+        {
+            await _database.GetCollection<ListItem>("listitems")
+                .FindOneAndReplaceAsync(e => e.Id == key, entity);
+            return await GetAsync(key);
+        }
     }
 }

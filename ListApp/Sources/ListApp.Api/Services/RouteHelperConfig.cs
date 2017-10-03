@@ -5,11 +5,6 @@ namespace ListApp.Api.Services
 {
     internal class RouteHelperConfig : IRouteHelperConfig
     {
-        public ItemsRouteHelperConfig()
-        {
-            ItemsControllerRoute = ItemsController.RouteName;
-        }
-
-        public string ItemsControllerRoute { get; set; }
+        public string ItemsControllerRoute => ItemsController.RouteName;
     }
 }

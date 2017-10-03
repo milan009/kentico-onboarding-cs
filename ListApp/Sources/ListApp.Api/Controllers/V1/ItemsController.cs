@@ -46,9 +46,9 @@ namespace ListApp.Api.Controllers.V1
 
         public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id)
         {
-            await _repository.DeleteAsync(id);
+            var deletedItem = await _repository.DeleteAsync(id);
            
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(deletedItem);
         }
 
     } 

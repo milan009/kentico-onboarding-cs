@@ -20,13 +20,13 @@ namespace ListApp.Repositories
         public async Task<ListItem> GetAsync(Guid key) 
             => await Task.FromResult(Constants.MockListItems.ElementAt(0));
 
-        public async Task AddAsync(Guid key, ListItem entity) 
-            => await Task.CompletedTask;
+        public async Task<ListItem> AddAsync(ListItem entity) 
+            => await Task.FromResult(Constants.MockListItems.ElementAt(0));
 
-        public async Task DeleteAsync(Guid key) 
-            => await Task.CompletedTask;
+        public async Task<ListItem> DeleteAsync(Guid key) 
+            => await Task.FromResult(Constants.MockListItems.ElementAt(0));
 
-        public async Task UpdateAsync(Guid key, ListItem entity) 
-            => await Task.CompletedTask;
+        public async Task<ListItem> UpdateAsync(Guid key, ListItem entity) 
+            => await Task.FromResult(Constants.MockListItems.ElementAt(0));
     }
 }

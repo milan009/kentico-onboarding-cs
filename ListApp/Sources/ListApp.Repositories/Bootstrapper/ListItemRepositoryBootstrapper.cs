@@ -7,6 +7,6 @@ namespace ListApp.Repositories.Bootstrapper
     {
         public IUnityContainer RegisterTypes(IUnityContainer container)
             => container
-                .RegisterType<IRepository, ListItemRepository>(new HierarchicalLifetimeManager());
+                .RegisterType<IRepository, ListItemRepository>(new HierarchicalLifetimeManager(), new InjectionConstructor(new ResolvedParameter<string>("connectionString")));
     }
 }

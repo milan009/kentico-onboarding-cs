@@ -26,6 +26,8 @@ namespace ListApp.Repositories
                 .Find(FilterDefinition<ListItem>.Empty)
                 .Project<Guid>(Builders<ListItem>.Projection.Include((item => item.Id))).ToListAsync());
             return null;
+            /*return await Task.FromResult(Constants.MockListItems.Select(
+                listItem => listItem.Id));*/
         }
 
         public async Task<IEnumerable<ListItem>> GetAllAsync()

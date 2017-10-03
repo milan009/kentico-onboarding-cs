@@ -33,15 +33,6 @@ namespace ListApp.Api
             };
         }
 
-        private static string GetDBConnectionString(string connectionName)
-        {
-            System.Configuration.Configuration rootWebConfig =
-                System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/");
-
-            if (rootWebConfig.ConnectionStrings.ConnectionStrings.Count <= 0) return null;
-
-            var connString = rootWebConfig.ConnectionStrings.ConnectionStrings[connectionName];
-            return connString.ConnectionString;
-        }
+        
     }
 }

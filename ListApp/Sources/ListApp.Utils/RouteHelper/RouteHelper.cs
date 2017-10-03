@@ -16,9 +16,7 @@ namespace ListApp.Utils.RouteHelper
             _helper = new UrlHelper(message);
         }
 
-        public string GetItemUrl(Guid id)
-        {
-            return _helper.Route(_config.ItemsControllerRoute, new {id});
-        }
+        public string GetItemUrl(Guid id) 
+            => _helper.Route(_config.ItemsControllerRoute, new {id});
     }
 }

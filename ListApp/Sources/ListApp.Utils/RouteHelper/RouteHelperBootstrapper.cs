@@ -5,10 +5,7 @@ namespace ListApp.Utils.RouteHelper
 {
     public class RouteHelperBootstrapper : IUnityContainerBootstrapper
     {
-        public IUnityContainer RegisterTypes(IUnityContainer container)
-        {
-            return container
-                .RegisterType<IRouteHelper, RouteHelper>(new TransientLifetimeManager());
-        }
+        public IUnityContainer RegisterTypes(IUnityContainer container) => 
+            container.RegisterType<IRouteHelper, RouteHelper>(new HierarchicalLifetimeManager());
     }
 }

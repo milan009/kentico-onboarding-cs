@@ -3,7 +3,7 @@ using ListApp.Contracts.Interfaces;
 
 namespace ListApp.Api.Services
 {
-    internal class ItemsRouteHelperConfig : IRouteHelperConfig
+    internal class RouteHelperConfig : IRouteHelperConfig
     {
         public ItemsRouteHelperConfig()
         {

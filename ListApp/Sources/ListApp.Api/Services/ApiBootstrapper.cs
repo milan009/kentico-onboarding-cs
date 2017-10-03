@@ -7,23 +7,14 @@ namespace ListApp.Api.Services
 {
     internal class ApiBootstrapper : IUnityContainerBootstrapper
     {
-        private void RegisterRouteHelperConfig(IUnityContainer container)
-        {
-            container.RegisterType<IRouteHelperConfig, ItemsRouteHelperConfig>(new HierarchicalLifetimeManager());
-        }
-
-        private void RegisterHttpRequestMessage(IUnityContainer container)
-        {
-            container.RegisterType<HttpRequestMessage>(new HierarchicalLifetimeManager(),
-                new InjectionFactory( _ => (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"]));
-        }
-
         public IUnityContainer RegisterTypes(IUnityContainer container)
-        {
-            RegisterRouteHelperConfig(container);
-            RegisterHttpRequestMessage(container);
+            => container
+            .RegisterType<IRouteHelperConfig, RouteHelperConfig>(new HierarchicalLifetimeManager())
+            .RegisterType<HttpRequestMessage>(
+                new HierarchicalLifetimeManager(),
+                new InjectionFactory(ExtractHttpRequestMessage));
 
-            return container;
-        }
+        private HttpRequestMessage ExtractHttpRequestMessage(IUnityContainer container) =>
+            (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"];
     }
 }

@@ -108,8 +108,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ApiBootstrapper.cs" />
-    <Compile Include="Services\RouteHelperConfig.cs" />
+    <Compile Include="Bootstrapper\ApiBootstrapper.cs" />
+    <Compile Include="Bootstrapper\RouteHelperConfig.cs" />
     <Compile Include="Utils\UnityResolver.cs" />
   </ItemGroup>
   <ItemGroup>

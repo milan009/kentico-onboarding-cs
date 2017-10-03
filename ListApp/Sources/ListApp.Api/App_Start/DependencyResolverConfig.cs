@@ -1,20 +1,30 @@
 ﻿using System.Web.Http;
+using ListApp.Api.Services;
 using ListApp.Api.Utils;
+using ListApp.Contracts.Interfaces;
 using ListApp.Repositories;
+using ListApp.Repositories.Bootstrapper;
+using ListApp.Utils.RouteHelper;
 using Microsoft.Practices.Unity;
 
 namespace ListApp.Api
 {
-    internal class DependencyResolverConfig
+    internal static class DependencyResolverConfig
     {
         internal static void Register(HttpConfiguration config)
         {
             var container = new UnityContainer();
 
-            var listItemRepositoryBootstrapper = new ListItemRepositoryBootstrapper();
-            listItemRepositoryBootstrapper.RegisterListItemRepository(container);
-            
+            container
+                .RegisterBootstrapper<ListItemRepositoryBootstrapper>()
+                .RegisterBootstrapper<RouteHelperBootstrapper>()
+                .RegisterBootstrapper<ApiBootstrapper>();
+
             config.DependencyResolver = new UnityResolver(container);
         }
+
+        private static IUnityContainer RegisterBootstrapper<TBootstrapper>(this IUnityContainer container)
+            where TBootstrapper : IUnityContainerBootstrapper, new()
+                => new TBootstrapper().RegisterTypes(container);
     }
 }

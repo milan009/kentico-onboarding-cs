@@ -27,13 +27,12 @@ namespace ListApp.Contracts.Interfaces
         Task<ListItem> GetAsync(Guid key);
 
         /// <summary>
-        /// Stores given entity in the repository under given key.
+        /// Stores given entity in the repository.
         /// </summary>
-        /// <param name="key">The key used to identify the entity</param>
         /// <param name="entity">The entity to store in the repository</param>
         /// <exception cref="ArgumentNullException">if a null argument is passed</exception>
         /// <exception cref="DuplicateKeyException">if an item with given key already exists</exception>
-        Task AddAsync(Guid key, ListItem entity);
+        Task<ListItem> AddAsync(ListItem entity);
 
         /// <summary>
         /// Deletes entity with corresponding key. Does nothing when given key does
@@ -41,13 +40,13 @@ namespace ListApp.Contracts.Interfaces
         /// key remains in the repository.
         /// </summary>
         /// <param name="key">The key used to identify the entity</param>
-        Task DeleteAsync(Guid key);
+        Task<ListItem> DeleteAsync(Guid key);
 
         /// <summary>
         /// Updates entity found under given key with given entity
         /// </summary>
         /// <param name="key">Key indetifyign the entity to update</param>
         /// <param name="entity">The entity containing the updated data</param>
-        Task UpdateAsync(Guid key, ListItem entity);
+        Task<ListItem> UpdateAsync(Guid key, ListItem entity);
     }
 }

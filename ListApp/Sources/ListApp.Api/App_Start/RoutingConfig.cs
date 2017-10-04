@@ -5,9 +5,9 @@ using MongoDB.Driver.Core.Configuration;
 
 namespace ListApp.Api
 {
-    public static class RoutingConfig
+    internal static class RoutingConfig
     {
-        public static void Register(HttpConfiguration config)
+        internal static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
             config.AddApiVersioning();

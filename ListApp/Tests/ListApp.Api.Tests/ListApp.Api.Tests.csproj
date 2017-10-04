@@ -76,6 +76,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Sources\ListApp.Api.Services\ListApp.Api.Services.csproj">
+      <Project>{C2542321-059E-4A2F-ABC8-9667DE89C1D1}</Project>
+      <Name>ListApp.Api.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Sources\ListApp.Api\ListApp.Api.csproj">
       <Project>{5323BC7A-28EB-4CE4-99EB-E376E52DD362}</Project>
       <Name>ListApp.Api</Name>

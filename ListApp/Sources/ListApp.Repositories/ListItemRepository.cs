@@ -26,8 +26,6 @@ namespace ListApp.Repositories
                 .Find(FilterDefinition<ListItem>.Empty)
                 .Project<Guid>(Builders<ListItem>.Projection.Include((item => item.Id))).ToListAsync());
             return null;
-            /*return await Task.FromResult(Constants.MockListItems.Select(
-                listItem => listItem.Id));*/
         }
 
         public async Task<IEnumerable<ListItem>> GetAllAsync()
@@ -45,19 +43,17 @@ namespace ListApp.Repositories
             /*  return await Task.FromResult(Constants.MockListItems.ElementAt(0));*/
         }
 
-        public async Task AddAsync(Guid key, ListItem entity)
+        public async Task<ListItem> AddAsync(ListItem entity)
         {
             await _database.GetCollection<ListItem>("listitems").InsertOneAsync(entity);
+            return entity;
             //  await Task.CompletedTask;
         }
 
-        public async Task DeleteAsync(Guid key) 
-            => await Task.CompletedTask;
+        public async Task<ListItem> DeleteAsync(Guid key) 
+            => await Task.FromResult(Constants.MockListItems.ElementAt(0));
 
-        public async Task ClearAsync() 
-            => await Task.CompletedTask;
-
-        public async Task UpdateAsync(Guid key, ListItem entity) 
-            => await Task.CompletedTask;
+        public async Task<ListItem> UpdateAsync(Guid key, ListItem entity) 
+            => await Task.FromResult(Constants.MockListItems.ElementAt(0));
     }
 }

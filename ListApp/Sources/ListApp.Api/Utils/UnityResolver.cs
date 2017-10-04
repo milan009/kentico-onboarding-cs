@@ -11,11 +11,7 @@ namespace ListApp.Api.Utils
 
         public UnityResolver(IUnityContainer container)
         {
-            if (container == null)
-            {
-                throw new ArgumentNullException(nameof(container));
-            }
-            this.Container = container;
+            Container = container ?? throw new ArgumentNullException(nameof(container));
         }
 
         public object GetService(Type serviceType)
@@ -48,14 +44,10 @@ namespace ListApp.Api.Utils
             return new UnityResolver(child);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+        public void Dispose() 
+            => Dispose(true);
 
-        private void Dispose(bool disposing)
-        {
-            Container.Dispose();
-        }
+        private void Dispose(bool disposing) 
+            => Container.Dispose();
     }
 }

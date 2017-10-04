@@ -2,54 +2,53 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using ListApp.Api.Services.RouteHelper;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
-using ListApp.Utils;
 using Microsoft.Web.Http;
 
 namespace ListApp.Api.Controllers.V1
 {
     [ApiVersion("1.0")]
-    [RoutePrefix("api/v{version:apiVersion}/items")]
-    [Route("", Name = "itemsBaseRoute")]
+    [Route("api/v{version:apiVersion}/items/{id:guid?}", Name = RouteName)]
     public class ItemsController : ApiController
     {
         private readonly IRepository _repository;
+        private readonly IRouteHelper _routeHelper;
+        internal const string RouteName = "itemsRoute";
 
-        public ItemsController(IRepository repository)
+        public ItemsController(IRepository repository, IRouteHelper routeHelper)
         {
             _repository = repository;
+            _routeHelper = routeHelper;
         }
 
         public async Task<IHttpActionResult> GetAsync() 
             => Ok(await _repository.GetAllAsync());
 
-        [Route("{id}")]
         public async Task<IHttpActionResult> GetAsync([FromUri] Guid id) 
             => Ok(await _repository.GetAsync(id));
 
-
         public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
-        {
-            await _repository.AddAsync(newItem.Id, newItem);
+        { 
+            var addedItem = await _repository.AddAsync(newItem);
+            var location = _routeHelper.GetItemUrl(addedItem.Id);
 
-            return Created(Url.Route("itemsBaseRoute", null) + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);
+            return Created(location, addedItem);
         }
 
-        [Route("{id}", Name = "itemsPutRoute")]
         public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem)
         {
-            await _repository.UpdateAsync(id, newItem);
+            var putItem = await _repository.UpdateAsync(id, newItem);
  
-            return Created(Url.Route("itemsPutRoute", Constants.NonExistingItemGuid), Constants.CreatedListItem);
+            return Ok(putItem);
         }
 
-        [Route("{id}")]
         public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id)
         {
-            await _repository.DeleteAsync(id);
+            var deletedItem = await _repository.DeleteAsync(id);
            
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(deletedItem);
         }
     }
 }

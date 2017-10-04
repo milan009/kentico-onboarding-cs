@@ -49,7 +49,6 @@
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -62,20 +61,20 @@
     <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Net.Http" />
+<<<<<<< HEAD
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
+=======
+>>>>>>> 7973f948
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -113,6 +112,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Bootstrapper\ApiBootstrapper.cs" />
+    <Compile Include="Bootstrapper\RouteHelperConfig.cs" />
     <Compile Include="Utils\UnityResolver.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +130,10 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ListApp.Api.Services\ListApp.Api.Services.csproj">
+      <Project>{C2542321-059E-4A2F-ABC8-9667DE89C1D1}</Project>
+      <Name>ListApp.Api.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ListApp.Contracts\ListApp.Contracts.csproj">
       <Project>{f895dfd4-2ab2-4935-9da8-8d2a5c3d91fa}</Project>
       <Name>ListApp.Contracts</Name>
@@ -136,10 +141,6 @@
     <ProjectReference Include="..\ListApp.Repositories\ListApp.Repositories.csproj">
       <Project>{57619956-4577-4376-8f67-17dda4320310}</Project>
       <Name>ListApp.Repositories</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ListApp.Utils\ListApp.Utils.csproj">
-      <Project>{f66d6548-7b1c-403f-a586-1e90c3a9a85e}</Project>
-      <Name>ListApp.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -3,11 +3,13 @@ using Newtonsoft.Json.Serialization;
 
 namespace ListApp.Api
 {
-    public static class SerializerConfig
+    internal static class SerializerConfig
     {
-        public static void Register(HttpConfiguration config)
-        {
-            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-        }
+        internal static void Register(HttpConfiguration config) => 
+            config
+                .Formatters
+                .JsonFormatter 
+                .SerializerSettings
+                .ContractResolver = new CamelCasePropertyNamesContractResolver();
     }
 }

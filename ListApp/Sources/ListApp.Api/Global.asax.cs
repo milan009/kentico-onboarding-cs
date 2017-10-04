@@ -7,7 +7,7 @@ namespace ListApp.Api
     {
         protected void Application_Start()
         {
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            GlobalConfiguration.Configure(RoutingConfig.Register);
             GlobalConfiguration.Configure(SerializerConfig.Register);
             GlobalConfiguration.Configure(DependencyResolverConfig.Register);
         }

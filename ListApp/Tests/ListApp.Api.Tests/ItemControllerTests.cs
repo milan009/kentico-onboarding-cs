@@ -24,13 +24,12 @@ namespace ListApp.Api.Tests
         private static readonly ListItem PostedItem = new ListItem { Id = PostedItemGuid, Text = PostedItemText };
 
         private ItemsController _itemsController;
-        private IRepository<Guid, ListItem> _itemsRepository;
-
+        private IRepository _itemsRepository;
 
         [SetUp]
         public void SetUp()
         {
-            _itemsRepository = Substitute.For<IRepository<Guid, ListItem>>();
+            _itemsRepository = Substitute.For<IRepository>();
             _itemsRepository.GetAllAsync().Returns(Constants.MockListItems);
             _itemsRepository.GetAsync(Arg.Any<Guid>()).Returns(Constants.MockListItems.ElementAt(0));
 
@@ -67,7 +66,6 @@ namespace ListApp.Api.Tests
             Assert.IsTrue(responseMessage.TryGetContentValue(out IEnumerable<ListItem> responseItems));
             Assert.That(responseItems, Is.EqualTo(expectedItems).UsingListItemComparer());
         }
-
 
         [Test]
         public async Task Get_WithAnyId_ResponseIsOfCorrectTypeAndReturnsFirtsItemAndCallsRepoGetAsyncMethodOnceWithCorrectId()

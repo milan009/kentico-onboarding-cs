@@ -3,7 +3,7 @@ using Microsoft.Practices.Unity;
 
 namespace ListApp.Repositories
 {
-    public static class ListItemRepositoryBootstrapperExtension
+    public static class UnityContainerBootstrapperExtension
     {
         public static void RegisterListItemRepository(this IUnityContainer container)
         {

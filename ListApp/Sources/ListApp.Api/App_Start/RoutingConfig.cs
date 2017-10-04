@@ -5,7 +5,7 @@ using MongoDB.Driver.Core.Configuration;
 
 namespace ListApp.Api
 {
-    public static class WebApiConfig
+    public static class RoutingConfig
     {
         public static void Register(HttpConfiguration config)
         {

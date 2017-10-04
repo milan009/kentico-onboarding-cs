@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
-using ListApp.Utils;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace ListApp.Repositories
@@ -24,7 +21,7 @@ namespace ListApp.Repositories
         {
             return await _database.GetCollection<ListItem>("listitems")
                 .Find(FilterDefinition<ListItem>.Empty)
-                .Project<Guid>(Builders<ListItem>.Projection.Include((item => item.Id))).ToListAsync();
+                .Project<Guid>(Builders<ListItem>.Projection.Include(item => item.Id)).ToListAsync();
         }
 
         public async Task<IEnumerable<ListItem>> GetAllAsync()

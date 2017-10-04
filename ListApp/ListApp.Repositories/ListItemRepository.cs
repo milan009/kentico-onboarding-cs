@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace ListApp.Repositories
 {
-    public class ListItemRepository : IRepository<Guid, ListItem>
+    internal class ListItemRepository : IRepository
     {
         private readonly IMongoDatabase _database;
 
@@ -30,11 +30,11 @@ namespace ListApp.Repositories
                 listItem => listItem.Id));*/
         }
 
-        public async Task<IEnumerable<ListItem>> GetAllAsync(Func<ListItem, bool> predicate = null)
+        public async Task<IEnumerable<ListItem>> GetAllAsync()
         {
             return await 
                 (await _database.GetCollection<ListItem>("listitems")
-                    .FindAsync(Builders<ListItem>.Filter.Where((item) => predicate(item)))
+                    .FindAsync(Builders<ListItem>.Filter.Empty)
                 )
                 .ToListAsync();
         }
@@ -51,14 +51,13 @@ namespace ListApp.Repositories
             //  await Task.CompletedTask;
         }
 
-        public async Task DeleteAsync(Guid key)
-        {
-            await Task.CompletedTask;
-        }
+        public async Task DeleteAsync(Guid key) 
+            => await Task.CompletedTask;
 
-        public async Task ClearAsync()
-        {
-            await Task.CompletedTask;
-        }
+        public async Task ClearAsync() 
+            => await Task.CompletedTask;
+
+        public async Task UpdateAsync(Guid key, ListItem entity) 
+            => await Task.CompletedTask;
     }
 }

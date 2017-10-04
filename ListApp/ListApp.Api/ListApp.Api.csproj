@@ -105,13 +105,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="App_Start\SerializerConfig.cs" />
+    <Compile Include="App_Start\DependencyResolverConfig.cs" />
+    <Compile Include="App_Start\RoutingConfig.cs" />
     <Compile Include="Controllers\V1\ItemsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\GuidGenerator.cs" />
     <Compile Include="Utils\UnityResolver.cs" />
   </ItemGroup>
   <ItemGroup>

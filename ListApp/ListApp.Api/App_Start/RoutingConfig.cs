@@ -1,12 +1,5 @@
-﻿using System;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Http.Routing;
-using ListApp.Contracts.Interfaces;
-using ListApp.Contracts.Models;
-using ListApp.Repositories;
-using ListApp.Api.Services;
-using ListApp.Api.Utils;
-using Microsoft.Practices.Unity;
 using Microsoft.Web.Http.Routing;
 using MongoDB.Driver.Core.Configuration;
 
@@ -20,10 +13,10 @@ namespace ListApp.Api
             config.AddApiVersioning();
 
             // Dependency resolver
-            var container = new UnityContainer();
-            container.RegisterType<IRepository<Guid, ListItem>, ListItemRepository>(new InjectionConstructor(GetDBConnectionString("MongoDBConnectionString")));
-            container.RegisterType<IGuidGenerator, GuidGenerator>(new HierarchicalLifetimeManager());
-            config.DependencyResolver = new UnityResolver(container);
+            //var container = new UnityContainer();
+            //container.RegisterType<IRepository<Guid, ListItem>, ListItemRepository>(new InjectionConstructor(GetDBConnectionString("MongoDBConnectionString")));
+            //container.RegisterType<IGuidGenerator, GuidGenerator>(new HierarchicalLifetimeManager());
+            //config.DependencyResolver = new UnityResolver(container);
 
             // Web API routes
             config.MapHttpAttributeRoutes(InitializeConstraintResolver());

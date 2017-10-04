@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using ListApp.Api.Interfaces;
-using ListApp.Api.Models;
-using ListApp.Api.Utils;
+using ListApp.Contracts.Interfaces;
+using ListApp.Contracts.Models;
+using ListApp.Utils;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-
-namespace ListApp.Api.Repositories
+namespace ListApp.Repositories
 {
     public class ListItemRepository : IRepository<Guid, ListItem>
     {
@@ -23,21 +22,21 @@ namespace ListApp.Api.Repositories
 
         public async Task<IEnumerable<Guid>> GetKeysAsync()
         {
-            return await Task.FromResult(Constants.MockListItems.Select(
-                listItem => listItem.Id));
+            var l = (await _database.GetCollection<ListItem>("listitems")
+                .Find(FilterDefinition<ListItem>.Empty)
+                .Project<Guid>(Builders<ListItem>.Projection.Include((item => item.Id))).ToListAsync());
+            return null;
+            /*return await Task.FromResult(Constants.MockListItems.Select(
+                listItem => listItem.Id));*/
         }
 
         public async Task<IEnumerable<ListItem>> GetAllAsync(Func<ListItem, bool> predicate = null)
         {
-            var a = await _database.GetCollection<BsonDocument>("listitems")
-                .Find(new BsonDocument()).ToListAsync();
-            var items = a.Select(e => new ListItem {Id = Guid.Parse(e["Id"].AsString), Text = e["Text"].AsString});
-                
-            //     return await _database.GetCollection<ListItem>("listitems").Find(new BsonDocument()).ToListAsync();
-
-            /*    return predicate == null ? await Task.FromResult(Constants.MockListItems)
-                    : await Task.FromResult(Constants.MockListItems.Where(predicate));*/
-            return items;
+            return await 
+                (await _database.GetCollection<ListItem>("listitems")
+                    .FindAsync(Builders<ListItem>.Filter.Where((item) => predicate(item)))
+                )
+                .ToListAsync();
         }
 
         public async Task<ListItem> GetAsync(Guid key)
@@ -48,7 +47,8 @@ namespace ListApp.Api.Repositories
 
         public async Task AddAsync(Guid key, ListItem entity)
         {
-            await Task.CompletedTask;
+            await _database.GetCollection<ListItem>("listitems").InsertOneAsync(entity);
+            //  await Task.CompletedTask;
         }
 
         public async Task DeleteAsync(Guid key)

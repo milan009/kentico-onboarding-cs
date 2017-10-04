@@ -2,9 +2,9 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using ListApp.Api.Interfaces;
-using ListApp.Api.Models;
-using ListApp.Api.Utils;
+using ListApp.Contracts.Interfaces;
+using ListApp.Contracts.Models;
+using ListApp.Utils;
 using Microsoft.Web.Http;
 
 namespace ListApp.Api.Controllers.V1
@@ -24,7 +24,10 @@ namespace ListApp.Api.Controllers.V1
 
         [Route]
         public async Task<IHttpActionResult> GetAsync()
-            => Ok(await _repository.GetAllAsync());
+        {
+            var l = await _repository.GetKeysAsync();
+            return Ok(await _repository.GetAllAsync());
+        }
 
         [Route("{id}")]
         public async Task<IHttpActionResult> GetAsync([FromUri] Guid id) 
@@ -37,7 +40,7 @@ namespace ListApp.Api.Controllers.V1
             newItem.Id = _guidGenerator.GenerateGuid();
             await _repository.AddAsync(newItem.Id, newItem);
 
-            return Created(Url.Request.RequestUri + $"/{Constants.NonExistingItemGuid}", Constants.CreatedListItem);
+            return Created(Url.Request.RequestUri + $"/{newItem.Id}", newItem);
         }
 
         [Route("{id}")]

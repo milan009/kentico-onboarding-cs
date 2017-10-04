@@ -7,10 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Controllers.V1;
-using ListApp.Api.Interfaces;
-using ListApp.Api.Models;
+using ListApp.Contracts.Interfaces;
+using ListApp.Contracts.Models;
 using ListApp.Api.Tests.Extensions;
-using ListApp.Api.Utils;
+using ListApp.Utils;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -37,20 +37,27 @@ namespace ListApp.Api.Tests
             _guidGenerator = Substitute.For<IGuidGenerator>();
             _guidGenerator.GenerateGuid().Returns(Constants.NonExistingItemGuid);
 
-            _itemsController = new ItemsController(_itemsRepository, _guidGenerator)
-            {
-                Configuration = Substitute.For<HttpConfiguration>(),
-                Request = Substitute.For<HttpRequestMessage>()
-            };
+            _itemsController =
+                new ItemsController(_itemsRepository, _guidGenerator)
+                {
+                    Configuration = Substitute.For<HttpConfiguration>(),
+                    Request = Substitute.For<HttpRequestMessage>()
+                };
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _itemsController.Dispose();
+        }
+        
         [Test]
-        public async Task Get_NoId_ResponseIsOfCorrectTypeAndReturnsDefaultItems()
+        public async Task Get_NoId_ResponseIsOfCorrectTypeAndReturnsDefaultItemsAndCallsRepoGetAsyncMethodOnce()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItems = new []
             {
-                new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000000"), Text = "Stretch correctly"},
+                new ListItem {Id = Guid.Empty, Text = "Stretch correctly"},
                 new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Text = "Make a coffey"},
                 new ListItem {Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Text = "Take over the world"}
             };
@@ -64,13 +71,14 @@ namespace ListApp.Api.Tests
             Assert.That(responseItems, Is.EqualTo(expectedItems).UsingListItemComparer());
         }
 
+
         [Test]
-        public async Task Get_WithAnyId_ResponseIsOfCorrectTypeAndReturnsFirtsItem()
+        public async Task Get_WithAnyId_ResponseIsOfCorrectTypeAndReturnsFirtsItemAndCallsRepoGetAsyncMethodOnceWithCorrectId()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItem = new ListItem
             {
-                Id = Guid.Parse("00000000-0000-0000-0000-000000000000"),
+                Id = Guid.Empty,
                 Text = "Stretch correctly"
             };
 
@@ -84,20 +92,27 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Post_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocation()
+        public async Task Post_ValidItem_GeneratesAGuid()
         {
-            var expectedLocation = _itemsController.Url.Request.RequestUri + "/00000000-0000-0000-0000-000000000003";
+            await _itemsController.PostAsync(PostedItem);
+
+            Assert.DoesNotThrow(() => _guidGenerator.Received(1).GenerateGuid());
+        }
+
+        [Test]
+        public async Task Post_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocationAndCallsRepoAddAsyncOnce()
+        {
+            var expectedLocation = _itemsController.Url.Request.RequestUri + $"/{PostedItemGuid}";
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
             var expectedItem = new ListItem
             {
-                Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                Id = PostedItemGuid,
                 Text = "Create another ListItem item!"
             };
 
             var receivedResponse = await _itemsController.PostAsync(PostedItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            Assert.DoesNotThrow(() => _guidGenerator.Received(1).GenerateGuid());
             Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).AddAsync(PostedItemGuid, PostedItem));
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
             Assert.AreEqual(expectedLocation, responseMessage.Headers.Location.ToString());
@@ -106,13 +121,13 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Put_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocation()
+        public async Task Put_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocationAndCallsRepoAddAndDeleteOnce()
         {
-            var expectedLocation = _itemsController.Url.Request.RequestUri + "/00000000-0000-0000-0000-000000000003";
+            var expectedLocation = _itemsController.Url.Request.RequestUri + $"/{PostedItemGuid}";
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
             var expectedItem = new ListItem
             {
-                Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                Id = PostedItemGuid,
                 Text = "Create another ListItem item!"
             };
 
@@ -128,7 +143,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Delete_WithAnyId_ReturnsNoContent()
+        public async Task Delete_WithAnyId_ReturnsNoContentAndCallsRepoDeleteAsyncOnce()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.NoContent;
 

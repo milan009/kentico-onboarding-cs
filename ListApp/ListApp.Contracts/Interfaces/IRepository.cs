@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Linq;
 using System.Threading.Tasks;
 
-namespace ListApp.Api.Interfaces
+namespace ListApp.Contracts.Interfaces
 {
     public interface IRepository<TKeyType, TItemType>
     {

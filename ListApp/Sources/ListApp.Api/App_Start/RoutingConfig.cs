@@ -1,7 +1,6 @@
 ﻿using System.Web.Http;
 using System.Web.Http.Routing;
 using Microsoft.Web.Http.Routing;
-using MongoDB.Driver.Core.Configuration;
 
 namespace ListApp.Api
 {
@@ -11,12 +10,6 @@ namespace ListApp.Api
         {
             // Web API configuration and services
             config.AddApiVersioning();
-
-            // Dependency resolver
-            //var container = new UnityContainer();
-            //container.RegisterType<IRepository<Guid, ListItem>, ListItemRepository>(new InjectionConstructor(GetDBConnectionString("MongoDBConnectionString")));
-            //container.RegisterType<IGuidGenerator, GuidGenerator>(new HierarchicalLifetimeManager());
-            //config.DependencyResolver = new UnityResolver(container);
 
             // Web API routes
             config.MapHttpAttributeRoutes(InitializeConstraintResolver());

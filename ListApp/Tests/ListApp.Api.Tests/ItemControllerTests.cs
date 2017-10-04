@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Controllers.V1;
+using ListApp.Api.Services.GuidGenerator;
 using ListApp.Api.Services.RouteHelper;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
@@ -27,6 +28,7 @@ namespace ListApp.Api.Tests
         private ItemsController _itemsController;
         private IRepository _itemsRepository;
         private IRouteHelper _routeHelper;
+        private IGuidGenerator _guidGenerator;
 
         [SetUp]
         public void SetUp()
@@ -47,8 +49,11 @@ namespace ListApp.Api.Tests
             _routeHelper.GetItemUrl(Arg.Any<Guid>())
                 .Returns(Guid.Empty.ToString());
 
+            _guidGenerator = Substitute.For<IGuidGenerator>();
+                _guidGenerator.GenerateGuid().ReturnsForAnyArgs(Guid.Empty);
+
             _itemsController =
-                new ItemsController(_itemsRepository, _routeHelper)
+                new ItemsController(_itemsRepository, _routeHelper, _guidGenerator)
                 {
                     Configuration = new HttpConfiguration(),
                     Request = Substitute.For<HttpRequestMessage>()

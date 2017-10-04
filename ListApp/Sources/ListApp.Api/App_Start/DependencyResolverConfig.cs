@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using ListApp.Api.Bootstrapper;
+using ListApp.Api.Services.GuidGenerator;
 using ListApp.Api.Services.RouteHelper;
 using ListApp.Api.Utils;
 using ListApp.Contracts.Interfaces;
@@ -15,7 +16,8 @@ namespace ListApp.Api
             var container = new UnityContainer()
                 .ExecuteBootstrapper<ListItemRepositoryBootstrapper>()
                 .ExecuteBootstrapper<RouteHelperBootstrapper>()
-                .ExecuteBootstrapper<ApiBootstrapper>();
+                .ExecuteBootstrapper<ApiBootstrapper>()
+                .ExecuteBootstrapper<GuidGeneratorBootstrapper>();
 
             config.DependencyResolver = new UnityResolver(container);
         }

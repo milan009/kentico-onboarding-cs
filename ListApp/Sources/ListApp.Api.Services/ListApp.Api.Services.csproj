@@ -57,6 +57,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GuidGenerator\GuidGenerator.cs" />
+    <Compile Include="GuidGenerator\GuidGeneratorBootstrapper.cs" />
+    <Compile Include="GuidGenerator\IGuidGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RouteHelper\IRouteHelper.cs" />
     <Compile Include="RouteHelper\RouteHelper.cs" />

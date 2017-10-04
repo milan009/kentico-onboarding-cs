@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using ListApp.Api.Services.GuidGenerator;
 using ListApp.Api.Services.RouteHelper;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
@@ -15,12 +16,14 @@ namespace ListApp.Api.Controllers.V1
     {
         private readonly IRepository _repository;
         private readonly IRouteHelper _routeHelper;
+        private readonly IGuidGenerator _guidGenerator;
         internal const string RouteName = "itemsRoute";
 
-        public ItemsController(IRepository repository, IRouteHelper routeHelper)
+        public ItemsController(IRepository repository, IRouteHelper routeHelper, IGuidGenerator guidGenerator)
         {
             _repository = repository;
             _routeHelper = routeHelper;
+            _guidGenerator = guidGenerator;
         }
 
         public async Task<IHttpActionResult> GetAsync() 
@@ -30,10 +33,11 @@ namespace ListApp.Api.Controllers.V1
             => Ok(await _repository.GetAsync(id));
 
         public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
-        { 
-            // todo: implement GUID generating service
-            // testing piece of code 
-            // newItem.Id = Guid.NewGuid();
+        {
+            if (newItem.Id != Guid.Empty)
+                return BadRequest("Posted item has specified ID!");
+
+            newItem.Id = _guidGenerator.GenerateGuid();
 
             var addedItem = await _repository.AddAsync(newItem);
             var location = _routeHelper.GetItemUrl(addedItem.Id);

@@ -8,12 +8,6 @@ namespace ListApp.Contracts.Interfaces
     public interface IRepository
     {
         /// <summary>
-        /// A method that returns all keys from repository
-        /// </summary>
-        /// <returns>A collection of all keys</returns>
-        Task<IEnumerable<Guid>> GetKeysAsync();
-
-        /// <summary>
         /// A method that returns all items in the repository.
         /// </summary>
         /// <returns>A collection of all items</returns>

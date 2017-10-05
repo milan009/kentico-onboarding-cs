@@ -10,10 +10,6 @@ namespace ListApp.Repositories
 {
     internal class ListItemRepository : IRepository
     {
-        public async Task<IEnumerable<Guid>> GetKeysAsync() 
-            => await Task.FromResult(Constants.MockListItems
-                .Select(listItem => listItem.Id));
-
         public async Task<IEnumerable<ListItem>> GetAllAsync() 
             => await Task.FromResult(Constants.MockListItems);
 

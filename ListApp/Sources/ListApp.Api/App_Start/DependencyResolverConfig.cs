@@ -14,7 +14,7 @@ namespace ListApp.Api
         {
             var container = new UnityContainer()
                 .ExecuteBootstrapper<ListItemRepositoryBootstrapper>()
-                .ExecuteBootstrapper<RouteHelperBootstrapper>()
+                .ExecuteBootstrapper<ServicesApiBootstrapper>()
                 .ExecuteBootstrapper<ApiBootstrapper>();
 
             config.DependencyResolver = new UnityResolver(container);

@@ -13,9 +13,10 @@ namespace ListApp.Api.Controllers.V1
     [Route("api/v{version:apiVersion}/items/{id:guid?}", Name = RouteName)]
     public class ItemsController : ApiController
     {
+        internal const string RouteName = "itemsRoute";
+
         private readonly IRepository _repository;
         private readonly IRouteHelper _routeHelper;
-        internal const string RouteName = "itemsRoute";
 
         public ItemsController(IRepository repository, IRouteHelper routeHelper)
         {

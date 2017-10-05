@@ -46,7 +46,7 @@ namespace ListApp.Api.Tests
         }
         
         [Test]
-        public async Task Get_NoId_ResponseIsOfCorrectTypeAndReturnsDefaultItemsAndCallsRepoGetAsyncMethodOnce()
+        public async Task Get_NoId_ReturnsExpectedResponse()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItems = new []
@@ -67,7 +67,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Get_WithAnyId_ResponseIsOfCorrectTypeAndReturnsFirtsItemAndCallsRepoGetAsyncMethodOnceWithCorrectId()
+        public async Task Get_WithAnyId_ReturnsExpectedResponse()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItem = new ListItem
@@ -87,7 +87,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Post_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocationAndCallsRepoAddAsyncOnce()
+        public async Task Post_ValidItem_ReturnsExpectedResponse()
         {
             var expectedLocation = Guid.Empty.ToString();
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
@@ -111,7 +111,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Put_ValidItem_ResponseIsOfCorrectTypeAndReturnsDefaultItemWithCorrectLocationAndCallsRepoAddAndDeleteOnce()
+        public async Task Put_ValidItem_ReturnsExpectedResponse()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItem = new ListItem
@@ -131,7 +131,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Delete_WithAnyId_ResponseIsOfCorrectTypeAndReturnsDefaultItemAndCallsRepoDeleteAsyncOnce()
+        public async Task Delete_ReturnsExpectedResponse()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItem = new ListItem

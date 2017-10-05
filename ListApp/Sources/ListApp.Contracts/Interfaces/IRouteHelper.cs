@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ListApp.Api.Services.RouteHelper
+namespace ListApp.Contracts.Interfaces
 {
     public interface IRouteHelper
     {

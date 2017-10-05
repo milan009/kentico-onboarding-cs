@@ -67,7 +67,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Get_WithAnyId_ReturnsExpectedResponse()
+        public async Task Get_WithAnyId_ReturnsOkResponse()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItem = new ListItem
@@ -87,7 +87,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Post_ValidItem_ReturnsExpectedResponse()
+        public async Task Post_ValidItem_ReturnsCreatedResponse()
         {
             var expectedLocation = Guid.Empty.ToString();
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
@@ -111,7 +111,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Put_ValidItem_ReturnsExpectedResponse()
+        public async Task Put_ValidItem_ReturnsOkResponse()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItem = new ListItem
@@ -131,7 +131,7 @@ namespace ListApp.Api.Tests
         }
 
         [Test]
-        public async Task Delete_ReturnsExpectedResponse()
+        public async Task Delete_ReturnsOkResponse()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var expectedItem = new ListItem

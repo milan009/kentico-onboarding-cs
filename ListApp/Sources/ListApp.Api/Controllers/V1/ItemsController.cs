@@ -39,7 +39,7 @@ namespace ListApp.Api.Controllers.V1
         }
 
         public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem) 
-            => Ok(await _repository.UpdateAsync(id, newItem));
+            => Ok(await _repository.UpdateAsync(newItem));
 
         public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id) 
             => Ok(await _repository.DeleteAsync(id));

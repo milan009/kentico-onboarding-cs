@@ -40,7 +40,7 @@ namespace ListApp.Api.Tests
                 .Returns(Constants.MockListItems.ElementAt(0));
             _itemsRepository.DeleteAsync(Arg.Any<Guid>())
                 .Returns(Constants.MockListItems.ElementAt(0));
-            _itemsRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<ListItem>())
+            _itemsRepository.UpdateAsync(Arg.Any<ListItem>())
                 .Returns(Constants.MockListItems.ElementAt(0));
 
             _routeHelper = Substitute.For<IRouteHelper>();
@@ -134,7 +134,7 @@ namespace ListApp.Api.Tests
             var receivedResponse = await _itemsController.PutAsync(PostedItemGuid, PostedItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).UpdateAsync(PostedItemGuid, PostedItem));
+            Assert.DoesNotThrowAsync(() => _itemsRepository.Received(1).UpdateAsync(PostedItem));
             Assert.AreEqual(expectedResponseCode, responseMessage.StatusCode);
             Assert.IsTrue(responseMessage.TryGetContentValue(out ListItem responseItem));
             Assert.That(responseItem, Is.EqualTo(expectedItem).UsingListItemComparer());

@@ -17,16 +17,16 @@ namespace ListApp.Repositories
         public async Task<IEnumerable<ListItem>> GetAllAsync() 
             => await Task.FromResult(Constants.MockListItems);
 
-        public async Task<ListItem> GetAsync(Guid key) 
+        public async Task<ListItem> GetAsync(Guid id) 
             => await Task.FromResult(Constants.MockListItems.ElementAt(0));
 
-        public async Task<ListItem> AddAsync(ListItem entity) 
+        public async Task<ListItem> AddAsync(ListItem item) 
             => await Task.FromResult(Constants.MockListItems.ElementAt(0));
 
-        public async Task<ListItem> DeleteAsync(Guid key) 
+        public async Task<ListItem> DeleteAsync(Guid id) 
             => await Task.FromResult(Constants.MockListItems.ElementAt(0));
 
-        public async Task<ListItem> UpdateAsync(Guid key, ListItem entity) 
+        public async Task<ListItem> UpdateAsync(ListItem entity) 
             => await Task.FromResult(Constants.MockListItems.ElementAt(0));
     }
 }

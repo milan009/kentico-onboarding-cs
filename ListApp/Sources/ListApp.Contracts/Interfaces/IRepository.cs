@@ -20,33 +20,30 @@ namespace ListApp.Contracts.Interfaces
         Task<IEnumerable<ListItem>> GetAllAsync();
 
         /// <summary>
-        /// A method that returns a specific item identified by given key.
+        /// A method that returns a specific item identified by given id.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns>The item with given key, null if no such item exists.</returns>
-        Task<ListItem> GetAsync(Guid key);
+        /// <param name="id">The GUID that identifies required item</param>
+        /// <returns>The item with given id, null if no such item exists.</returns>
+        Task<ListItem> GetAsync(Guid id);
 
         /// <summary>
-        /// Stores given entity in the repository.
+        /// Stores given item in the repository.
         /// </summary>
-        /// <param name="entity">The entity to store in the repository</param>
-        /// <exception cref="ArgumentNullException">if a null argument is passed</exception>
-        /// <exception cref="DuplicateKeyException">if an item with given key already exists</exception>
-        Task<ListItem> AddAsync(ListItem entity);
+        /// <param name="item">The item to store in the repository</param>
+        Task<ListItem> AddAsync(ListItem item);
 
         /// <summary>
-        /// Deletes entity with corresponding key. Does nothing when given key does
+        /// Deletes item with corresponding id. Does nothing when given id does
         /// not correspond to any item as the goal has been met - no item with given
-        /// key remains in the repository.
+        /// id remains in the repository.
         /// </summary>
-        /// <param name="key">The key used to identify the entity</param>
-        Task<ListItem> DeleteAsync(Guid key);
+        /// <param name="id">The GUID used to identify the item</param>
+        Task<ListItem> DeleteAsync(Guid id);
 
         /// <summary>
-        /// Updates entity found under given key with given entity
+        /// Updates item with the same id of given item with sent data
         /// </summary>
-        /// <param name="key">Key indetifyign the entity to update</param>
-        /// <param name="entity">The entity containing the updated data</param>
-        Task<ListItem> UpdateAsync(Guid key, ListItem entity);
+        /// <param name="item">The item containing the updated data</param>
+        Task<ListItem> UpdateAsync(ListItem item);
     }
 }

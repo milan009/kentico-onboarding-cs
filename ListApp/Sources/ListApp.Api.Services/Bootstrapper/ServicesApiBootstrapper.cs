@@ -10,7 +10,7 @@ using Microsoft.Practices.Unity;
 
 namespace ListApp.Api.Services.Bootstrapper
 {
-    public class ApiServicesBootstrapper : IUnityContainerBootstrapper
+    public class ServicesApiBootstrapper : IUnityContainerBootstrapper
     {
         public IUnityContainer RegisterTypes(IUnityContainer container)
         {

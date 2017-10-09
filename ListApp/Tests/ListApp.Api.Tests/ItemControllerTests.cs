@@ -7,8 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Api.Controllers.V1;
-using ListApp.Api.Services.GuidGenerator;
-using ListApp.Api.Services.RouteHelper;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 using ListApp.Api.Tests.Extensions;

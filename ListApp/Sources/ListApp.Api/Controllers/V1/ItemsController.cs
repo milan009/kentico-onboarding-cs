@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using ListApp.Api.Services.RouteHelper;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 using Microsoft.Web.Http;

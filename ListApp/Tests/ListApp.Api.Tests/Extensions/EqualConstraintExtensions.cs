@@ -6,7 +6,7 @@ namespace ListApp.Api.Tests.Extensions
 {
     public static class EqualConstraintExtensions
     {
-        public static EqualConstraint UsingListItemComparer(this EqualConstraint constr) => constr.Using(ListItemEqualityComparer.Instance);
+        public static EqualConstraint UsingListItemComparer(this EqualConstraint constraint) => constraint.Using(ListItemEqualityComparer.Instance);
 
         private class ListItemEqualityComparer : IEqualityComparer<ListItem>
         {

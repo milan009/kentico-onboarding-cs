@@ -11,10 +11,11 @@ namespace ListApp.Api.Controllers.V1
     [Route("api/v{version:apiVersion}/items/{id:guid?}", Name = RouteName)]
     public class ItemsController : ApiController
     {
+        internal const string RouteName = "itemsRoute";
+
         private readonly IRepository _repository;
         private readonly IRouteHelper _routeHelper;
         private readonly IGuidGenerator _guidGenerator;
-        internal const string RouteName = "itemsRoute";
 
         public ItemsController(IRepository repository, IRouteHelper routeHelper, IGuidGenerator guidGenerator)
         {
@@ -42,18 +43,10 @@ namespace ListApp.Api.Controllers.V1
             return Created(location, addedItem);
         }
 
-        public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem)
-        {
-            var putItem = await _repository.UpdateAsync(id, newItem);
- 
-            return Ok(putItem);
-        }
+        public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem) 
+            => Ok(await _repository.UpdateAsync(newItem));
 
-        public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id)
-        {
-            var deletedItem = await _repository.DeleteAsync(id);
-           
-            return Ok(deletedItem);
-        }
-    }
+        public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id) 
+            => Ok(await _repository.DeleteAsync(id));
+    } 
 }

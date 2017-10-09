@@ -31,28 +31,28 @@ namespace ListApp.Repositories
                 .ToListAsync();
         }
 
-        public async Task<ListItem> GetAsync(Guid key)
+        public async Task<ListItem> GetAsync(Guid id)
         {
-            return (await _database.GetCollection<ListItem>("listitems").FindAsync(e => e.Id == key)).FirstOrDefault();
+            return (await _database.GetCollection<ListItem>("listitems").FindAsync(e => e.Id == id)).FirstOrDefault();
         }
 
-        public async Task<ListItem> AddAsync(ListItem entity)
+        public async Task<ListItem> AddAsync(ListItem item)
         {
-            await _database.GetCollection<ListItem>("listitems").InsertOneAsync(entity);
-            return entity;
+            await _database.GetCollection<ListItem>("listitems").InsertOneAsync(item);
+            return item;
         }
 
-        public async Task<ListItem> DeleteAsync(Guid key)
+        public async Task<ListItem> DeleteAsync(Guid id)
         {
             return await _database.GetCollection<ListItem>("listitems")
-                .FindOneAndDeleteAsync(e => e.Id == key);
+                .FindOneAndDeleteAsync(e => e.Id == id);
         }
 
-        public async Task<ListItem> UpdateAsync(Guid key, ListItem entity)
+        public async Task<ListItem> UpdateAsync(ListItem item)
         {
             await _database.GetCollection<ListItem>("listitems")
-                .FindOneAndReplaceAsync(e => e.Id == key, entity);
-            return await GetAsync(key);
+                .FindOneAndReplaceAsync(e => e.Id == item.Id, item);
+            return await GetAsync(item.Id);
         }
     }
 }

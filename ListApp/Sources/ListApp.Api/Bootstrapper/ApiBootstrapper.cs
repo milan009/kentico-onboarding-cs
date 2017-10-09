@@ -9,7 +9,7 @@ namespace ListApp.Api.Bootstrapper
     {
         public IUnityContainer RegisterTypes(IUnityContainer container)
             => container
-            .RegisterInstance("connectionString", getDbConnectionStringFromConfig("MongoDBConnectionString"))
+            .RegisterInstance("connectionString", _getDbConnectionStringFromConfig("MongoDBConnectionString"))
             .RegisterType<IRouteHelperConfig, RouteHelperConfig>(new HierarchicalLifetimeManager())
             .RegisterType<HttpRequestMessage>(
                 new HierarchicalLifetimeManager(),
@@ -18,7 +18,7 @@ namespace ListApp.Api.Bootstrapper
         private HttpRequestMessage ExtractHttpRequestMessage(IUnityContainer container) =>
             (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"];
 
-        private string getDbConnectionStringFromConfig(string connectionName)
+        private string _getDbConnectionStringFromConfig(string connectionName)
         {
             System.Configuration.Configuration rootWebConfig =
                 System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/");

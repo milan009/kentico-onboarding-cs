@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ListApp.Api.Models
+namespace ListApp.Contracts.Models
 {
     public class ListItem
     {

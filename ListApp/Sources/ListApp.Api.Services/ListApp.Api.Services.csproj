@@ -59,9 +59,7 @@
   <ItemGroup>
     <Compile Include="Bootstrapper\ApiServicesBootstrapper.cs" />
     <Compile Include="GuidGenerator\GuidGenerator.cs" />
-    <Compile Include="GuidGenerator\IGuidGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RouteHelper\IRouteHelper.cs" />
     <Compile Include="RouteHelper\RouteHelper.cs" />
   </ItemGroup>
   <ItemGroup>

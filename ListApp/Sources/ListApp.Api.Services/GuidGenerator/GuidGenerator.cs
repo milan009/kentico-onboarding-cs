@@ -1,4 +1,5 @@
 ﻿using System;
+using ListApp.Contracts.Interfaces;
 
 namespace ListApp.Api.Services.GuidGenerator
 {

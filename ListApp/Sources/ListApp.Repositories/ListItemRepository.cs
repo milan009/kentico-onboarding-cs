@@ -16,7 +16,7 @@ namespace ListApp.Repositories
             new ListItem {Id = Guid.Parse("C6F4D46F-D7B1-45DD-8C7C-265313AF77BB"), Text = "Take over the world"}
         };
 
-    public async Task<IEnumerable<ListItem>> GetAllAsync() 
+        public async Task<IEnumerable<ListItem>> GetAllAsync() 
             => await Task.FromResult(MockListItems);
 
         public async Task<ListItem> GetAsync(Guid id) 

@@ -52,6 +52,7 @@
     <Compile Include="Interfaces\IRouteHelper.cs" />
     <Compile Include="Interfaces\IRouteHelperConfig.cs" />
     <Compile Include="Interfaces\IUnityContainerBootstrapper.cs" />
+    <Compile Include="Models\DatabaseConfiguration.cs" />
     <Compile Include="Models\ListItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

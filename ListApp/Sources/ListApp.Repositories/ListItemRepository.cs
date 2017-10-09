@@ -9,50 +9,47 @@ namespace ListApp.Repositories
 {
     internal class ListItemRepository : IRepository
     {
+        private const string databaseName = "listappdb";
+        private const string collectionName = "listitems";
         private readonly IMongoDatabase _database;
 
-        public ListItemRepository(string connection)
+        public ListItemRepository(DatabaseConfiguration configuration)
         {
-            var client = new MongoClient(connection);
-            _database = client.GetDatabase("listappdb");
-        }
-
-        public async Task<IEnumerable<Guid>> GetKeysAsync()
-        {
-            return await _database.GetCollection<ListItem>("listitems")
-                .Find(FilterDefinition<ListItem>.Empty)
-                .Project<Guid>(Builders<ListItem>.Projection.Include(item => item.Id)).ToListAsync();
+            var client = new MongoClient(configuration.ConnectionString);
+            _database = client.GetDatabase(databaseName);
         }
 
         public async Task<IEnumerable<ListItem>> GetAllAsync()
         {
-            return await (await _database.GetCollection<ListItem>("listitems")
+            return await (await _database.GetCollection<ListItem>(collectionName)
                 .FindAsync(_ => true))
                 .ToListAsync();
         }
 
         public async Task<ListItem> GetAsync(Guid id)
         {
-            return (await _database.GetCollection<ListItem>("listitems").FindAsync(e => e.Id == id)).FirstOrDefault();
+            return (await _database.GetCollection<ListItem>(collectionName)
+                .FindAsync(e => e.Id == id))
+                .FirstOrDefault();
         }
 
         public async Task<ListItem> AddAsync(ListItem item)
         {
-            await _database.GetCollection<ListItem>("listitems").InsertOneAsync(item);
+            await _database.GetCollection<ListItem>(collectionName)
+                .InsertOneAsync(item);
             return item;
         }
 
         public async Task<ListItem> DeleteAsync(Guid id)
         {
-            return await _database.GetCollection<ListItem>("listitems")
+            return await _database.GetCollection<ListItem>(collectionName)
                 .FindOneAndDeleteAsync(e => e.Id == id);
         }
 
         public async Task<ListItem> UpdateAsync(ListItem item)
         {
-            await _database.GetCollection<ListItem>("listitems")
+            return await _database.GetCollection<ListItem>(collectionName)
                 .FindOneAndReplaceAsync(e => e.Id == item.Id, item);
-            return await GetAsync(item.Id);
         }
     }
 }

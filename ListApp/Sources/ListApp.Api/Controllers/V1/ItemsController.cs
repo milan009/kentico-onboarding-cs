@@ -34,15 +34,16 @@ namespace ListApp.Api.Controllers.V1
         {
             if (newItem.Id != Guid.Empty)
                 return BadRequest("Posted item has specified ID!");
-
+            // --
             newItem.Id = _guidGenerator.GenerateGuid();
 
             var addedItem = await _repository.AddAsync(newItem);
+            // --
             var location = _routeHelper.GetItemUrl(addedItem.Id);
 
             return Created(location, addedItem);
         }
-
+        
         public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem) 
             => Ok(await _repository.UpdateAsync(newItem));
 

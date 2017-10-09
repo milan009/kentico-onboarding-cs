@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Web;
 using ListApp.Contracts.Interfaces;
+using ListApp.Contracts.Models;
 using Microsoft.Practices.Unity;
 
 namespace ListApp.Api.Bootstrapper
@@ -9,7 +10,10 @@ namespace ListApp.Api.Bootstrapper
     {
         public IUnityContainer RegisterTypes(IUnityContainer container)
             => container
-            .RegisterInstance("connectionString", _getDbConnectionStringFromConfig("MongoDBConnectionString"))
+            .RegisterInstance(new DatabaseConfiguration
+                {
+                    ConnectionString = _getDbConnectionStringFromConfig("MongoDBConnectionString")
+                })
             .RegisterType<IRouteHelperConfig, RouteHelperConfig>(new HierarchicalLifetimeManager())
             .RegisterType<HttpRequestMessage>(
                 new HierarchicalLifetimeManager(),
@@ -20,10 +24,13 @@ namespace ListApp.Api.Bootstrapper
 
         private string _getDbConnectionStringFromConfig(string connectionName)
         {
-            System.Configuration.Configuration rootWebConfig =
-                System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/");
+            var rootWebConfig = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/");
+            // var
 
-            if (rootWebConfig.ConnectionStrings.ConnectionStrings.Count <= 0) return null;
+            if (rootWebConfig.ConnectionStrings.ConnectionStrings.Count <= 0)
+            {
+                return null;
+            }
 
             var connString = rootWebConfig.ConnectionStrings.ConnectionStrings[connectionName];
             return connString.ConnectionString;

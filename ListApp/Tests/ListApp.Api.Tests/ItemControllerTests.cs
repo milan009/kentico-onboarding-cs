@@ -24,17 +24,17 @@ namespace ListApp.Api.Tests
         private ItemsController _itemsController;
         private IRepository _itemsRepository;
         private IRouteHelper _routeHelper;
-        private IGuidGenerator _guidGenerator;
+        private IItemService _itemService;
 
         [SetUp]
         public void SetUp()
         {
             _itemsRepository = Substitute.For<IRepository>();
             _routeHelper = Substitute.For<IRouteHelper>();
-            _guidGenerator = Substitute.For<IGuidGenerator>();
+            _itemService = Substitute.For<IItemService>();
 
             _itemsController =
-                new ItemsController(_itemsRepository, _routeHelper, _guidGenerator)
+                new ItemsController(_itemsRepository, _routeHelper, _itemService)
                 {
                     Configuration = new HttpConfiguration(),
                     Request = Substitute.For<HttpRequestMessage>()

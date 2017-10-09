@@ -25,14 +25,14 @@ namespace ListApp.Api.Bootstrapper
         private string _getDbConnectionStringFromConfig(string connectionName)
         {
             var rootWebConfig = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/");
-            // var
+            var connectionStrings = rootWebConfig.ConnectionStrings.ConnectionStrings;
 
-            if (rootWebConfig.ConnectionStrings.ConnectionStrings.Count <= 0)
+            if (connectionStrings.Count <= 0)
             {
                 return null;
             }
 
-            var connString = rootWebConfig.ConnectionStrings.ConnectionStrings[connectionName];
+            var connString = connectionStrings[connectionName];
             return connString.ConnectionString;
         }
     }

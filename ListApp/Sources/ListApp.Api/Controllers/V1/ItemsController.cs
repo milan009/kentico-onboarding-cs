@@ -15,13 +15,13 @@ namespace ListApp.Api.Controllers.V1
 
         private readonly IRepository _repository;
         private readonly IRouteHelper _routeHelper;
-        private readonly IGuidGenerator _guidGenerator;
+        private readonly IItemService _itemService;
 
-        public ItemsController(IRepository repository, IRouteHelper routeHelper, IGuidGenerator guidGenerator)
+        public ItemsController(IRepository repository, IRouteHelper routeHelper, IItemService itemService)
         {
             _repository = repository;
             _routeHelper = routeHelper;
-            _guidGenerator = guidGenerator;
+            _itemService = itemService;
         }
 
         public async Task<IHttpActionResult> GetAsync() 
@@ -34,18 +34,15 @@ namespace ListApp.Api.Controllers.V1
         {
             if (newItem.Id != Guid.Empty)
                 return BadRequest("Posted item has specified ID!");
-            // --
-            newItem.Id = _guidGenerator.GenerateGuid();
-
-            var addedItem = await _repository.AddAsync(newItem);
-            // --
+            
+            var addedItem = await _itemService.InsertItemAsync(newItem);
             var location = _routeHelper.GetItemUrl(addedItem.Id);
 
             return Created(location, addedItem);
         }
         
         public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem) 
-            => Ok(await _repository.UpdateAsync(newItem));
+            => Ok(await _itemService.UpdateItemAsync(newItem));
 
         public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id) 
             => Ok(await _repository.DeleteAsync(id));

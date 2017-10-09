@@ -48,9 +48,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IGuidGenerator.cs" />
+    <Compile Include="Interfaces\IItemService.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Interfaces\IRouteHelper.cs" />
     <Compile Include="Interfaces\IRouteHelperConfig.cs" />
+    <Compile Include="Interfaces\ITimeHelper.cs" />
     <Compile Include="Interfaces\IUnityContainerBootstrapper.cs" />
     <Compile Include="Models\DatabaseConfiguration.cs" />
     <Compile Include="Models\ListItem.cs" />

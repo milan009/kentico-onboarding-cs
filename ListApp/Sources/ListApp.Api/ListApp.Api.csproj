@@ -127,6 +127,10 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ListApp.Services\ListApp.Services.csproj">
+      <Project>{F1EB54D4-9FA3-4038-BB3E-8C75BA9BCE66}</Project>
+      <Name>ListApp.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ListApp.Api.Services\ListApp.Api.Services.csproj">
       <Project>{C2542321-059E-4A2F-ABC8-9667DE89C1D1}</Project>
       <Name>ListApp.Api.Services</Name>

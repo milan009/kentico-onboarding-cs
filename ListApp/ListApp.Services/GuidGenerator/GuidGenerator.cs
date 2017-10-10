@@ -1,7 +1,7 @@
 ﻿using System;
 using ListApp.Contracts.Interfaces;
 
-namespace ListApp.Api.Services.GuidGenerator
+namespace ListApp.Services.GuidGenerator
 {
     internal class GuidGenerator : IGuidGenerator
     {

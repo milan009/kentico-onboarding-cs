@@ -31,8 +31,15 @@ namespace ListApp.Api.Controllers.V1
         public async Task<IHttpActionResult> GetAsync() 
             => Ok(await _repository.GetAllAsync());
 
-        public async Task<IHttpActionResult> GetAsync([FromUri] Guid id) 
-            => Ok(await _repository.GetAsync(id));
+        public async Task<IHttpActionResult> GetAsync([FromUri] Guid id)
+        {
+            var theItem = await _repository.GetAsync(id);
+            if (theItem == null)
+                return NotFound();
+
+            return Ok(theItem);
+        }
+           
 
         public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
         {

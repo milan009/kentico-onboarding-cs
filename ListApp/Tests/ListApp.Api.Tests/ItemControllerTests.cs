@@ -98,14 +98,14 @@ namespace ListApp.Api.Tests
                 Id = Guid.Parse("BFBF8A62-FD82-42D4-A86B-324704BE161E"),
                 Text = "Stretch correctly"
             };
-            _itemsRepository.AddAsync(Arg.Any<ListItem>()).Returns(expectedItem);
+            _itemService.InsertItemAsync(Arg.Any<ListItem>()).Returns(expectedItem);
             _routeHelper.GetItemUrl(Arg.Any<Guid>()).Returns(expectedLocation);
 
             var receivedResponse = await _itemsController.PostAsync(PostedItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
             responseMessage.TryGetContentValue(out ListItem responseItem);
 
-            _itemsRepository.Received(1).AddAsync(PostedItem);
+            _itemService.Received(1).InsertItemAsync(PostedItem);
             Assert.That(responseMessage.StatusCode, Is.EqualTo(expectedResponseCode));
             Assert.AreEqual(expectedLocation, responseMessage.Headers.Location.ToString());
             Assert.That(responseMessage.Headers.Location.ToString(), Is.EqualTo(expectedLocation));
@@ -121,13 +121,13 @@ namespace ListApp.Api.Tests
                 Id = Guid.Parse("BFBF8A62-FD82-42D4-A86B-324704BE161E"),
                 Text = "UpdatedItem"
             };
-            _itemsRepository.UpdateAsync(Arg.Any<ListItem>()).Returns(expectedItem);
+            _itemService.UpdateItemAsync(Arg.Any<ListItem>()).Returns(expectedItem);
 
             var receivedResponse = await _itemsController.PutAsync(PostedItemGuid, PostedItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
             responseMessage.TryGetContentValue(out ListItem responseItem);
 
-            _itemsRepository.Received(1).UpdateAsync(PostedItem);
+            _itemService.Received(1).UpdateItemAsync(PostedItem);
             Assert.That(responseMessage.StatusCode, Is.EqualTo(expectedResponseCode));
             Assert.That(responseItem, Is.EqualTo(expectedItem).UsingListItemComparer());
         }

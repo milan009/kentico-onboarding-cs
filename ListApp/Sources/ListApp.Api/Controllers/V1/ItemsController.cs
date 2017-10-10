@@ -15,13 +15,17 @@ namespace ListApp.Api.Controllers.V1
 
         private readonly IRepository _repository;
         private readonly IRouteHelper _routeHelper;
-        private readonly IItemService _itemService;
+        private readonly IInsertItemService _insertItemService;
+        private readonly IDeleteItemService _deleteItemService;
+        private readonly IUpdateItemService _updateItemService;
 
-        public ItemsController(IRepository repository, IRouteHelper routeHelper, IItemService itemService)
+        public ItemsController(IRepository repository, IRouteHelper routeHelper, IInsertItemService insertItemService, IDeleteItemService deleteItemService, IUpdateItemService updateItemService)
         {
             _repository = repository;
             _routeHelper = routeHelper;
-            _itemService = itemService;
+            _insertItemService = insertItemService;
+            _deleteItemService = deleteItemService;
+            _updateItemService = updateItemService;
         }
 
         public async Task<IHttpActionResult> GetAsync() 
@@ -32,19 +36,47 @@ namespace ListApp.Api.Controllers.V1
 
         public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
         {
+            if (newItem == null)
+                return BadRequest("Posted item cannot be null!");
+
             if (newItem.Id != Guid.Empty)
-                return BadRequest("Posted item has specified ID!");
-            
-            var addedItem = await _itemService.InsertItemAsync(newItem);
+                return BadRequest("Posted item must have empty guid!");
+
+            var addedItem = await _insertItemService.InsertItemAsync(newItem);
             var location = _routeHelper.GetItemUrl(addedItem.Id);
 
             return Created(location, addedItem);
         }
-        
-        public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem) 
-            => Ok(await _itemService.UpdateItemAsync(newItem));
 
-        public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id) 
-            => Ok(await _repository.DeleteAsync(id));
+        public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem)
+        {
+            if (newItem == null)
+                return BadRequest("Posted item cannot be null!");
+
+            if (newItem.Id != id)
+                return BadRequest("IDs do not match in URL and posted item!");
+
+            if (newItem.Id == Guid.Empty)
+                return BadRequest("ID cannot be empty guid!");
+
+            var updatedResult = await _updateItemService.UpdateItemAsync(newItem);
+
+            if (updatedResult.Found)
+                return Ok(updatedResult.Item);
+
+            return Created(_routeHelper.GetItemUrl(updatedResult.Item.Id), updatedResult.Item);
+        }
+
+        public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id)
+        {
+            var deleteResult = await _deleteItemService.DeleteItemAsync(id);
+
+            if (deleteResult.Found)
+            {
+                return Ok(deleteResult.Item);
+            }
+
+            return NotFound();
+        }
     } 
 }

@@ -7,7 +7,6 @@ namespace ListApp.Api.Services.Bootstrapper
     {
         public IUnityContainer RegisterTypes(IUnityContainer container) =>
             container
-                .RegisterType<IRouteHelper, RouteHelper.RouteHelper>(new HierarchicalLifetimeManager())
-                .RegisterType<IItemService, ItemService>(new HierarchicalLifetimeManager());
+                .RegisterType<IRouteHelper, RouteHelper.RouteHelper>(new HierarchicalLifetimeManager());
     }
 }

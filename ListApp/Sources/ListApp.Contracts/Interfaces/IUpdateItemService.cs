@@ -5,6 +5,6 @@ namespace ListApp.Contracts.Interfaces
 {
     public interface IUpdateItemService
     {
-        Task<ListItem> UpdateItemAsync(ListItem item);
+        Task<OperationResult> UpdateItemAsync(ListItem item);
     }
 }

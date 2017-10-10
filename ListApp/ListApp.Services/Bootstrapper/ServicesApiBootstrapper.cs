@@ -8,6 +8,9 @@ namespace ListApp.Services.Bootstrapper
         public IUnityContainer RegisterTypes(IUnityContainer container) =>
             container
                 .RegisterType<IGuidGenerator, GuidGenerator.GuidGenerator>(new TransientLifetimeManager())
-                .RegisterType<ITimeHelper, TimeHelper.TimeHelper>(new TransientLifetimeManager());
+                .RegisterType<ITimeHelper, TimeHelper.TimeHelper>(new TransientLifetimeManager())
+                .RegisterType<IInsertItemService, InsertItemService>(new HierarchicalLifetimeManager())
+                .RegisterType<IDeleteItemService, DeleteItemService>(new HierarchicalLifetimeManager())
+                .RegisterType<IUpdateItemService, UpdateItemService>(new HierarchicalLifetimeManager());
     }
 }

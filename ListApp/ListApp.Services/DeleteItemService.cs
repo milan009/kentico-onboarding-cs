@@ -5,7 +5,7 @@ using ListApp.Contracts.Models;
 
 namespace ListApp.Services
 {
-    class DeleteItemService : IDeleteItemService
+    internal class DeleteItemService : IDeleteItemService
     {
         private readonly IRepository _repository;
 
@@ -16,7 +16,9 @@ namespace ListApp.Services
 
         public async Task<OperationResult> DeleteItemAsync(Guid id)
         {
-        
+            var deletedItem = await _repository.DeleteAsync(id);
+
+            return deletedItem == null ? new OperationResult(false, null) : new OperationResult(true, deletedItem);
         }
     }
 }

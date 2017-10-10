@@ -35,9 +35,9 @@ namespace ListApp.Contracts.Interfaces
         Task<ListItem> DeleteAsync(Guid id);
 
         /// <summary>
-        /// Updates item with the same id of given item with sent data
+        /// Replaces item with the same id of given item with sent data
         /// </summary>
-        /// <param name="item">The item containing the updated data</param>
-        Task<ListItem> UpdateAsync(ListItem item);
+        /// <param name="item">The item to replace with</param>
+        Task<ListItem> ReplaceAsync(ListItem item);
     }
 }

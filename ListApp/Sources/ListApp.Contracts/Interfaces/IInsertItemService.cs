@@ -5,6 +5,6 @@ namespace ListApp.Contracts.Interfaces
 {
     public interface IInsertItemService
     {
-        Task<OperationResult> InsertItemAsync(ListItem item);
+        Task<ListItem> InsertItemAsync(ListItem item);
     }
 }

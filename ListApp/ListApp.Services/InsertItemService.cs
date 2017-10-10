@@ -2,7 +2,7 @@
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 
-namespace ListApp.Api.Services
+namespace ListApp.Services
 {
     internal class InsertItemService : IInsertItemService
     {
@@ -17,7 +17,7 @@ namespace ListApp.Api.Services
             _timeHelper = timeHelper;
         }
 
-        public async Task<ListItem> InsertItemAsync(ListItem item)
+        public async Task<OperationResult> InsertItemAsync(ListItem item)
         {
             item.Created = _timeHelper.GetCurrentTime();
             item.LastModified = _timeHelper.GetCurrentTime();

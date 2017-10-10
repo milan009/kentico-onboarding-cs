@@ -25,12 +25,5 @@ namespace ListApp.Api.Services
 
             return await _repository.AddAsync(item);
         }
-
-        public async Task<ListItem> UpdateItemAsync(ListItem item)
-        {
-            item.LastModified = _timeHelper.GetCurrentTime();
-
-            return await _repository.UpdateAsync(item);
-        }
     }
 }

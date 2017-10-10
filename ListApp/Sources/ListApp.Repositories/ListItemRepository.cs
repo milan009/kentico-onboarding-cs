@@ -37,6 +37,7 @@ namespace ListApp.Repositories
         {
             await _database.GetCollection<ListItem>(collectionName)
                 .InsertOneAsync(item);
+
             return item;
         }
 
@@ -46,10 +47,12 @@ namespace ListApp.Repositories
                 .FindOneAndDeleteAsync(e => e.Id == id);
         }
 
-        public async Task<ListItem> UpdateAsync(ListItem item)
+        public async Task<ListItem> ReplaceAsync(ListItem item)
         {
-            return await _database.GetCollection<ListItem>(collectionName)
+            await _database.GetCollection<ListItem>(collectionName)
                 .FindOneAndReplaceAsync(e => e.Id == item.Id, item);
+
+            return item;
         }
     }
 }

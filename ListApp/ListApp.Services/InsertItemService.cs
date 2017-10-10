@@ -19,8 +19,9 @@ namespace ListApp.Services
 
         public async Task<ListItem> InsertItemAsync(ListItem item)
         {
-            item.Created = _timeHelper.GetCurrentTime();
-            item.LastModified = _timeHelper.GetCurrentTime();
+            var now = _timeHelper.GetCurrentTime();
+            item.Created = now;
+            item.LastModified = now;
             item.Id = _guidGenerator.GenerateGuid();
 
             return await _repository.AddAsync(item);

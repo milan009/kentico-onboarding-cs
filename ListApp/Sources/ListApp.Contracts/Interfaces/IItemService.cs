@@ -3,9 +3,8 @@ using ListApp.Contracts.Models;
 
 namespace ListApp.Contracts.Interfaces
 {
-    public interface IItemService
+    public interface IInsertItemService
     {
         Task<ListItem> InsertItemAsync(ListItem item);
-        Task<ListItem> UpdateItemAsync(ListItem item);
     }
 }

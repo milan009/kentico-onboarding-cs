@@ -4,13 +4,13 @@ using ListApp.Contracts.Models;
 
 namespace ListApp.Api.Services
 {
-    internal class ItemService : IItemService
+    internal class InsertItemService : IInsertItemService
     {
         private readonly IRepository _repository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly ITimeHelper _timeHelper;
 
-        public ItemService(IRepository repository, IGuidGenerator guidGenerator, ITimeHelper timeHelper)
+        public InsertItemService(IRepository repository, IGuidGenerator guidGenerator, ITimeHelper timeHelper)
         {
             _repository = repository;
             _guidGenerator = guidGenerator;

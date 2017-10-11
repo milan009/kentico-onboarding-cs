@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 
@@ -15,25 +16,35 @@ namespace ListApp.Services
             _timeHelper = timeHelper;
         }
 
-        public async Task<OperationResult> UpdateItemAsync(ListItem item)
+        public async Task<OperationResult> UpdateItemAsync(ListItem oldItem, ListItem newItem)
+        {
+            var itemToReplace = new ListItem
+            {
+                Id = oldItem.Id,
+                Created = oldItem.Created,
+                Text = newItem.Text,
+                LastModified = _timeHelper.GetCurrentTime()
+            };
+            
+            var updatedItem = await _repository.ReplaceAsync(itemToReplace);
+
+            if (updatedItem == null)
+            {
+                return OperationResult.Failed;
+            }
+
+            return OperationResult.CreateSuccessfulResult(updatedItem);
+        }
+
+        public async Task<OperationResult> CheckIfItemExistsAsync(ListItem item)
         {
             var existingItem = await _repository.GetAsync(item.Id);
             if (existingItem == null)
             {
-                var now = _timeHelper.GetCurrentTime();
-                item.Created = now;
-                item.LastModified = now;
-
-                var addedItem = await _repository.AddAsync(item);
-                
-                return new OperationResult(false, addedItem);
+                return OperationResult.Failed;
             }
 
-            existingItem.LastModified = _timeHelper.GetCurrentTime();
-            existingItem.Text = item.Text;
-            var updatedItem = await _repository.ReplaceAsync(existingItem);
-
-            return new OperationResult(true, updatedItem);
+            return OperationResult.CreateSuccessfulResult(existingItem);
         }
     }
 }

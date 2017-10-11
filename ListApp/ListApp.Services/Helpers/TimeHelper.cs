@@ -1,7 +1,7 @@
 ﻿using System;
 using ListApp.Contracts.Interfaces;
 
-namespace ListApp.Services.TimeHelper
+namespace ListApp.Services.Helpers
 {
     internal class TimeHelper : ITimeHelper
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ListApp.Contracts.Interfaces;
+using ListApp.Services.Helpers;
 using NUnit.Framework;
 
 namespace ListApp.Services.Tests
@@ -13,7 +14,7 @@ namespace ListApp.Services.Tests
         [SetUp]
         public void Setup()
         {
-            _guidGenerator = new GuidGenerator.GuidGenerator();
+            _guidGenerator = new GuidGenerator();
         }
 
         [Test]

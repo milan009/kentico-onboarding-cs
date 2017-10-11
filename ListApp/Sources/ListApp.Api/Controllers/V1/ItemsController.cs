@@ -50,14 +50,13 @@ namespace ListApp.Api.Controllers.V1
             return Ok(theItem);
         }
            
-
         public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
         {
             ValidatePostParam(newItem);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
+            
             var addedItem = await _insertItemService.InsertItemAsync(newItem);
             var location = _routeHelper.GetItemUrl(addedItem.Id);
 

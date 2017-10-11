@@ -1,6 +1,6 @@
 ﻿using ListApp.Contracts.Models;
 
-namespace ListApp.Services.Tests.Extensions
+namespace ListApp.Tests.Extensions
 {
     internal static class ListItemExtensions
     {

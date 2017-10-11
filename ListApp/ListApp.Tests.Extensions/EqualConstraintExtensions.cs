@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using NUnit.Framework.Constraints;
 using ListApp.Contracts.Models;
+using NUnit.Framework.Constraints;
 
-namespace ListApp.Api.Tests.Extensions
+namespace ListApp.Tests.Extensions
 {
     public static class EqualConstraintExtensions
     {

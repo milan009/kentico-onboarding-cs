@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Validation;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 using Microsoft.Web.Http;
@@ -33,6 +34,11 @@ namespace ListApp.Api.Controllers.V1
 
         public async Task<IHttpActionResult> GetAsync([FromUri] Guid id)
         {
+            ValidateId(id);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var theItem = await _repository.GetAsync(id);
             if (theItem == null)
                 return NotFound();
@@ -43,11 +49,10 @@ namespace ListApp.Api.Controllers.V1
 
         public async Task<IHttpActionResult> PostAsync([FromBody] ListItem newItem)
         {
-            if (newItem == null)
-                return BadRequest("Posted item cannot be null!");
+            ValidatePostParam(newItem);
 
-            if (newItem.Id != Guid.Empty)
-                return BadRequest("Posted item must have empty guid!");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var addedItem = await _insertItemService.InsertItemAsync(newItem);
             var location = _routeHelper.GetItemUrl(addedItem.Id);
@@ -57,33 +62,71 @@ namespace ListApp.Api.Controllers.V1
 
         public async Task<IHttpActionResult> PutAsync([FromUri] Guid id, [FromBody] ListItem newItem)
         {
-            if (newItem == null)
-                return BadRequest("Posted item cannot be null!");
+            ValidatePutParams(id, newItem);
 
-            if (newItem.Id != id)
-                return BadRequest("IDs do not match in URL and posted item!");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            if (newItem.Id == Guid.Empty)
-                return BadRequest("ID cannot be empty guid!");
-
-            var updatedResult = await _updateItemService.UpdateItemAsync(newItem);
-
-            if (updatedResult.Found)
+            var checkResult = await _updateItemService.CheckIfItemExistsAsync(newItem);
+            if (checkResult.Found)
+            {
+                var updatedResult = await _updateItemService.UpdateItemAsync(checkResult.Item, newItem);
                 return Ok(updatedResult.Item);
+            }
 
-            return Created(_routeHelper.GetItemUrl(updatedResult.Item.Id), updatedResult.Item);
+            var createdItem = await _insertItemService.InsertItemAsync(newItem);
+
+            return Created(_routeHelper.GetItemUrl(createdItem.Id), createdItem);
         }
 
         public async Task<IHttpActionResult> DeleteAsync([FromUri] Guid id)
         {
+            ValidateId(id);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var deleteResult = await _deleteItemService.DeleteItemAsync(id);
 
             if (deleteResult.Found)
-            {
                 return Ok(deleteResult.Item);
-            }
 
             return NotFound();
+        }
+
+        private void ValidatePutParams(Guid id, ListItem item)
+        { 
+            ValidateId(id);
+            ValidateItem(item);
+
+            if(item != null)
+                ValidateIdConsistenty(id, item);
+        }
+
+        private void ValidatePostParam(ListItem item)
+        {
+            ValidateItem(item);
+
+            if(ModelState.IsValid && item.Id != Guid.Empty)
+                ModelState.AddModelError("IdNotEmpty", "ID has to be empty guid in POST!");
+        }
+
+        private void ValidateIdConsistenty(Guid id, ListItem item)
+        {
+            if(id != item.Id)
+                ModelState.AddModelError("IDsNotConsistent", "IDs in URL and item do not match!");
+        }
+
+        private void ValidateId(Guid id)
+        {
+            if (id == Guid.Empty)
+                ModelState.AddModelError("GuidEmpty", "ID cannot be empty guid!");
+        }
+
+        private void ValidateItem(ListItem item)
+        {
+            if (item == null)
+                ModelState.AddModelError("ItemNull", "Item cannot be null!");
         }
     } 
 }

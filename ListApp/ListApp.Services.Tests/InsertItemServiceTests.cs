@@ -29,6 +29,7 @@ namespace ListApp.Services.Tests
         [Test]
         public async Task InsertItemAsync_NonExistingId_ReturnsCorrectOperationResult()
         {
+            //  Arrange
             var expectedItem = new ListItem
             {
                 Id = Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921"),
@@ -37,14 +38,19 @@ namespace ListApp.Services.Tests
                 LastModified = DateTime.Parse("17.12.2017")
             };
             var itemToInsert = new ListItem {Id = Guid.Empty, Text = "Order pizza"};
-            _guidGenerator.GenerateGuid().Returns(Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921"));
-            _timeHelper.GetCurrentTime().Returns(DateTime.Parse("17.12.2017"));
+
+            _guidGenerator.GenerateGuid()
+                .Returns(Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921"));
+            _timeHelper.GetCurrentTime()
+                .Returns(DateTime.Parse("17.12.2017"));
             _repository.AddAsync(Arg.Is<ListItem>(item
                     => ListItemEqualityComparer.Instance.Equals(item, expectedItem)))
                 .Returns(expectedItem);
 
+            //  Act
             var insertResult = await _insertItemService.InsertItemAsync(itemToInsert);
 
+            //  Assert
             await _repository.Received(1).AddAsync(itemToInsert);
             _timeHelper.Received(1).GetCurrentTime();
             _guidGenerator.Received(1).GenerateGuid();

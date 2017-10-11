@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
-using ListApp.Services.Tests.Extensions;
+using ListApp.Tests.Base;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
@@ -45,7 +45,8 @@ namespace ListApp.Services.Tests
             var itemToInsert = new ListItem {Id = Guid.Empty, Text = "Order pizza"};
             _guidGenerator.GenerateGuid().Returns(Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921"));
             _timeHelper.GetCurrentTime().Returns(DateTime.Parse("17.12.2017"));
-            _repository.AddAsync(Arg.Is<ListItem>(item => item.IsEqualTo(expectedItem)))
+            _repository.AddAsync(Arg.Is<ListItem>(item 
+                    => EqualConstraintExtensions.ListItemEqualityComparer.Instance.Equals(item, expectedItem)))
                 .Returns(expectedItem);
 
             var insertResult = await _insertItemService.InsertItemAsync(itemToInsert);

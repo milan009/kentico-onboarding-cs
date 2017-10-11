@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
-using ListApp.Services.Tests.Extensions;
+using ListApp.Tests.Base;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
@@ -34,13 +34,6 @@ namespace ListApp.Services.Tests
         public async Task CheckIfItemExistsAsync_NonExistingId_ReturnsCorrectOperationResult()
         {
             var guid = Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921");
-            var expectedItem = new ListItem
-            {
-                Id = guid,
-                Text = "Order pizza",
-                Created = DateTime.Parse("17.12.2017"),
-                LastModified = DateTime.Parse("17.12.2017")
-            };
             var itemToUpdate = new ListItem
             {
                 Id = guid,
@@ -50,49 +43,13 @@ namespace ListApp.Services.Tests
 
             _repository.GetAsync(Arg.Any<Guid>())
                 .ReturnsNull();
-            _repository.AddAsync(Arg.Is<ListItem>(item => item.IsEqualTo(expectedItem)))
-                .Returns(expectedItem);
 
             var updateResult = await _updateItemService.CheckIfItemExistsAsync(itemToUpdate);
 
             await _repository.Received(0).AddAsync(Arg.Any<ListItem>());
             await _repository.Received(1).GetAsync(guid);
-            Assert.That(expectedResult, Is.EqualTo(expectedResult));
+            Assert.That(updateResult, Is.EqualTo(expectedResult));
         }
-
-     /*   [Test]
-        public async Task UpdateItemAsync_NonExistingId_ReturnsCorrectOperationResult()
-        {
-            var guid = Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921");
-            var expectedItem = new ListItem
-            {
-                Id = guid,
-                Text = "Order pizza",
-                Created = DateTime.Parse("17.12.2017"),
-                LastModified = DateTime.Parse("17.12.2017")
-            };
-            var itemToUpdate = new ListItem
-            {
-                Id = guid,
-                Text = "Order pizza"
-            };
-            var checkExpectedResult = OperationResult.Failed;
-
-            _timeHelper.GetCurrentTime()
-                .Returns(DateTime.Parse("17.12.2017"));
-            _repository.GetAsync(Arg.Any<Guid>())
-                .ReturnsNull();
-            _repository.AddAsync(Arg.Is<ListItem>(item => item.IsEqualTo(expectedItem)))
-                .Returns(expectedItem);
-
-            var updateResult = await _updateItemService.UpdateItemAsync(itemToUpdate);
-
-            await _repository.Received(1).AddAsync(itemToUpdate);
-            await _repository.Received(1).GetAsync(guid);
-            _timeHelper.Received(1).GetCurrentTime();
-            Assert.That(updateResult.Found, Is.EqualTo(expectedResult.Found));
-            Assert.That(updateResult.Item, Is.EqualTo(expectedResult.Item));
-        }*/
 
         [Test]
         public async Task CheckIfItemExistsAsync_ExistingId_ReturnsCorrectOperationResult()
@@ -119,45 +76,87 @@ namespace ListApp.Services.Tests
 
             await _repository.Received(1).GetAsync(guid);
             Assert.That(updateResult.Found, Is.EqualTo(expectedResult.Found));
-            Assert.That(updateResult.Item, Is.EqualTo(expectedResult.Item));
+            Assert.That(updateResult.Item, Is.EqualTo(expectedResult.Item).UsingListItemComparer());
         }
 
-        //[Test]
-        //public async Task UpdateItemAsync_ExistingId_ReturnsCorrectOperationResult()
-        //{
-        //    var guid = Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921");
-        //    var expectedItem = new ListItem
-        //    {
-        //        Id = guid,
-        //        Text = "Order pizza",
-        //        Created = DateTime.Parse("5.12.2017"),
-        //        LastModified = DateTime.Parse("17.12.2017")
-        //    };
-        //    var repoItem = new ListItem
-        //    {
-        //        Id = guid,
-        //        Text = "Order fries",
-        //        Created = DateTime.Parse("5.12.2017"),
-        //        LastModified = DateTime.Parse("7.12.2017")
-        //    };
-        //    var itemToUpdate = new ListItem
-        //    {
-        //        Id = guid,
-        //        Text = "Order pizza"
-        //    };
-        //    var expectedResult = new OperationResult(true, expectedItem);
-        //    _timeHelper.GetCurrentTime().Returns(DateTime.Parse("17.12.2017"));
-        //    _repository.GetAsync(guid).Returns(repoItem);
-        //    _repository.ReplaceAsync(Arg.Is<ListItem>(item => item.IsEqualTo(expectedItem)))
-        //        .Returns(expectedItem);
+        [Test]
+        public async Task UpdateItemAsync_UpdateReturnsNull_ReturnsCorrectOperationResult()
+        {
+            var guid = Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921");
+            var oldItem = new ListItem
+            {
+                Id = guid,
+                Text = "Order pizza",
+                Created = DateTime.Parse("5.12.2017"),
+                LastModified = DateTime.Parse("7.12.2017")
+            };
+            var itemToUpdate = new ListItem
+            {
+                Id = guid,
+                Text = "Order fries"
+            };
+            var updatedItem = new ListItem
+            {
+                Id = guid,
+                Text = "Order fries",
+                Created = DateTime.Parse("5.12.2017"),
+                LastModified = DateTime.Parse("17.12.2017")
+            };
+            var expectedResult = OperationResult.Failed;
 
-        //    var updateResult = await _updateItemService.UpdateItemAsync(itemToUpdate);
+            _repository.ReplaceAsync(Arg.Any<ListItem>())
+                .ReturnsNull();
+            _timeHelper.GetCurrentTime()
+                .Returns(DateTime.Parse("17.12.2017"));
 
-        //    await _repository.Received(1).ReplaceAsync(repoItem);
-        //    await _repository.Received(1).GetAsync(guid);
-        //    _timeHelper.Received(1).GetCurrentTime();
-        //    Assert.That(updateResult.Found, Is.EqualTo(expectedResult.Found));
-        //    Assert.That(updateResult.Item, Is.EqualTo(expectedResult.Item));
-        //}
+            var updateResult = await _updateItemService.UpdateItemAsync(oldItem, itemToUpdate);
+
+            await _repository.Received(1).ReplaceAsync(Arg.Any<ListItem>());
+            _timeHelper.Received(1).GetCurrentTime();
+            Assert.That(updateResult, Is.EqualTo(expectedResult));
+        }
+
+        [Test]
+        public async Task UpdateItemAsync_CorrectItem_ReturnsCorrectOperationResult()
+        {
+            var guid = Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921");
+            var expectedItem = new ListItem
+            {
+                Id = guid,
+                Text = "Order pizza",
+                Created = DateTime.Parse("5.12.2017"),
+                LastModified = DateTime.Parse("17.12.2017")
+            };
+            var repoItem = new ListItem
+            {
+                Id = guid,
+                Text = "Order fries",
+                Created = DateTime.Parse("5.12.2017"),
+                LastModified = DateTime.Parse("7.12.2017")
+            };
+            var itemToUpdate = new ListItem
+            {
+                Id = guid,
+                Text = "Order pizza"
+            };
+            var expectedResult = OperationResult.CreateSuccessfulResult(expectedItem);
+
+            _timeHelper.GetCurrentTime()
+                .Returns(DateTime.Parse("17.12.2017"));
+            _repository.GetAsync(guid)
+                .Returns(repoItem);
+            _repository.ReplaceAsync(Arg.Any<ListItem>())
+                .Returns(call => call.Arg<ListItem>());//expectedItem);
+
+            var updateResult = await _updateItemService.UpdateItemAsync(repoItem, itemToUpdate);
+
+            await _repository.Received(1).ReplaceAsync(
+                Arg.Is<ListItem>(
+                    item => EqualConstraintExtensions.ListItemEqualityComparer.Instance.Equals(item, expectedItem)));
+        
+            _timeHelper.Received(1).GetCurrentTime();
+            Assert.That(updateResult.Found, Is.EqualTo(expectedResult.Found));
+            Assert.That(updateResult.Item, Is.EqualTo(expectedResult.Item).UsingListItemComparer());
+        }
     }
 }

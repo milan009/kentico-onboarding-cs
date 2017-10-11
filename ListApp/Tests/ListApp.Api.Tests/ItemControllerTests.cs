@@ -8,7 +8,7 @@ using System.Web.Http;
 using ListApp.Api.Controllers.V1;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
-using ListApp.Api.Tests.Extensions;
+using ListApp.Tests.Base;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;

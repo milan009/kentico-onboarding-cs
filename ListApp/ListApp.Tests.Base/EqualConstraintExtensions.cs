@@ -2,7 +2,7 @@
 using ListApp.Contracts.Models;
 using NUnit.Framework.Constraints;
 
-namespace ListApp.Tests.Extensions
+namespace ListApp.Tests.Base
 {
     internal static class EqualConstraintExtensions
     {

@@ -69,6 +69,10 @@
       <Project>{f1eb54d4-9fa3-4038-bb3e-8c75ba9bce66}</Project>
       <Name>ListApp.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ListApp.Tests.Base\ListApp.Tests.Base.csproj">
+      <Project>{af76e2b8-47df-4de0-801a-ab0aafd2cc91}</Project>
+      <Name>ListApp.Tests.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sources\ListApp.Contracts\ListApp.Contracts.csproj">
       <Project>{F895DFD4-2AB2-4935-9DA8-8D2A5C3D91FA}</Project>
       <Name>ListApp.Contracts</Name>

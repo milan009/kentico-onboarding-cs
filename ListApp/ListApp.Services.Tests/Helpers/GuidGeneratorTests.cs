@@ -4,7 +4,7 @@ using ListApp.Contracts.Interfaces;
 using ListApp.Services.Helpers;
 using NUnit.Framework;
 
-namespace ListApp.Services.Tests
+namespace ListApp.Services.Tests.Helpers
 {
     [TestFixture]
     internal class GuidGeneratorTests

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 using ListApp.Services.ItemServices;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
+using NUnit.Framework;
 
-namespace ListApp.Services.Tests
+namespace ListApp.Services.Tests.ItemServices
 {
     [TestFixture]
     public class DeleteItemServiceTests

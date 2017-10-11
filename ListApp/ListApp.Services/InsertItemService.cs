@@ -20,11 +20,15 @@ namespace ListApp.Services
         public async Task<ListItem> InsertItemAsync(ListItem item)
         {
             var now = _timeHelper.GetCurrentTime();
-            item.Created = now;
-            item.LastModified = now;
-            item.Id = _guidGenerator.GenerateGuid();
-
-            return await _repository.AddAsync(item);
+            var newItem = new ListItem
+            {
+                Id = _guidGenerator.GenerateGuid(),
+                Text = item.Text,
+                Created = now,
+                LastModified = now
+            };
+           
+            return await _repository.AddAsync(newItem);
         }
     }
 }

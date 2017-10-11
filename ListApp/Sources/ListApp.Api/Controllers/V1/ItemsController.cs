@@ -131,7 +131,15 @@ namespace ListApp.Api.Controllers.V1
         private void ValidateItem(ListItem item)
         {
             if (item == null)
+            {
                 ModelState.AddModelError("ItemNull", "Item cannot be null!");
+                return ;
+            }
+
+            if (string.IsNullOrWhiteSpace(item.Text))
+            {
+                ModelState.AddModelError("ItemTextInvalid", "The text of the item is either null, empty, or composed only of white spaces!");
+            }
         }
     } 
 }

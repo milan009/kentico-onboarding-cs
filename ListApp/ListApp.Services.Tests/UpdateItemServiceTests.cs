@@ -152,7 +152,7 @@ namespace ListApp.Services.Tests
 
             await _repository.Received(1).ReplaceAsync(
                 Arg.Is<ListItem>(
-                    item => EqualConstraintExtensions.ListItemEqualityComparer.Instance.Equals(item, expectedItem)));
+                    item => ListItemEqualityComparer.Instance.Equals(item, expectedItem)));
         
             _timeHelper.Received(1).GetCurrentTime();
             Assert.That(updateResult.Found, Is.EqualTo(expectedResult.Found));

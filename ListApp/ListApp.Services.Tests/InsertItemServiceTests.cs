@@ -46,7 +46,7 @@ namespace ListApp.Services.Tests
             _guidGenerator.GenerateGuid().Returns(Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921"));
             _timeHelper.GetCurrentTime().Returns(DateTime.Parse("17.12.2017"));
             _repository.AddAsync(Arg.Is<ListItem>(item 
-                    => EqualConstraintExtensions.ListItemEqualityComparer.Instance.Equals(item, expectedItem)))
+                    => ListItemEqualityComparer.Instance.Equals(item, expectedItem)))
                 .Returns(expectedItem);
 
             var insertResult = await _insertItemService.InsertItemAsync(itemToInsert);

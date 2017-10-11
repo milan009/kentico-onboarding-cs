@@ -42,10 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper\ServicesApiBootstrapper.cs" />
-    <Compile Include="UpdateItemService.cs" />
-    <Compile Include="DeleteItemService.cs" />
+    <Compile Include="ItemServices\UpdateItemService.cs" />
+    <Compile Include="ItemServices\DeleteItemService.cs" />
     <Compile Include="GuidGenerator\GuidGenerator.cs" />
-    <Compile Include="InsertItemService.cs" />
+    <Compile Include="ItemServices\InsertItemService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeHelper\TimeHelper.cs" />
   </ItemGroup>

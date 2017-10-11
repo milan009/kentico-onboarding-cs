@@ -13,7 +13,7 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
 
-namespace ListApp.Api.Tests
+namespace ListApp.Api.Tests.Controllers.V1
 {
     [TestFixture]
     public class ItemsControllerTests

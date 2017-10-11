@@ -27,7 +27,7 @@ namespace ListApp.Services
                 Created = now,
                 LastModified = now
             };
-           
+
             return await _repository.AddAsync(newItem);
         }
     }

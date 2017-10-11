@@ -7,6 +7,10 @@ using MongoDB.Driver;
 
 namespace ListApp.Repositories
 {
+    /* The repository is intentionally NOT using expression
+     * bodied functions, as for some strange reason, in this
+     * case they seem to be less readable than regular functions */ 
+
     internal class ListItemRepository : IRepository
     {
         private const string DatabaseName = "listappdb";
@@ -21,15 +25,13 @@ namespace ListApp.Repositories
 
         public async Task<IEnumerable<ListItem>> GetAllAsync()
         {
-            return await (await _database.GetCollection<ListItem>(CollectionName)
-                .FindAsync(_ => true))
+            return await (await _database.GetCollection<ListItem>(CollectionName).FindAsync(_ => true))
                 .ToListAsync();
         }
 
         public async Task<ListItem> GetAsync(Guid id)
         {
-            return (await _database.GetCollection<ListItem>(CollectionName)
-                .FindAsync(dbItem => dbItem.Id == id))
+            return (await _database.GetCollection<ListItem>(CollectionName).FindAsync(dbItem => dbItem.Id == id))
                 .FirstOrDefault();
         }
 

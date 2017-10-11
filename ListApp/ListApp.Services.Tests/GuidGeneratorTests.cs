@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using ListApp.Contracts.Interfaces;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace ListApp.Services.Tests
 {
@@ -25,7 +20,7 @@ namespace ListApp.Services.Tests
         public void GenerateGuid_DoesNotReturnEmptyGuid()
         {
             var guid = _guidGenerator.GenerateGuid();
-            
+
             Assert.That(guid, Is.Not.EqualTo(Guid.Empty));
         }
 

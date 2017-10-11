@@ -5,7 +5,7 @@ namespace ListApp.Services.TimeHelper
 {
     internal class TimeHelper : ITimeHelper
     {
-        public DateTime GetCurrentTime() 
+        public DateTime GetCurrentTime()
             => DateTime.UtcNow;
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Validation;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 using Microsoft.Web.Http;
@@ -20,7 +19,12 @@ namespace ListApp.Api.Controllers.V1
         private readonly IDeleteItemService _deleteItemService;
         private readonly IUpdateItemService _updateItemService;
 
-        public ItemsController(IRepository repository, IRouteHelper routeHelper, IInsertItemService insertItemService, IDeleteItemService deleteItemService, IUpdateItemService updateItemService)
+        public ItemsController(
+            IRepository repository, 
+            IRouteHelper routeHelper, 
+            IInsertItemService insertItemService, 
+            IDeleteItemService deleteItemService, 
+            IUpdateItemService updateItemService)
         {
             _repository = repository;
             _routeHelper = routeHelper;
@@ -93,6 +97,8 @@ namespace ListApp.Api.Controllers.V1
 
             return NotFound();
         }
+
+        // Validation
 
         private void ValidatePutParams(Guid id, ListItem item)
         { 

@@ -10,17 +10,17 @@ namespace ListApp.Api.Bootstrapper
     {
         public IUnityContainer RegisterTypes(IUnityContainer container)
             => container
-            .RegisterInstance(new DatabaseConfiguration
+                .RegisterInstance(new DatabaseConfiguration
                 {
                     ConnectionString = _getDbConnectionStringFromConfig("MongoDBConnectionString")
                 })
-            .RegisterType<IRouteHelperConfig, RouteHelperConfig>(new HierarchicalLifetimeManager())
-            .RegisterType<HttpRequestMessage>(
-                new HierarchicalLifetimeManager(),
-                new InjectionFactory(ExtractHttpRequestMessage));
+                .RegisterType<IRouteHelperConfig, RouteHelperConfig>(new HierarchicalLifetimeManager())
+                .RegisterType<HttpRequestMessage>(
+                    new HierarchicalLifetimeManager(),
+                    new InjectionFactory(ExtractHttpRequestMessage));
 
-        private HttpRequestMessage ExtractHttpRequestMessage(IUnityContainer container) =>
-            (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"];
+        private HttpRequestMessage ExtractHttpRequestMessage(IUnityContainer container) 
+            => (HttpRequestMessage) HttpContext.Current.Items["MS_HttpRequestMessage"];
 
         private string _getDbConnectionStringFromConfig(string connectionName)
         {

@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 using ListApp.Tests.Base;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
-using NUnit.Framework.Constraints;
 
 namespace ListApp.Services.Tests
 {
@@ -146,14 +141,14 @@ namespace ListApp.Services.Tests
             _repository.GetAsync(guid)
                 .Returns(repoItem);
             _repository.ReplaceAsync(Arg.Any<ListItem>())
-                .Returns(call => call.Arg<ListItem>());//expectedItem);
+                .Returns(call => call.Arg<ListItem>());
 
             var updateResult = await _updateItemService.UpdateItemAsync(repoItem, itemToUpdate);
 
             await _repository.Received(1).ReplaceAsync(
                 Arg.Is<ListItem>(
                     item => ListItemEqualityComparer.Instance.Equals(item, expectedItem)));
-        
+
             _timeHelper.Received(1).GetCurrentTime();
             Assert.That(updateResult.Found, Is.EqualTo(expectedResult.Found));
             Assert.That(updateResult.Item, Is.EqualTo(expectedResult.Item).UsingListItemComparer());

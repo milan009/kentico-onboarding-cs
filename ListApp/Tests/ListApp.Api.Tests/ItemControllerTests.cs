@@ -35,7 +35,12 @@ namespace ListApp.Api.Tests
             _deleteItemService = Substitute.For<IDeleteItemService>();
 
             _itemsController =
-                new ItemsController(_itemsRepository, _routeHelper, _insertItemService, _deleteItemService, _updateItemService)
+                new ItemsController(
+                    _itemsRepository,
+                    _routeHelper,
+                    _insertItemService,
+                    _deleteItemService,
+                    _updateItemService)
                 {
                     Configuration = new HttpConfiguration(),
                     Request = Substitute.For<HttpRequestMessage>()
@@ -47,12 +52,12 @@ namespace ListApp.Api.Tests
         {
             _itemsController.Dispose();
         }
-        
+
         [Test]
         public async Task Get_NoId_ReturnsOkResponse()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
-            var expectedItems = new []
+            var expectedItems = new[]
             {
                 new ListItem {Id = Guid.Parse("BFBF8A62-FD82-42D4-A86B-324704BE161E"), Text = "Stretch correctly"},
                 new ListItem {Id = Guid.Parse("A55578BC-57F2-4A42-BEDF-7D8C23992DBC"), Text = "Make coffee"},
@@ -124,7 +129,7 @@ namespace ListApp.Api.Tests
         public async Task Post_ItemWithGivenId_ReturnsBadRequest()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.BadRequest;
-            var postedItem = new ListItem{Id = Guid.NewGuid(), Text = "An invalid post item"};
+            var postedItem = new ListItem {Id = Guid.NewGuid(), Text = "An invalid post item"};
 
             var receivedResponse = await _itemsController.PostAsync(postedItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
@@ -177,7 +182,7 @@ namespace ListApp.Api.Tests
         public async Task Put_EmptyGuid_ReturnsBadRequest()
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.BadRequest;
-            var putItem = new ListItem { Id = Guid.Empty, Text = "Stretch correctly" };
+            var putItem = new ListItem {Id = Guid.Empty, Text = "Stretch correctly"};
 
             var receivedResponse = await _itemsController.PutAsync(Guid.Empty, putItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
@@ -197,7 +202,8 @@ namespace ListApp.Api.Tests
                 Text = "Stretch correctly"
             };
 
-            var receivedResponse = await _itemsController.PutAsync(Guid.Parse("00000000-E372-458B-A0A6-654EA545BFB9"), putItem);
+            var receivedResponse =
+                await _itemsController.PutAsync(Guid.Parse("00000000-E372-458B-A0A6-654EA545BFB9"), putItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
             await _updateItemService.Received(0).CheckIfItemExistsAsync(Arg.Any<ListItem>());
@@ -211,7 +217,7 @@ namespace ListApp.Api.Tests
             const HttpStatusCode expectedResponseCode = HttpStatusCode.Created;
             var itemGuid = Guid.Parse("BFBF8A62-FD82-42D4-A86B-324704BE161E");
             var expectedLocation = itemGuid.ToString();
-            var expectedItem = new ListItem { Id = itemGuid, Text = "UpdatedItem" };
+            var expectedItem = new ListItem {Id = itemGuid, Text = "UpdatedItem"};
 
             _updateItemService.CheckIfItemExistsAsync(Arg.Any<ListItem>())
                 .Returns(OperationResult.Failed);
@@ -237,7 +243,7 @@ namespace ListApp.Api.Tests
         {
             const HttpStatusCode expectedResponseCode = HttpStatusCode.OK;
             var itemGuid = Guid.Parse("BFBF8A62-FD82-42D4-A86B-324704BE161E");
-            var expectedItem = new ListItem { Id = itemGuid, Text = "UpdatedItem" };
+            var expectedItem = new ListItem {Id = itemGuid, Text = "UpdatedItem"};
 
             _updateItemService.CheckIfItemExistsAsync(Arg.Any<ListItem>())
                 .Returns(OperationResult.CreateSuccessfulResult(expectedItem));

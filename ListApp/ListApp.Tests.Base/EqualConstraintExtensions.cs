@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using ListApp.Contracts.Models;
-using NUnit.Framework.Constraints;
+﻿using NUnit.Framework.Constraints;
 
 namespace ListApp.Tests.Base
 {
     internal static class EqualConstraintExtensions
     {
-        public static EqualConstraint UsingListItemComparer(this EqualConstraint constraint) => constraint.Using(ListItemEqualityComparer.Instance);
+        public static EqualConstraint UsingListItemComparer(this EqualConstraint constraint) 
+            => constraint.Using(ListItemEqualityComparer.Instance);
     }
 }

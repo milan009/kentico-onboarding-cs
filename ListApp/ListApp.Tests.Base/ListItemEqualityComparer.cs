@@ -15,8 +15,8 @@ namespace ListApp.Tests.Base
             if (ReferenceEquals(x, y)) return true;
             if (x == null || y == null) return false;
             return x.Id == y.Id && x.Text == y.Text
-                   && x.LastModified == y.LastModified
-                   && x.Created == y.Created;
+                && x.LastModified == y.LastModified
+                && x.Created == y.Created;
         }
 
         public int GetHashCode(ListItem obj)

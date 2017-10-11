@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 
@@ -25,7 +24,7 @@ namespace ListApp.Services
                 Text = newItem.Text,
                 LastModified = _timeHelper.GetCurrentTime()
             };
-            
+
             var updatedItem = await _repository.ReplaceAsync(itemToReplace);
 
             if (updatedItem == null)

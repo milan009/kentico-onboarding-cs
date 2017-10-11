@@ -55,7 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ItemControllerTests.cs" />
+    <Compile Include="Controllers\V1\ItemControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

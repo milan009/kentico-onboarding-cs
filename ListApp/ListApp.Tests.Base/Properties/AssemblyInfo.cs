@@ -18,6 +18,8 @@ using System.Runtime.InteropServices;
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
+[assembly: InternalsVisibleTo("ListApp.Api.Tests")]
+[assembly: InternalsVisibleTo("ListApp.Services.Tests")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("af76e2b8-47df-4de0-801a-ab0aafd2cc91")]

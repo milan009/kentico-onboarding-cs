@@ -4,11 +4,11 @@ using NUnit.Framework.Constraints;
 
 namespace ListApp.Tests.Extensions
 {
-    public static class EqualConstraintExtensions
+    internal static class EqualConstraintExtensions
     {
         public static EqualConstraint UsingListItemComparer(this EqualConstraint constraint) => constraint.Using(ListItemEqualityComparer.Instance);
-
-        private class ListItemEqualityComparer : IEqualityComparer<ListItem>
+        
+        internal class ListItemEqualityComparer : IEqualityComparer<ListItem>
         {
             private ListItemEqualityComparer() { }
 
@@ -19,7 +19,9 @@ namespace ListApp.Tests.Extensions
             {
                 if (ReferenceEquals(x, y)) return true;
                 if (x == null || y == null) return false;
-                return x.Id == y.Id && x.Text == y.Text;
+                return x.Id == y.Id && x.Text == y.Text
+                       && x.LastModified == y.LastModified
+                       && x.Created == y.Created;
             }
 
             public int GetHashCode(ListItem obj)

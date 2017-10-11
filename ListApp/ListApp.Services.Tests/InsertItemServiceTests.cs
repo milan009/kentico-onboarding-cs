@@ -43,18 +43,18 @@ namespace ListApp.Services.Tests
                 .Returns(Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921"));
             _timeHelper.GetCurrentTime()
                 .Returns(DateTime.Parse("17.12.2017"));
-            _repository.AddAsync(Arg.Is<ListItem>(item
-                    => ListItemEqualityComparer.Instance.Equals(item, expectedItem)))
-                .Returns(expectedItem);
+            _repository.AddAsync(Arg.Any<ListItem>())
+                .Returns(call => call.Arg<ListItem>());
 
             //  Act
             var insertResult = await _insertItemService.InsertItemAsync(itemToInsert);
 
             //  Assert
-            await _repository.Received(1).AddAsync(itemToInsert);
+            await _repository.Received(1).AddAsync(Arg.Is<ListItem>(
+                item => ListItemEqualityComparer.Instance.Equals(item, expectedItem)));
             _timeHelper.Received(1).GetCurrentTime();
             _guidGenerator.Received(1).GenerateGuid();
-            Assert.That(insertResult, Is.EqualTo(expectedItem));
+            Assert.That(insertResult, Is.EqualTo(expectedItem).UsingListItemComparer());
         }
     }
 }

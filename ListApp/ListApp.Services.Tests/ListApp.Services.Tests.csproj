@@ -54,11 +54,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GuidGeneratorTests.cs" />
-    <Compile Include="TimeHelperTests.cs" />
-    <Compile Include="UpdateItemServiceTests.cs" />
-    <Compile Include="InsertItemServiceTests.cs" />
-    <Compile Include="DeleteItemServiceTests.cs" />
+    <Compile Include="Helpers\GuidGeneratorTests.cs" />
+    <Compile Include="Helpers\TimeHelperTests.cs" />
+    <Compile Include="ItemServices\UpdateItemServiceTests.cs" />
+    <Compile Include="ItemServices\InsertItemServiceTests.cs" />
+    <Compile Include="ItemServices\DeleteItemServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

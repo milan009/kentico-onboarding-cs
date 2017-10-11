@@ -1,4 +1,5 @@
 ﻿using ListApp.Contracts.Interfaces;
+using ListApp.Services.ItemServices;
 using Microsoft.Practices.Unity;
 
 namespace ListApp.Services.Bootstrapper

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
+using ListApp.Services.ItemServices;
 using ListApp.Tests.Base;
 using NSubstitute;
 

@@ -2,7 +2,7 @@
 using ListApp.Contracts.Interfaces;
 using ListApp.Contracts.Models;
 
-namespace ListApp.Services
+namespace ListApp.Services.ItemServices
 {
     internal class UpdateItemService : IUpdateItemService
     {

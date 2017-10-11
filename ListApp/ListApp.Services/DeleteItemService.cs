@@ -18,7 +18,7 @@ namespace ListApp.Services
         {
             var deletedItem = await _repository.DeleteAsync(id);
 
-            return deletedItem == null ? new OperationResult(false, null) : new OperationResult(true, deletedItem);
+            return deletedItem == null ? OperationResult.Failed : OperationResult.CreateSuccessfulResult(deletedItem);
         }
     }
 }

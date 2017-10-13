@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Threading;
 using ListApp.Contracts.Interfaces;
 using ListApp.Services.Helpers;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace ListApp.Services.Tests.Helpers
 {
@@ -26,13 +26,13 @@ namespace ListApp.Services.Tests.Helpers
         }
 
         [Test]
-        public void GetCurrentTime_IsNotCounter()
+        public async Task GetCurrentTime_IsNotCounter()
         {
             var tolerance = TimeSpan.FromMilliseconds(2);
             var millisToWait = TimeSpan.FromMilliseconds(200);
 
             var dateTime1 = _timeHelper.GetCurrentTime();
-            Thread.Sleep(millisToWait);
+            await Task.Delay(millisToWait);
             var dateTime2 = _timeHelper.GetCurrentTime();
             var difference = dateTime2 - dateTime1;
 

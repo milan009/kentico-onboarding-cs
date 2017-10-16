@@ -28,7 +28,7 @@ namespace ListApp.Services.Tests.Helpers
         [Test]
         public async Task GetCurrentTime_IsNotCounter()
         {
-            var tolerance = TimeSpan.FromMilliseconds(2);
+            var tolerance = TimeSpan.FromMilliseconds(10);
             var millisToWait = TimeSpan.FromMilliseconds(200);
 
             var dateTime1 = _timeService.GetCurrentTime();

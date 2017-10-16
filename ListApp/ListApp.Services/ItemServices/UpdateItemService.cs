@@ -43,7 +43,7 @@ namespace ListApp.Services.ItemServices
                 LastModified = _timeService.GetCurrentTime()
             };
 
-            return ListItemDbOperationResult.CreateSuccessfulResult(existingItem);
+            return ListItemDbOperationResult.CreateSuccessfulResult(itemToReplace);
         }
     }
 }

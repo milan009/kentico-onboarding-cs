@@ -25,7 +25,7 @@ namespace ListApp.Repositories
 
         public async Task<IEnumerable<ListItem>> GetAllAsync()
         {
-            return await (await _database.GetCollection<ListItem>(CollectionName).FindAsync(_ => true))
+            return await (await _database.GetCollection<ListItem>(CollectionName).FindAsync(FilterDefinition<ListItem>.Empty))
                 .ToListAsync();
         }
 

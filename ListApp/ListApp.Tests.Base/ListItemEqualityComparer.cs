@@ -14,9 +14,15 @@ namespace ListApp.Tests.Base
         {
             if (ReferenceEquals(x, y)) return true;
             if (x == null || y == null) return false;
-            return x.Id == y.Id && x.Text == y.Text
-                && x.LastModified == y.LastModified
-                && x.Created == y.Created;
+            return IsListItemContentEqueal(x, y);
+        }
+
+        private bool IsListItemContentEqueal(ListItem a, ListItem b)
+        {
+            return a.Id == b.Id 
+                && a.Text == b.Text
+                && a.LastModified == b.LastModified
+                && a.Created == b.Created;
         }
 
         public int GetHashCode(ListItem obj)

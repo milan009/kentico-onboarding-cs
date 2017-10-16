@@ -15,17 +15,9 @@ namespace ListApp.Services.ItemServices
             _timeService = timeService;
         }
 
-        public async Task<OperationResult> UpdateItemAsync(ListItem oldItem, ListItem newItem)
+        public async Task<OperationResult> UpdateItemAsync(ListItem newItem)
         {
-            var itemToReplace = new ListItem
-            {
-                Id = oldItem.Id,
-                Created = oldItem.Created,
-                Text = newItem.Text,
-                LastModified = _timeService.GetCurrentTime()
-            };
-
-            var updatedItem = await _listItemRepository.ReplaceAsync(itemToReplace);
+            var updatedItem = await _listItemRepository.ReplaceAsync(newItem);
 
             if (updatedItem == null)
             {
@@ -35,13 +27,21 @@ namespace ListApp.Services.ItemServices
             return OperationResult.CreateSuccessfulResult(updatedItem);
         }
 
-        public async Task<OperationResult> CheckIfItemExistsAsync(ListItem item)
+        public async Task<OperationResult> PrepareUpdatedItem(ListItem newItem)
         {
-            var existingItem = await _listItemRepository.GetAsync(item.Id);
+            var existingItem = await _listItemRepository.GetAsync(newItem.Id);
             if (existingItem == null)
             {
                 return OperationResult.Failed;
             }
+
+            var itemToReplace = new ListItem
+            {
+                Id = existingItem.Id,
+                Created = existingItem.Created,
+                Text = newItem.Text,
+                LastModified = _timeService.GetCurrentTime()
+            };
 
             return OperationResult.CreateSuccessfulResult(existingItem);
         }

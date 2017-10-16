@@ -60,7 +60,7 @@
   <ItemGroup>
     <Compile Include="Bootstrapper\ListItemRepositoryBootstrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ListItemRepository.cs" />
+    <Compile Include="ListItemListItemRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ListApp.Contracts\ListApp.Contracts.csproj">

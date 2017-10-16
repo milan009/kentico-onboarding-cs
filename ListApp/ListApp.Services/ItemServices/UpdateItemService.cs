@@ -6,12 +6,12 @@ namespace ListApp.Services.ItemServices
 {
     internal class UpdateItemService : IUpdateItemService
     {
-        private readonly IRepository _repository;
+        private readonly IListItemRepository _listItemRepository;
         private readonly ITimeService _timeService;
 
-        public UpdateItemService(IRepository repository, ITimeService timeService)
+        public UpdateItemService(IListItemRepository listItemRepository, ITimeService timeService)
         {
-            _repository = repository;
+            _listItemRepository = listItemRepository;
             _timeService = timeService;
         }
 
@@ -25,7 +25,7 @@ namespace ListApp.Services.ItemServices
                 LastModified = _timeService.GetCurrentTime()
             };
 
-            var updatedItem = await _repository.ReplaceAsync(itemToReplace);
+            var updatedItem = await _listItemRepository.ReplaceAsync(itemToReplace);
 
             if (updatedItem == null)
             {
@@ -37,7 +37,7 @@ namespace ListApp.Services.ItemServices
 
         public async Task<OperationResult> CheckIfItemExistsAsync(ListItem item)
         {
-            var existingItem = await _repository.GetAsync(item.Id);
+            var existingItem = await _listItemRepository.GetAsync(item.Id);
             if (existingItem == null)
             {
                 return OperationResult.Failed;

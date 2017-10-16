@@ -14,20 +14,20 @@ namespace ListApp.Api.Controllers.V1
     {
         internal const string RouteName = "itemsRoute";
 
-        private readonly IRepository _repository;
+        private readonly IListItemRepository _listItemRepository;
         private readonly IRouteHelper _routeHelper;
         private readonly IInsertItemService _insertItemService;
         private readonly IDeleteItemService _deleteItemService;
         private readonly IUpdateItemService _updateItemService;
 
         public ItemsController(
-            IRepository repository, 
+            IListItemRepository listItemRepository, 
             IRouteHelper routeHelper, 
             IInsertItemService insertItemService, 
             IDeleteItemService deleteItemService, 
             IUpdateItemService updateItemService)
         {
-            _repository = repository;
+            _listItemRepository = listItemRepository;
             _routeHelper = routeHelper;
             _insertItemService = insertItemService;
             _deleteItemService = deleteItemService;
@@ -35,7 +35,7 @@ namespace ListApp.Api.Controllers.V1
         }
 
         public async Task<IHttpActionResult> GetAsync() 
-            => Ok(await _repository.GetAllAsync());
+            => Ok(await _listItemRepository.GetAllAsync());
 
         public async Task<IHttpActionResult> GetAsync([FromUri] Guid id)
         {
@@ -44,7 +44,7 @@ namespace ListApp.Api.Controllers.V1
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var theItem = await _repository.GetAsync(id);
+            var theItem = await _listItemRepository.GetAsync(id);
             if (theItem == null)
                 return NotFound();
 

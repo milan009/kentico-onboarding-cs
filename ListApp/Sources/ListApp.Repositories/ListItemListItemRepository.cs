@@ -11,13 +11,13 @@ namespace ListApp.Repositories
      * bodied functions, as for some strange reason, in this
      * case they seem to be less readable than regular functions */ 
 
-    internal class ListItemRepository : IRepository
+    internal class ListItemListItemRepository : IListItemRepository
     {
         private const string DatabaseName = "listappdb";
         private const string CollectionName = "listitems";
         private readonly IMongoDatabase _database;
 
-        public ListItemRepository(DatabaseConfiguration configuration)
+        public ListItemListItemRepository(DatabaseConfiguration configuration)
         {
             var client = new MongoClient(configuration.ConnectionString);
             _database = client.GetDatabase(DatabaseName);

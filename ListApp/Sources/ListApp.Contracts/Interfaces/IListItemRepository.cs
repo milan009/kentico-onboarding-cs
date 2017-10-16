@@ -5,7 +5,7 @@ using ListApp.Contracts.Models;
 
 namespace ListApp.Contracts.Interfaces
 {
-    public interface IRepository
+    public interface IListItemRepository
     {
         /// <summary>
         /// A method that returns all items in the repository.

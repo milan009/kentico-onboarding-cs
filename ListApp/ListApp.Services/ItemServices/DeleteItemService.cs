@@ -7,16 +7,16 @@ namespace ListApp.Services.ItemServices
 {
     internal class DeleteItemService : IDeleteItemService
     {
-        private readonly IRepository _repository;
+        private readonly IListItemRepository _listItemRepository;
 
-        public DeleteItemService(IRepository repository)
+        public DeleteItemService(IListItemRepository listItemRepository)
         {
-            _repository = repository;
+            _listItemRepository = listItemRepository;
         }
 
         public async Task<OperationResult> DeleteItemAsync(Guid id)
         {
-            var deletedItem = await _repository.DeleteAsync(id);
+            var deletedItem = await _listItemRepository.DeleteAsync(id);
 
             return deletedItem == null ? OperationResult.Failed : OperationResult.CreateSuccessfulResult(deletedItem);
         }

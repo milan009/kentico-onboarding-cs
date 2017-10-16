@@ -13,18 +13,18 @@ namespace ListApp.Services.Tests.ItemServices
     public class InsertItemServiceTests
     {
         private IInsertItemService _insertItemService;
-        private IRepository _repository;
+        private IListItemRepository _listItemRepository;
         private IGuidGenerator _guidGenerator;
         private ITimeService _timeService;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = Substitute.For<IRepository>();
+            _listItemRepository = Substitute.For<IListItemRepository>();
             _guidGenerator = Substitute.For<IGuidGenerator>();
             _timeService = Substitute.For<ITimeService>();
 
-            _insertItemService = new InsertItemService(_repository, _guidGenerator, _timeService);
+            _insertItemService = new InsertItemService(_listItemRepository, _guidGenerator, _timeService);
         }
 
         [Test]
@@ -44,14 +44,14 @@ namespace ListApp.Services.Tests.ItemServices
                 .Returns(Guid.Parse("9584B1D0-2333-4A0E-A49A-66B45D258921"));
             _timeService.GetCurrentTime()
                 .Returns(DateTime.Parse("17.12.2017"));
-            _repository.AddAsync(Arg.Any<ListItem>())
+            _listItemRepository.AddAsync(Arg.Any<ListItem>())
                 .Returns(call => call.Arg<ListItem>());
 
             //  Act
             var insertResult = await _insertItemService.InsertItemAsync(itemToInsert);
 
             //  Assert
-            await _repository.Received(1).AddAsync(Arg.Is<ListItem>(
+            await _listItemRepository.Received(1).AddAsync(Arg.Is<ListItem>(
                 item => ListItemEqualityComparer.Instance.Equals(item, expectedItem)));
             _timeService.Received(1).GetCurrentTime();
             _guidGenerator.Received(1).GenerateGuid();

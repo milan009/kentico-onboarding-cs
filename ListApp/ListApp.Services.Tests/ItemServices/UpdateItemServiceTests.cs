@@ -14,16 +14,16 @@ namespace ListApp.Services.Tests.ItemServices
     public class UpdateItemServiceTests
     {
         private IUpdateItemService _updateItemService;
-        private IRepository _repository;
+        private IListItemRepository _listItemRepository;
         private ITimeService _timeService;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = Substitute.For<IRepository>();
+            _listItemRepository = Substitute.For<IListItemRepository>();
             _timeService = Substitute.For<ITimeService>();
 
-            _updateItemService = new UpdateItemService(_repository, _timeService);
+            _updateItemService = new UpdateItemService(_listItemRepository, _timeService);
         }
 
         [Test]
@@ -38,15 +38,15 @@ namespace ListApp.Services.Tests.ItemServices
             };
             var expectedResult = OperationResult.Failed;
 
-            _repository.GetAsync(Arg.Any<Guid>())
+            _listItemRepository.GetAsync(Arg.Any<Guid>())
                 .ReturnsNull();
 
             //  Act
             var updateResult = await _updateItemService.CheckIfItemExistsAsync(itemToUpdate);
 
             //  Assert
-            await _repository.Received(0).AddAsync(Arg.Any<ListItem>());
-            await _repository.Received(1).GetAsync(guid);
+            await _listItemRepository.Received(0).AddAsync(Arg.Any<ListItem>());
+            await _listItemRepository.Received(1).GetAsync(guid);
             Assert.That(updateResult, Is.EqualTo(expectedResult));
         }
 
@@ -69,14 +69,14 @@ namespace ListApp.Services.Tests.ItemServices
             };
             var expectedResult = OperationResult.CreateSuccessfulResult(expectedItem);
 
-            _repository.GetAsync(guid)
+            _listItemRepository.GetAsync(guid)
                 .Returns(expectedItem);
 
             //  Act
             var updateResult = await _updateItemService.CheckIfItemExistsAsync(itemToCheck);
 
             //  Assert
-            await _repository.Received(1).GetAsync(guid);
+            await _listItemRepository.Received(1).GetAsync(guid);
             Assert.That(updateResult.Found, Is.EqualTo(expectedResult.Found));
             Assert.That(updateResult.Item, Is.EqualTo(expectedResult.Item).UsingListItemComparer());
         }
@@ -100,7 +100,7 @@ namespace ListApp.Services.Tests.ItemServices
             };
             var expectedResult = OperationResult.Failed;
 
-            _repository.ReplaceAsync(Arg.Any<ListItem>())
+            _listItemRepository.ReplaceAsync(Arg.Any<ListItem>())
                 .ReturnsNull();
             _timeService.GetCurrentTime()
                 .Returns(DateTime.Parse("17.12.2017"));
@@ -109,7 +109,7 @@ namespace ListApp.Services.Tests.ItemServices
             var updateResult = await _updateItemService.UpdateItemAsync(oldItem, itemToUpdate);
 
             //  Assert
-            await _repository.Received(1).ReplaceAsync(Arg.Any<ListItem>());
+            await _listItemRepository.Received(1).ReplaceAsync(Arg.Any<ListItem>());
             _timeService.Received(1).GetCurrentTime();
             Assert.That(updateResult, Is.EqualTo(expectedResult));
         }
@@ -142,16 +142,16 @@ namespace ListApp.Services.Tests.ItemServices
 
             _timeService.GetCurrentTime()
                 .Returns(DateTime.Parse("17.12.2017"));
-            _repository.GetAsync(guid)
+            _listItemRepository.GetAsync(guid)
                 .Returns(repoItem);
-            _repository.ReplaceAsync(Arg.Any<ListItem>())
+            _listItemRepository.ReplaceAsync(Arg.Any<ListItem>())
                 .Returns(call => call.Arg<ListItem>());
 
             //  Act
             var updateResult = await _updateItemService.UpdateItemAsync(repoItem, itemToUpdate);
 
             //  Assert
-            await _repository.Received(1).ReplaceAsync(
+            await _listItemRepository.Received(1).ReplaceAsync(
                 Arg.Is<ListItem>(
                     item => ListItemEqualityComparer.Instance.Equals(item, expectedItem)));
 

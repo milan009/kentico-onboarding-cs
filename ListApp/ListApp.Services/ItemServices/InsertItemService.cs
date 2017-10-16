@@ -6,13 +6,13 @@ namespace ListApp.Services.ItemServices
 {
     internal class InsertItemService : IInsertItemService
     {
-        private readonly IRepository _repository;
+        private readonly IListItemRepository _listItemRepository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly ITimeService _timeService;
 
-        public InsertItemService(IRepository repository, IGuidGenerator guidGenerator, ITimeService timeService)
+        public InsertItemService(IListItemRepository listItemRepository, IGuidGenerator guidGenerator, ITimeService timeService)
         {
-            _repository = repository;
+            _listItemRepository = listItemRepository;
             _guidGenerator = guidGenerator;
             _timeService = timeService;
         }
@@ -28,7 +28,7 @@ namespace ListApp.Services.ItemServices
                 LastModified = now
             };
 
-            return await _repository.AddAsync(newItem);
+            return await _listItemRepository.AddAsync(newItem);
         }
     }
 }

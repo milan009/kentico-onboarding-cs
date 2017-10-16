@@ -13,13 +13,13 @@ namespace ListApp.Services.Tests.ItemServices
     public class DeleteItemServiceTests
     {
         private IDeleteItemService _deleteItemService;
-        private IRepository _repository;
+        private IListItemRepository _listItemRepository;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = Substitute.For<IRepository>();
-            _deleteItemService = new DeleteItemService(_repository);
+            _listItemRepository = Substitute.For<IListItemRepository>();
+            _deleteItemService = new DeleteItemService(_listItemRepository);
         }
 
         [Test]
@@ -27,11 +27,11 @@ namespace ListApp.Services.Tests.ItemServices
         {
             var deleteGuid = Guid.NewGuid();
             var expectedResult = OperationResult.Failed;
-            _repository.DeleteAsync(Arg.Any<Guid>()).ReturnsNull();
+            _listItemRepository.DeleteAsync(Arg.Any<Guid>()).ReturnsNull();
 
             var deleteResult = await _deleteItemService.DeleteItemAsync(deleteGuid);
 
-            await _repository.Received(1).DeleteAsync(deleteGuid);
+            await _listItemRepository.Received(1).DeleteAsync(deleteGuid);
             Assert.That(deleteResult.Found, Is.EqualTo(expectedResult.Found));
             Assert.That(deleteResult.Item, Is.EqualTo(expectedResult.Item));
         }
@@ -42,11 +42,11 @@ namespace ListApp.Services.Tests.ItemServices
             var deleteGuid = Guid.NewGuid();
             var expectedItem = new ListItem {Id = deleteGuid, Text = "I was deleted"};
             var expectedResult = OperationResult.CreateSuccessfulResult(expectedItem);
-            _repository.DeleteAsync(Arg.Any<Guid>()).Returns(expectedItem);
+            _listItemRepository.DeleteAsync(Arg.Any<Guid>()).Returns(expectedItem);
 
             var deleteResult = await _deleteItemService.DeleteItemAsync(deleteGuid);
 
-            await _repository.Received(1).DeleteAsync(deleteGuid);
+            await _listItemRepository.Received(1).DeleteAsync(deleteGuid);
             Assert.That(deleteResult.Found, Is.EqualTo(expectedResult.Found));
             Assert.That(deleteResult.Item, Is.EqualTo(expectedResult.Item));
         }

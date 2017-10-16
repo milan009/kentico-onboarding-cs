@@ -8,18 +8,18 @@ namespace ListApp.Services.ItemServices
     {
         private readonly IRepository _repository;
         private readonly IGuidGenerator _guidGenerator;
-        private readonly ITimeHelper _timeHelper;
+        private readonly ITimeService _timeService;
 
-        public InsertItemService(IRepository repository, IGuidGenerator guidGenerator, ITimeHelper timeHelper)
+        public InsertItemService(IRepository repository, IGuidGenerator guidGenerator, ITimeService timeService)
         {
             _repository = repository;
             _guidGenerator = guidGenerator;
-            _timeHelper = timeHelper;
+            _timeService = timeService;
         }
 
         public async Task<ListItem> InsertItemAsync(ListItem item)
         {
-            var now = _timeHelper.GetCurrentTime();
+            var now = _timeService.GetCurrentTime();
             var newItem = new ListItem
             {
                 Id = _guidGenerator.GenerateGuid(),

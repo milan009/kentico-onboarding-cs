@@ -9,18 +9,18 @@ namespace ListApp.Services.Tests.Helpers
     [TestFixture]
     internal class TimeHelperTests
     {
-        private ITimeHelper _timeHelper;
+        private ITimeService _timeService;
 
         [SetUp]
         public void Setup()
         {
-            _timeHelper = new TimeHelper();
+            _timeService = new TimeService();
         }
 
         [Test]
         public void GetCurrentTime_DoesNotReturnDefaultValue()
         {
-            var dateTime = _timeHelper.GetCurrentTime();
+            var dateTime = _timeService.GetCurrentTime();
 
             Assert.That(dateTime, Is.Not.EqualTo(default(DateTime)));
         }
@@ -31,9 +31,9 @@ namespace ListApp.Services.Tests.Helpers
             var tolerance = TimeSpan.FromMilliseconds(2);
             var millisToWait = TimeSpan.FromMilliseconds(200);
 
-            var dateTime1 = _timeHelper.GetCurrentTime();
+            var dateTime1 = _timeService.GetCurrentTime();
             await Task.Delay(millisToWait);
-            var dateTime2 = _timeHelper.GetCurrentTime();
+            var dateTime2 = _timeService.GetCurrentTime();
             var difference = dateTime2 - dateTime1;
 
             Assert.That(dateTime2, Is.GreaterThan(dateTime1));

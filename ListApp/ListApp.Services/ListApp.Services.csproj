@@ -47,7 +47,7 @@
     <Compile Include="Helpers\GuidGenerator.cs" />
     <Compile Include="ItemServices\InsertItemService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Helpers\TimeHelper.cs" />
+    <Compile Include="Helpers\TimeService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sources\ListApp.Contracts\ListApp.Contracts.csproj">

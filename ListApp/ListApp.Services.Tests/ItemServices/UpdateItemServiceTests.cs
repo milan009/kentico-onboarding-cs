@@ -15,15 +15,15 @@ namespace ListApp.Services.Tests.ItemServices
     {
         private IUpdateItemService _updateItemService;
         private IRepository _repository;
-        private ITimeHelper _timeHelper;
+        private ITimeService _timeService;
 
         [SetUp]
         public void SetUp()
         {
             _repository = Substitute.For<IRepository>();
-            _timeHelper = Substitute.For<ITimeHelper>();
+            _timeService = Substitute.For<ITimeService>();
 
-            _updateItemService = new UpdateItemService(_repository, _timeHelper);
+            _updateItemService = new UpdateItemService(_repository, _timeService);
         }
 
         [Test]
@@ -102,7 +102,7 @@ namespace ListApp.Services.Tests.ItemServices
 
             _repository.ReplaceAsync(Arg.Any<ListItem>())
                 .ReturnsNull();
-            _timeHelper.GetCurrentTime()
+            _timeService.GetCurrentTime()
                 .Returns(DateTime.Parse("17.12.2017"));
 
             //  Act
@@ -110,7 +110,7 @@ namespace ListApp.Services.Tests.ItemServices
 
             //  Assert
             await _repository.Received(1).ReplaceAsync(Arg.Any<ListItem>());
-            _timeHelper.Received(1).GetCurrentTime();
+            _timeService.Received(1).GetCurrentTime();
             Assert.That(updateResult, Is.EqualTo(expectedResult));
         }
 
@@ -140,7 +140,7 @@ namespace ListApp.Services.Tests.ItemServices
             };
             var expectedResult = OperationResult.CreateSuccessfulResult(expectedItem);
 
-            _timeHelper.GetCurrentTime()
+            _timeService.GetCurrentTime()
                 .Returns(DateTime.Parse("17.12.2017"));
             _repository.GetAsync(guid)
                 .Returns(repoItem);
@@ -155,7 +155,7 @@ namespace ListApp.Services.Tests.ItemServices
                 Arg.Is<ListItem>(
                     item => ListItemEqualityComparer.Instance.Equals(item, expectedItem)));
 
-            _timeHelper.Received(1).GetCurrentTime();
+            _timeService.Received(1).GetCurrentTime();
             Assert.That(updateResult.Found, Is.EqualTo(expectedResult.Found));
             Assert.That(updateResult.Item, Is.EqualTo(expectedResult.Item).UsingListItemComparer());
         }

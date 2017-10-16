@@ -7,12 +7,12 @@ namespace ListApp.Services.ItemServices
     internal class UpdateItemService : IUpdateItemService
     {
         private readonly IRepository _repository;
-        private readonly ITimeHelper _timeHelper;
+        private readonly ITimeService _timeService;
 
-        public UpdateItemService(IRepository repository, ITimeHelper timeHelper)
+        public UpdateItemService(IRepository repository, ITimeService timeService)
         {
             _repository = repository;
-            _timeHelper = timeHelper;
+            _timeService = timeService;
         }
 
         public async Task<OperationResult> UpdateItemAsync(ListItem oldItem, ListItem newItem)
@@ -22,7 +22,7 @@ namespace ListApp.Services.ItemServices
                 Id = oldItem.Id,
                 Created = oldItem.Created,
                 Text = newItem.Text,
-                LastModified = _timeHelper.GetCurrentTime()
+                LastModified = _timeService.GetCurrentTime()
             };
 
             var updatedItem = await _repository.ReplaceAsync(itemToReplace);

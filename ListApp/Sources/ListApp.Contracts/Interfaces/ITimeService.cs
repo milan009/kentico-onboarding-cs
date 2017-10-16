@@ -2,7 +2,7 @@
 
 namespace ListApp.Contracts.Interfaces
 {
-    public interface ITimeHelper
+    public interface ITimeService
     {
         DateTime GetCurrentTime();
     }

@@ -71,7 +71,7 @@ namespace ListApp.Api.Controllers.V1
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var prepareUpdateResult = await _updateItemService.PrepareUpdatedItem(newItem);
+            var prepareUpdateResult = await _updateItemService.PrepareUpdatedItemAsync(newItem);
             if (prepareUpdateResult.Found)
             {
                 var updatedResult = await _updateItemService.UpdateItemAsync(prepareUpdateResult.Item);

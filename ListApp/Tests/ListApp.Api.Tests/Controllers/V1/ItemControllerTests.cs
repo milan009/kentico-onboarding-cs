@@ -185,7 +185,7 @@ namespace ListApp.Api.Tests.Controllers.V1
             var receivedResponse = await _itemsController.PutAsync(Guid.NewGuid(), null);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            await _updateItemService.Received(0).PrepareUpdatedItem(Arg.Any<ListItem>());
+            await _updateItemService.Received(0).PrepareUpdatedItemAsync(Arg.Any<ListItem>());
             await _updateItemService.Received(0).UpdateItemAsync(Arg.Any<ListItem>());
             Assert.That(responseMessage.StatusCode, Is.EqualTo(expectedResponseCode));
         }
@@ -199,7 +199,7 @@ namespace ListApp.Api.Tests.Controllers.V1
             var receivedResponse = await _itemsController.PutAsync(Guid.Empty, putItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            await _updateItemService.Received(0).PrepareUpdatedItem(Arg.Any<ListItem>());
+            await _updateItemService.Received(0).PrepareUpdatedItemAsync(Arg.Any<ListItem>());
             await _updateItemService.Received(0).UpdateItemAsync(Arg.Any<ListItem>());
             Assert.That(responseMessage.StatusCode, Is.EqualTo(expectedResponseCode));
         }
@@ -218,7 +218,7 @@ namespace ListApp.Api.Tests.Controllers.V1
                 await _itemsController.PutAsync(Guid.Parse("00000000-E372-458B-A0A6-654EA545BFB9"), putItem);
             var responseMessage = await receivedResponse.ExecuteAsync(CancellationToken.None);
 
-            await _updateItemService.Received(0).PrepareUpdatedItem(Arg.Any<ListItem>());
+            await _updateItemService.Received(0).PrepareUpdatedItemAsync(Arg.Any<ListItem>());
             await _updateItemService.Received(0).UpdateItemAsync(Arg.Any<ListItem>());
             Assert.That(responseMessage.StatusCode, Is.EqualTo(expectedResponseCode));
         }
@@ -232,7 +232,7 @@ namespace ListApp.Api.Tests.Controllers.V1
             var expectedLocation = itemGuid.ToString();
             var expectedItem = new ListItem {Id = itemGuid, Text = "UpdatedItem"};
 
-            _updateItemService.PrepareUpdatedItem(Arg.Any<ListItem>())
+            _updateItemService.PrepareUpdatedItemAsync(Arg.Any<ListItem>())
                 .Returns(ListItemDbOperationResult.Failed);
             _insertItemService.InsertItemAsync(Arg.Any<ListItem>())
                 .Returns(expectedItem);
@@ -245,7 +245,7 @@ namespace ListApp.Api.Tests.Controllers.V1
             responseMessage.TryGetContentValue(out ListItem responseItem);
 
             //  Assert
-            await _updateItemService.Received(1).PrepareUpdatedItem(expectedItem);
+            await _updateItemService.Received(1).PrepareUpdatedItemAsync(expectedItem);
             await _updateItemService.Received(0).UpdateItemAsync(Arg.Any<ListItem>());
             await _insertItemService.Received(1).InsertItemAsync(expectedItem);
             Assert.That(responseMessage.StatusCode, Is.EqualTo(expectedResponseCode));
@@ -261,7 +261,7 @@ namespace ListApp.Api.Tests.Controllers.V1
             var itemGuid = Guid.Parse("BFBF8A62-FD82-42D4-A86B-324704BE161E");
             var expectedItem = new ListItem {Id = itemGuid, Text = "UpdatedItem"};
 
-            _updateItemService.PrepareUpdatedItem(Arg.Any<ListItem>())
+            _updateItemService.PrepareUpdatedItemAsync(Arg.Any<ListItem>())
                 .Returns(ListItemDbOperationResult.CreateSuccessfulResult(expectedItem));
             _updateItemService.UpdateItemAsync(expectedItem)
                 .Returns(ListItemDbOperationResult.CreateSuccessfulResult(expectedItem));
@@ -272,7 +272,7 @@ namespace ListApp.Api.Tests.Controllers.V1
             responseMessage.TryGetContentValue(out ListItem responseItem);
 
             //  Assert
-            await _updateItemService.Received(1).PrepareUpdatedItem(expectedItem);
+            await _updateItemService.Received(1).PrepareUpdatedItemAsync(expectedItem);
             await _updateItemService.Received(1).UpdateItemAsync(expectedItem);
             await _insertItemService.Received(0).InsertItemAsync(Arg.Any<ListItem>());
             Assert.That(responseMessage.StatusCode, Is.EqualTo(expectedResponseCode));

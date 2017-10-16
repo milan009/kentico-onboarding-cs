@@ -42,7 +42,7 @@ namespace ListApp.Services.Tests.ItemServices
                 .ReturnsNull();
 
             //  Act
-            var updateResult = await _updateItemService.PrepareUpdatedItem(itemToUpdate);
+            var updateResult = await _updateItemService.PrepareUpdatedItemAsync(itemToUpdate);
 
             //  Assert
             await _listItemRepository.Received(0).AddAsync(Arg.Any<ListItem>());
@@ -82,7 +82,7 @@ namespace ListApp.Services.Tests.ItemServices
                 .Returns(DateTime.Parse("17.12.2017"));
 
             //  Act
-            var updateResult = await _updateItemService.PrepareUpdatedItem(itemToCheck);
+            var updateResult = await _updateItemService.PrepareUpdatedItemAsync(itemToCheck);
 
             //  Assert
             await _listItemRepository.Received(1).GetAsync(guid);

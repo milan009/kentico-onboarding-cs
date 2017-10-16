@@ -27,7 +27,7 @@ namespace ListApp.Services.ItemServices
             return ListItemDbOperationResult.CreateSuccessfulResult(updatedItem);
         }
 
-        public async Task<ListItemDbOperationResult> PrepareUpdatedItem(ListItem newItem)
+        public async Task<ListItemDbOperationResult> PrepareUpdatedItemAsync(ListItem newItem)
         {
             var existingItem = await _listItemRepository.GetAsync(newItem.Id);
             if (existingItem == null)

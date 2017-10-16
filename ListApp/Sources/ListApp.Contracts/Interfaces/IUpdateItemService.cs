@@ -6,6 +6,6 @@ namespace ListApp.Contracts.Interfaces
     public interface IUpdateItemService
     {
         Task<ListItemDbOperationResult> UpdateItemAsync(ListItem newItem);
-        Task<ListItemDbOperationResult> PrepareUpdatedItem(ListItem newItem);
+        Task<ListItemDbOperationResult> PrepareUpdatedItemAsync(ListItem newItem);
     }
 }

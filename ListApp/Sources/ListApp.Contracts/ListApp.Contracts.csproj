@@ -61,7 +61,7 @@
     <Compile Include="Interfaces\IUpdateItemService.cs" />
     <Compile Include="Models\DatabaseConfiguration.cs" />
     <Compile Include="Models\ListItem.cs" />
-    <Compile Include="Models\OperationResult.cs" />
+    <Compile Include="Models\ListItemDbOperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

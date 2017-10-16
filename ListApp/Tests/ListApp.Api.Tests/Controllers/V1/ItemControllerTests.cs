@@ -233,7 +233,7 @@ namespace ListApp.Api.Tests.Controllers.V1
             var expectedItem = new ListItem {Id = itemGuid, Text = "UpdatedItem"};
 
             _updateItemService.CheckIfItemExistsAsync(Arg.Any<ListItem>())
-                .Returns(OperationResult.Failed);
+                .Returns(ListItemDbOperationResult.Failed);
             _insertItemService.InsertItemAsync(Arg.Any<ListItem>())
                 .Returns(expectedItem);
             _routeHelper.GetItemUrl(Arg.Any<Guid>())
@@ -262,9 +262,9 @@ namespace ListApp.Api.Tests.Controllers.V1
             var expectedItem = new ListItem {Id = itemGuid, Text = "UpdatedItem"};
 
             _updateItemService.CheckIfItemExistsAsync(Arg.Any<ListItem>())
-                .Returns(OperationResult.CreateSuccessfulResult(expectedItem));
+                .Returns(ListItemDbOperationResult.CreateSuccessfulResult(expectedItem));
             _updateItemService.UpdateItemAsync(Arg.Any<ListItem>(), expectedItem)
-                .Returns(OperationResult.CreateSuccessfulResult(expectedItem));
+                .Returns(ListItemDbOperationResult.CreateSuccessfulResult(expectedItem));
 
             //  Act
             var receivedResponse = await _itemsController.PutAsync(expectedItem.Id, expectedItem);
@@ -287,7 +287,7 @@ namespace ListApp.Api.Tests.Controllers.V1
             var deletedGuid = Guid.NewGuid();
 
             _deleteItemService.DeleteItemAsync(Arg.Any<Guid>())
-                .Returns(OperationResult.Failed);
+                .Returns(ListItemDbOperationResult.Failed);
 
             //  Act
             var receivedResponse = await _itemsController.DeleteAsync(deletedGuid);
@@ -312,7 +312,7 @@ namespace ListApp.Api.Tests.Controllers.V1
             };
 
             _deleteItemService.DeleteItemAsync(Arg.Any<Guid>())
-                .Returns(OperationResult.CreateSuccessfulResult(expectedItem));
+                .Returns(ListItemDbOperationResult.CreateSuccessfulResult(expectedItem));
 
             //  Act
             var receivedResponse = await _itemsController.DeleteAsync(expectedItem.Id);

@@ -36,7 +36,7 @@ namespace ListApp.Services.Tests.ItemServices
                 Id = guid,
                 Text = "Order pizza"
             };
-            var expectedResult = OperationResult.Failed;
+            var expectedResult = ListItemDbOperationResult.Failed;
 
             _listItemRepository.GetAsync(Arg.Any<Guid>())
                 .ReturnsNull();
@@ -67,7 +67,7 @@ namespace ListApp.Services.Tests.ItemServices
                 Id = guid,
                 Text = "Order fries"
             };
-            var expectedResult = OperationResult.CreateSuccessfulResult(expectedItem);
+            var expectedResult = ListItemDbOperationResult.CreateSuccessfulResult(expectedItem);
 
             _listItemRepository.GetAsync(guid)
                 .Returns(expectedItem);
@@ -98,7 +98,7 @@ namespace ListApp.Services.Tests.ItemServices
                 Id = guid,
                 Text = "Order fries"
             };
-            var expectedResult = OperationResult.Failed;
+            var expectedResult = ListItemDbOperationResult.Failed;
 
             _listItemRepository.ReplaceAsync(Arg.Any<ListItem>())
                 .ReturnsNull();
@@ -138,7 +138,7 @@ namespace ListApp.Services.Tests.ItemServices
                 Id = guid,
                 Text = "Order pizza"
             };
-            var expectedResult = OperationResult.CreateSuccessfulResult(expectedItem);
+            var expectedResult = ListItemDbOperationResult.CreateSuccessfulResult(expectedItem);
 
             _timeService.GetCurrentTime()
                 .Returns(DateTime.Parse("17.12.2017"));

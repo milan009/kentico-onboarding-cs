@@ -15,24 +15,24 @@ namespace ListApp.Services.ItemServices
             _timeService = timeService;
         }
 
-        public async Task<OperationResult> UpdateItemAsync(ListItem newItem)
+        public async Task<ListItemDbOperationResult> UpdateItemAsync(ListItem newItem)
         {
             var updatedItem = await _listItemRepository.ReplaceAsync(newItem);
 
             if (updatedItem == null)
             {
-                return OperationResult.Failed;
+                return ListItemDbOperationResult.Failed;
             }
 
-            return OperationResult.CreateSuccessfulResult(updatedItem);
+            return ListItemDbOperationResult.CreateSuccessfulResult(updatedItem);
         }
 
-        public async Task<OperationResult> PrepareUpdatedItem(ListItem newItem)
+        public async Task<ListItemDbOperationResult> PrepareUpdatedItem(ListItem newItem)
         {
             var existingItem = await _listItemRepository.GetAsync(newItem.Id);
             if (existingItem == null)
             {
-                return OperationResult.Failed;
+                return ListItemDbOperationResult.Failed;
             }
 
             var itemToReplace = new ListItem
@@ -43,7 +43,7 @@ namespace ListApp.Services.ItemServices
                 LastModified = _timeService.GetCurrentTime()
             };
 
-            return OperationResult.CreateSuccessfulResult(existingItem);
+            return ListItemDbOperationResult.CreateSuccessfulResult(existingItem);
         }
     }
 }

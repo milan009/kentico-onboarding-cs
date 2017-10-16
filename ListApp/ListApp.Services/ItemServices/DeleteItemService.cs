@@ -14,11 +14,11 @@ namespace ListApp.Services.ItemServices
             _listItemRepository = listItemRepository;
         }
 
-        public async Task<OperationResult> DeleteItemAsync(Guid id)
+        public async Task<ListItemDbOperationResult> DeleteItemAsync(Guid id)
         {
             var deletedItem = await _listItemRepository.DeleteAsync(id);
 
-            return deletedItem == null ? OperationResult.Failed : OperationResult.CreateSuccessfulResult(deletedItem);
+            return deletedItem == null ? ListItemDbOperationResult.Failed : ListItemDbOperationResult.CreateSuccessfulResult(deletedItem);
         }
     }
 }

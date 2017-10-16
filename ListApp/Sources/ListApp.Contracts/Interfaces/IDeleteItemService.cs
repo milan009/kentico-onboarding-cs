@@ -6,6 +6,6 @@ namespace ListApp.Contracts.Interfaces
 {
     public interface IDeleteItemService
     {
-        Task<OperationResult> DeleteItemAsync(Guid id);
+        Task<ListItemDbOperationResult> DeleteItemAsync(Guid id);
     }
 }

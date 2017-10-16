@@ -26,7 +26,7 @@ namespace ListApp.Services.Tests.ItemServices
         public async Task DeleteItemAsync_NonExistingId_ReturnsCorrectOperationResult()
         {
             var deleteGuid = Guid.NewGuid();
-            var expectedResult = OperationResult.Failed;
+            var expectedResult = ListItemDbOperationResult.Failed;
             _listItemRepository.DeleteAsync(Arg.Any<Guid>()).ReturnsNull();
 
             var deleteResult = await _deleteItemService.DeleteItemAsync(deleteGuid);
@@ -41,7 +41,7 @@ namespace ListApp.Services.Tests.ItemServices
         {
             var deleteGuid = Guid.NewGuid();
             var expectedItem = new ListItem {Id = deleteGuid, Text = "I was deleted"};
-            var expectedResult = OperationResult.CreateSuccessfulResult(expectedItem);
+            var expectedResult = ListItemDbOperationResult.CreateSuccessfulResult(expectedItem);
             _listItemRepository.DeleteAsync(Arg.Any<Guid>()).Returns(expectedItem);
 
             var deleteResult = await _deleteItemService.DeleteItemAsync(deleteGuid);

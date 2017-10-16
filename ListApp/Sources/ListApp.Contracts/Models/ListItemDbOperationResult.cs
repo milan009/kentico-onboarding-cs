@@ -2,24 +2,24 @@
 
 namespace ListApp.Contracts.Models
 {
-    public class OperationResult
+    public class ListItemDbOperationResult
     {
-        public static readonly OperationResult Failed = new OperationResult(false, null);
+        public static readonly ListItemDbOperationResult Failed = new ListItemDbOperationResult(false, null);
 
-        public static OperationResult CreateSuccessfulResult(ListItem item)
+        public static ListItemDbOperationResult CreateSuccessfulResult(ListItem item)
         {
             if (item == null)
             {
                 throw new ArgumentNullException(nameof(item));
             }
 
-            return new OperationResult(true, item);
+            return new ListItemDbOperationResult(true, item);
         }
 
         public bool Found { get; }
         public ListItem Item { get; }
 
-        private OperationResult(bool found, ListItem item)
+        private ListItemDbOperationResult(bool found, ListItem item)
         {
             Found = found;
             Item = item;

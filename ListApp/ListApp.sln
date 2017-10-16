@@ -17,11 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{B298
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Api.Services", "Sources\ListApp.Api.Services\ListApp.Api.Services.csproj", "{C2542321-059E-4A2F-ABC8-9667DE89C1D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Services", "ListApp.Services\ListApp.Services.csproj", "{F1EB54D4-9FA3-4038-BB3E-8C75BA9BCE66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Services", "Sources\ListApp.Services\ListApp.Services.csproj", "{F1EB54D4-9FA3-4038-BB3E-8C75BA9BCE66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Services.Tests", "ListApp.Services.Tests\ListApp.Services.Tests.csproj", "{23D7C764-6883-47A4-B809-6FA2C14E234A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Services.Tests", "Tests\ListApp.Services.Tests\ListApp.Services.Tests.csproj", "{23D7C764-6883-47A4-B809-6FA2C14E234A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Tests.Base", "ListApp.Tests.Base\ListApp.Tests.Base.csproj", "{AF76E2B8-47DF-4DE0-801A-AB0AAFD2CC91}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListApp.Tests.Base", "Tests\ListApp.Tests.Base\ListApp.Tests.Base.csproj", "{AF76E2B8-47DF-4DE0-801A-AB0AAFD2CC91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

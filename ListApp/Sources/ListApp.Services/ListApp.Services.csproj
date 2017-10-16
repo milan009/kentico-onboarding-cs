@@ -50,7 +50,7 @@
     <Compile Include="Helpers\TimeService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sources\ListApp.Contracts\ListApp.Contracts.csproj">
+    <ProjectReference Include="..\ListApp.Contracts\ListApp.Contracts.csproj">
       <Project>{F895DFD4-2AB2-4935-9DA8-8D2A5C3D91FA}</Project>
       <Name>ListApp.Contracts</Name>
     </ProjectReference>

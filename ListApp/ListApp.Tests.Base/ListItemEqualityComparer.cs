@@ -3,7 +3,7 @@ using ListApp.Contracts.Models;
 
 namespace ListApp.Tests.Base
 {
-    internal class ListItemEqualityComparer : IEqualityComparer<ListItem>
+    public class ListItemEqualityComparer : IEqualityComparer<ListItem>
     {
         private ListItemEqualityComparer() { }
 

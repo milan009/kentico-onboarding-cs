@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ListApp.Services.Tests.Helpers
 {
     [TestFixture]
-    internal class TimeHelperTests
+    internal class TimeServiceTests
     {
         private ITimeService _timeService;
 

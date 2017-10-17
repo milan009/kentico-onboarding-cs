@@ -55,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\GuidGeneratorTests.cs" />
-    <Compile Include="Helpers\TimeHelperTests.cs" />
+    <Compile Include="Helpers\TimeServiceTests.cs" />
     <Compile Include="ItemServices\UpdateItemServiceTests.cs" />
     <Compile Include="ItemServices\InsertItemServiceTests.cs" />
     <Compile Include="ItemServices\DeleteItemServiceTests.cs" />

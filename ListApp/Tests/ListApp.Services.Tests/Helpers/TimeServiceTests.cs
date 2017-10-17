@@ -28,8 +28,8 @@ namespace ListApp.Services.Tests.Helpers
         [Test]
         public async Task GetCurrentTime_IsNotCounter()
         {
-            var tolerance = TimeSpan.FromMilliseconds(10);
-            var millisToWait = TimeSpan.FromMilliseconds(200);
+            var tolerance = TimeSpan.FromMilliseconds(50);
+            var millisToWait = TimeSpan.FromMilliseconds(500);
 
             var dateTime1 = _timeService.GetCurrentTime();
             await Task.Delay(millisToWait);

@@ -17,7 +17,13 @@ namespace ListApp.Services.ItemServices
 
         public async Task<ListItemDbOperationResult> UpdateItemAsync(ListItem newItem)
         {
-            var updatedItem = await _listItemRepository.ReplaceAsync(newItem);
+            var prepareOperationResult = await PrepareUpdatedItemAsync(newItem);
+            if (prepareOperationResult == ListItemDbOperationResult.Failed)
+            {
+                return prepareOperationResult;
+            }
+
+            var updatedItem = await _listItemRepository.ReplaceAsync(prepareOperationResult.Item);
 
             if (updatedItem == null)
             {
@@ -27,7 +33,7 @@ namespace ListApp.Services.ItemServices
             return ListItemDbOperationResult.CreateSuccessfulResult(updatedItem);
         }
 
-        public async Task<ListItemDbOperationResult> PrepareUpdatedItemAsync(ListItem newItem)
+        internal async Task<ListItemDbOperationResult> PrepareUpdatedItemAsync(ListItem newItem)
         {
             var existingItem = await _listItemRepository.GetAsync(newItem.Id);
             if (existingItem == null)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ListApp.Contracts.Interfaces;

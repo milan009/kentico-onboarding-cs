@@ -4,6 +4,7 @@ using ListApp.Api.Services.Bootstrapper;
 using ListApp.Api.Utils;
 using ListApp.Contracts.Interfaces;
 using ListApp.Repositories.Bootstrapper;
+using ListApp.Services.Bootstrapper;
 using Microsoft.Practices.Unity;
 
 namespace ListApp.Api
@@ -15,6 +16,7 @@ namespace ListApp.Api
             var container = new UnityContainer()
                 .ExecuteBootstrapper<ListItemRepositoryBootstrapper>()
                 .ExecuteBootstrapper<ServicesApiBootstrapper>()
+                .ExecuteBootstrapper<ServicesBootstrapper>()
                 .ExecuteBootstrapper<ApiBootstrapper>();
 
             config.DependencyResolver = new UnityResolver(container);

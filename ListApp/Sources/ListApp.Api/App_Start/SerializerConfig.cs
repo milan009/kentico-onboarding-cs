@@ -5,11 +5,13 @@ namespace ListApp.Api
 {
     internal static class SerializerConfig
     {
-        internal static void Register(HttpConfiguration config) => 
+        internal static void Register(HttpConfiguration config)
+        {
             config
                 .Formatters
-                .JsonFormatter 
+                .JsonFormatter
                 .SerializerSettings
                 .ContractResolver = new CamelCasePropertyNamesContractResolver();
+        }
     }
 }

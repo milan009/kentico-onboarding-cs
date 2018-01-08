@@ -8,20 +8,20 @@ namespace ListApp.Api
     {
         internal static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
             config.AddApiVersioning();
 
-            // Web API routes
             config.MapHttpAttributeRoutes(InitializeConstraintResolver());
         }
 
-        private static IInlineConstraintResolver InitializeConstraintResolver() 
-            => new DefaultInlineConstraintResolver
+        private static IInlineConstraintResolver InitializeConstraintResolver()
+        {
+            return new DefaultInlineConstraintResolver
             {
                 ConstraintMap =
                 {
-                    ["apiVersion"] = typeof( ApiVersionRouteConstraint )
+                    ["apiVersion"] = typeof(ApiVersionRouteConstraint)
                 }
             };
+        }
     }
 }

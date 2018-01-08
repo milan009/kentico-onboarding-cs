@@ -55,11 +55,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\EqualConstraintExtensions.cs" />
-    <Compile Include="ItemControllerTests.cs" />
+    <Compile Include="Controllers\V1\ItemControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ListApp.Tests.Base\ListApp.Tests.Base.csproj">
+      <Project>{af76e2b8-47df-4de0-801a-ab0aafd2cc91}</Project>
+      <Name>ListApp.Tests.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Sources\ListApp.Api\ListApp.Api.csproj">
       <Project>{5323BC7A-28EB-4CE4-99EB-E376E52DD362}</Project>
       <Name>ListApp.Api</Name>

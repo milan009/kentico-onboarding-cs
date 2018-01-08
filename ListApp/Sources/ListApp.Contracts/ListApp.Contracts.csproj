@@ -47,15 +47,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\IRepository.cs" />
+    <Compile Include="Interfaces\IGuidGenerator.cs" />
+    <Compile Include="Interfaces\IDeleteItemService.cs" />
+    <Compile Include="Interfaces\IInsertItemService.cs" />
+    <Compile Include="Interfaces\IListItemRepository.cs" />
     <Compile Include="Interfaces\IRouteHelper.cs" />
     <Compile Include="Interfaces\IRouteHelperConfig.cs" />
+    <Compile Include="Interfaces\ITimeService.cs" />
     <Compile Include="Interfaces\IUnityContainerBootstrapper.cs" />
+    <Compile Include="Interfaces\IUpdateItemService.cs" />
+    <Compile Include="Models\DatabaseConfiguration.cs" />
     <Compile Include="Models\ListItem.cs" />
+    <Compile Include="Models\ListItemDbOperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
